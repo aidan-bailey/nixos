@@ -31,13 +31,12 @@
   # Select internationalisation properties.
   i18n.defaultLocale = "en_ZA.UTF-8";
 
+  services.displayManager.defaultSession = "none+i3";
+
   # Enable the X11 windowing system.
   services.xserver = {
     enable = true;
     desktopManager = {xterm.enable=false;};
-    displayManager = {
-      defaultSession = "none+i3";
-    };
     windowManager.i3 = {
       enable = true;
       extraPackages = with pkgs; [
@@ -51,11 +50,15 @@
   #services.xserver.enable = true;
   services.xserver.windowManager.i3.package = pkgs.i3-gaps;
   programs.dconf.enable = true;
+  console.useXkbConfig = true;
 
   # Configure keymap in X11
   services.xserver = {
-    layout = "za";
-    xkbVariant = "";
+    xkb = { 
+    	layout = "za";
+    	variant = ""; 
+	options = "ctrl:swapcaps";
+    };
   };
 
   # Enable CUPS to print documents.
