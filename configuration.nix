@@ -9,6 +9,7 @@
 let
   basePackages = with pkgs; [
     wget
+    lxde.lxsession
     vim
     neovim
     curl
@@ -17,11 +18,16 @@ let
     unzip
     zsh
     alacritty
+    xfce.thunar
+    home-manager
+    gparted
   ];
+
   guiPackages = with pkgs; [
     rofi
     feh
   ];
+
   devPackages = with pkgs; [
     # Essentials
     libtool
@@ -30,6 +36,8 @@ let
     gcc
     # Shell
     shfmt
+    shellcheck
+    nodePackages.bash-language-server
     # Emacs
     ripgrep
     fd
@@ -44,7 +52,10 @@ let
     swtpm
     guestfs-tools
     libosinfo
+    # Python
+    python3
   ];
+
   apps = with pkgs; [
     firefox
     brave
@@ -178,6 +189,25 @@ in
   services.gvfs.enable = true; # Mount, trash, and other functionalities
   services.tumbler.enable = true; # Thumbnail support for images
 
+  # Security
+  #security.polkit.enable = true;
+  #systemd = {
+  #  user.services.polkit-gnome-authentication-agent-1 = {
+  #    enable = true;
+  #    description = "polkit-gnome-authentication-agent-1";
+  #    wantedBy = [ "graphical-session.target" ];
+  #    wants = [ "graphical-session.target" ];
+  #    after = [ "graphical-session.target" ];
+  #    serviceConfig = {
+  #      Type = "simple";
+  #      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+  #      Restart = "on-failure";
+  #      RestartSec = 1;
+  #      TimeoutStopSec = 10;
+  #    };
+  #  };
+  #};
+
   # Virtualisation
   virtualisation.libvirtd = {
     enable = true;
@@ -217,7 +247,8 @@ in
 
     shellAliases = {
       ll = "ls -l";
-      update = "sudo nixos-rebuild switch";
+      updaten = "sudo nixos-rebuild switch";
+      updateh = "home-manager switch";
       configure = "nvim /etc/nixos/configuration.nix";
     };
 
@@ -236,6 +267,7 @@ in
     isNormalUser = true;
     description = "Aidan Bailey";
     extraGroups = [
+      "libvirtd"
       "networkmanager"
       "wheel"
     ];
