@@ -99,9 +99,6 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # for the picom
-  #services.picom.enable = true;
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -147,8 +144,8 @@
 
 
   services.picom = {
-    enable = true;
-    fade = true;
+    enable = false;
+    fade = false;
 #    vSync = true;
     shadow = true;
     fadeDelta = 4 ;
