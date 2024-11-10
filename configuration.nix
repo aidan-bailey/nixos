@@ -50,12 +50,12 @@
   services.displayManager.defaultSession = "none+i3";
   programs.dconf.enable = true;
   services.picom = {
-    enable = false;
+    enable = true;
     fade = false;
 #    vSync = true;
     shadow = true;
-    fadeDelta = 4 ;
-    inactiveOpacity = 0.8;
+    fadeDelta = 1 ;
+    inactiveOpacity = 0.9;
     activeOpacity = 1;
 #    backend = "glx";
     settings = {
