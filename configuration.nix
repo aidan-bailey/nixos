@@ -1,6 +1,54 @@
 # Aidan's NixOS config
 
-{ config, pkgs, callPackage, ... }:
+{
+  config,
+  pkgs,
+  callPackage,
+  ...
+}:
+let
+  basePackages = with pkgs; [
+    wget
+    vim
+    neovim
+    curl
+    htop
+    git
+    unzip
+    zsh
+    alacritty
+  ];
+  guiPackages = with pkgs; [
+    rofi
+    feh
+  ];
+  devPackages = with pkgs; [
+    # Essentials
+    libtool
+    cmake
+    gnumake
+    gcc
+    # Shell
+    shfmt
+    # Emacs
+    pkgs.emacs-git
+    ripgrep
+    fd
+    # Nix
+    nixd
+    nixfmt-rfc-style
+    # JS
+    nodejs_22
+  ];
+  apps = with pkgs; [
+    firefox
+    thunderbird
+    discord
+    slack
+    firefox
+    spotify
+  ];
+in
 {
 
   ##############
@@ -9,10 +57,10 @@
 
   system.stateVersion = "23.05"; # Did you read the comment?
 
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -32,18 +80,19 @@
   time.timeZone = "Africa/Johannesburg";
   i18n.defaultLocale = "en_ZA.UTF-8";
 
-
   # GUI
   services.xserver = {
     enable = true;
-    desktopManager = {xterm.enable=false;};
+    desktopManager = {
+      xterm.enable = false;
+    };
     windowManager.i3 = {
       enable = true;
       extraPackages = with pkgs; [
         dmenu
         i3status
-	i3lock
-	i3blocks
+        i3lock
+        i3blocks
       ];
     };
   };
@@ -52,28 +101,27 @@
   services.picom = {
     enable = true;
     fade = false;
-#    vSync = true;
+    #    vSync = true;
     shadow = true;
-    fadeDelta = 1 ;
+    fadeDelta = 1;
     inactiveOpacity = 0.9;
     activeOpacity = 1;
-#    backend = "glx";
+    #    backend = "glx";
     settings = {
       blur = {
-	#method = "dual_kawase";
-#	background = true;
-	strength = 5;
+        #method = "dual_kawase";
+        #	background = true;
+        strength = 5;
       };
     };
   };
 
-
   # Keyboard
   services.xserver = {
-    xkb = { 
-    	layout = "za";
-    	variant = ""; 
-	options = "caps:swapescape";
+    xkb = {
+      layout = "za";
+      variant = "";
+      options = "caps:swapescape";
     };
   };
   console.useXkbConfig = true;
@@ -95,10 +143,18 @@
     #media-session.enable = true;
   };
 
+  # Fonts
+  fonts.packages = with pkgs; [
+    nerdfonts
+    noto-fonts
+    noto-fonts-cjk
+    noto-fonts-emoji
+  ];
+
   # Services
   services.openssh.enable = true;
   services.printing.enable = true; # enable CUPS to print documents
-  services.emacs.package = pkgs.emacs-unstable;
+  #services.emacs.package = pkgs.emacs-unstable;
   services.xserver.windowManager.i3.package = pkgs.i3-gaps;
   services.gvfs.enable = true; # Mount, trash, and other functionalities
   services.tumbler.enable = true; # Thumbnail support for images
@@ -109,9 +165,11 @@
 
   nixpkgs.config.allowUnfree = true;
   nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url = "https://github.com/nix-community/emacs-overlay/archive/master.tar.gz";
-    }))
+    (import (
+      builtins.fetchTarball {
+        url = "https://github.com/nix-community/emacs-overlay/archive/master.tar.gz";
+      }
+    ))
   ];
 
   # Terminal
@@ -122,6 +180,7 @@
     shellAliases = {
       ll = "ls -l";
       update = "sudo nixos-rebuild switch";
+      configure = "nvim /etc/nixos/configuration.nix";
     };
 
     ohMyZsh = {
@@ -132,34 +191,18 @@
 
   };
 
-  environment.systemPackages = with pkgs; [
- 	wget
-	vim
-	neovim
-	curl
-	htop
-	git
-	feh
-	unzip
-	rofi
-	zsh
-	pkgs.emacsGcc
-  ];
+  environment.systemPackages = basePackages ++ guiPackages ++ devPackages;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.aidanb = {
     isNormalUser = true;
     description = "Aidan Bailey";
-    extraGroups = [ "networkmanager" "wheel" ];
-    shell = pkgs.zsh;
-    packages = with pkgs; [
-      firefox
-      thunderbird
-	discord
-	slack
-	firefox
-	alacritty
+    extraGroups = [
+      "networkmanager"
+      "wheel"
     ];
+    shell = pkgs.zsh;
+    packages = apps;
   };
 
 }
