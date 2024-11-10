@@ -57,7 +57,7 @@
     xkb = { 
     	layout = "za";
     	variant = ""; 
-	options = "ctrl:swapcaps";
+	options = "caps:swapescape";
     };
   };
 
@@ -81,14 +81,30 @@
     #media-session.enable = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+
+    shellAliases = {
+      ll = "ls -l";
+      update = "sudo nixos-rebuild switch";
+    };
+
+    ohMyZsh = {
+      enable = true;
+      plugins = [ "git" ];
+      theme = "robbyrussell";
+    };
+
+  };
+
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.aidanb = {
     isNormalUser = true;
     description = "Aidan Bailey";
     extraGroups = [ "networkmanager" "wheel" ];
+    shell = pkgs.zsh;
     packages = with pkgs; [
       firefox
       thunderbird
@@ -114,6 +130,7 @@
 	feh
 	unzip
 	rofi
+	zsh
   ];
   services.gvfs.enable = true; # Mount, trash, and other functionalities
   services.tumbler.enable = true; # Thumbnail support for images
@@ -164,3 +181,4 @@
     };
   };
 }
+
