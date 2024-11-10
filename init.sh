@@ -8,15 +8,17 @@ SRCDIR="$HOME/Source"
 MEDIADIR="$HOME/Media"
 CURDIR=$(pwd)
 
-DOOMSRC=$(pwd)/doom.d
-NIXSRC=$(pwd)/configuration.nix
-I3SRC=$(pwd)/config
-ZSHRCSRC=$(pwd)/zshrc
+DOOMDIR=$(pwd)/doom.d
+NIXCFG=$(pwd)/configuration.nix
+I3CFG=$(pwd)/config
+ZSHRC=$(pwd)/zshrc
+HOMECFG=$(pwd)/home.nix
 
-DOOMDIR="$HOME/.doom.d"
-NIXCFG="/etc/nixos/configuration.nix"
-I3CFG="$HOME/.config/i3/config"
-ZSHRC="$HOME/.zshrc"
+DOOMTRG="$HOME/.doom.d"
+NIXTRG="/etc/nixos/configuration.nix"
+I3CFGTRG="$HOME/.config/i3/config"
+ZSHRCTRG="$HOME/.zshrc"
+HOMECFGTRG="$HOME/.config/home-manager/home.nix"
 
 #####################
 # ARRANGE MEDIA DIR #
@@ -49,11 +51,18 @@ moveifexists "$HOME/Pictures" "$MEDIADIR/Pictures"
 moveifexists "$HOME/Music" "$MEDIADIR/Music"
 moveifexists "$HOME/Videos" "$MEDIADIR/Videos"
 
-###############
+############## #
 # SETUP LINKS #
 ###############
 
-ln -s "$DOOMSRC" "$DOOMDIR"
-ln -s "$NIXSRC" "$NIXCFG"
-ln -s "$I3SRC" "$I3CFG"
-ln -s "$ZSHRCSRC" "$ZSHRC"
+ln -s "$DOOMDIR" "$DOOMTRG"
+ln -s "$NIXCFG" "$NIXTRG"
+ln -s "$I3CFG" "$I3CFGTRG"
+ln -s "$ZSHRC" "$ZSHRCTRG"
+mkdir -p "$HOME/.config/home-manager"
+ln -s "$HOMECFG" "$HOMECFGTRG"
+
+################
+# HOME MANAGER #
+################
+
