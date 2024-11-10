@@ -31,7 +31,6 @@ let
     # Shell
     shfmt
     # Emacs
-    pkgs.emacs-git
     ripgrep
     fd
     # Nix
@@ -39,14 +38,28 @@ let
     nixfmt-rfc-style
     # JS
     nodejs_22
+    # Emulation
+    qemu
+    libvirt
+    swtpm
+    guestfs-tools
+    libosinfo
   ];
   apps = with pkgs; [
     firefox
+    brave
     thunderbird
     discord
-    slack
     firefox
     spotify
+    steam
+  ];
+  tools = with pkgs; [
+    slack
+    vscode
+    pkgs.emacs-git
+    remmina
+    virt-manager
   ];
 in
 {
@@ -60,6 +73,7 @@ in
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    <home-manager/nixos>
   ];
 
   # Bootloader.
@@ -143,6 +157,11 @@ in
     #media-session.enable = true;
   };
 
+  # RDP
+  services.xrdp.enable = true;
+  services.xrdp.defaultWindowManager = "i3";
+  services.xrdp.openFirewall = true;
+
   # Fonts
   fonts.packages = with pkgs; [
     nerdfonts
@@ -158,6 +177,25 @@ in
   services.xserver.windowManager.i3.package = pkgs.i3-gaps;
   services.gvfs.enable = true; # Mount, trash, and other functionalities
   services.tumbler.enable = true; # Thumbnail support for images
+
+  # Virtualisation
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu = {
+      package = pkgs.qemu_kvm;
+      runAsRoot = true;
+      swtpm.enable = true;
+      ovmf = {
+        enable = true;
+        packages = [
+          (pkgs.OVMF.override {
+            secureBoot = true;
+            tpmSupport = true;
+          }).fd
+        ];
+      };
+    };
+  };
 
   ############
   # PACKAGES #
@@ -202,7 +240,7 @@ in
       "wheel"
     ];
     shell = pkgs.zsh;
-    packages = apps;
+    packages = apps ++ tools;
   };
 
 }
