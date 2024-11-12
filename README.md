@@ -8,7 +8,7 @@
 - [ ] Configure HDR
 
 ## Configuration
-- [x] Email
+- [ ] Email
 - [ ] Slack
 - [ ] Automount secondary M.2
 
