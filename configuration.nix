@@ -20,12 +20,20 @@ let
     alacritty
     xfce.thunar
     home-manager
+    smartmontools
     gparted
+    nvme-cli
+    ddrescue
+    gnome.gnome-keyring
+    geeqie
   ];
 
   guiPackages = with pkgs; [
     rofi
     feh
+    lxappearance
+    pavucontrol
+    pa_applet
   ];
 
   devPackages = with pkgs; [
@@ -38,6 +46,10 @@ let
     shfmt
     shellcheck
     nodePackages.bash-language-server
+    # Markdown
+    python311Packages.grip
+    pandoc
+    marksman
     # Emacs
     ripgrep
     fd
@@ -46,6 +58,9 @@ let
     nixfmt-rfc-style
     # JS
     nodejs_22
+    # DB
+    postgresql
+    dbeaver-bin
     # Emulation
     qemu
     libvirt
@@ -53,7 +68,14 @@ let
     guestfs-tools
     libosinfo
     # Python
-    python3
+    python3Full
+    pyright
+    pyenv
+    semgrep
+    python311Packages.black
+    python311Packages.pyflakes
+    python311Packages.isort
+    python311Packages.pytest
   ];
 
   apps = with pkgs; [
@@ -64,6 +86,7 @@ let
     firefox
     spotify
     steam
+    cockatrice
   ];
   tools = with pkgs; [
     slack
@@ -87,6 +110,18 @@ in
     <home-manager/nixos>
   ];
 
+  services.postgresql = {
+    enable = true;
+    ensureDatabases = [ "postgres" ];
+    authentication = pkgs.lib.mkOverride 10 ''
+      #type database  DBuser  auth-method
+      local all       all     trust
+      local all all              trust
+      host  all all 127.0.0.1/32 trust
+      host  all all ::1/128      trust
+    '';
+  };
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -100,6 +135,25 @@ in
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # networking.firewall.enable = false;
+
+  # Graphics
+
+  # Enable OpenGL
+  hardware.opengl = {
+    enable = true;
+  };
+
+  # Load nvidia driver for Xorg and Wayland
+  services.xserver.videoDrivers = [ "nvidia" ];
+
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = false;
+    powerManagement.finegrained = false;
+    open = false;
+    nvidiaSettings = true;
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+  };
 
   # Locale + TZ.
   time.timeZone = "Africa/Johannesburg";
@@ -258,6 +312,14 @@ in
       theme = "robbyrussell";
     };
 
+  };
+
+  # Steam
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+    localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
 
   environment.systemPackages = basePackages ++ guiPackages ++ devPackages;
