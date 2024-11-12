@@ -1,9 +1,10 @@
 # Todo
 
 ## Investigations
-- [ ] Investigate Flake
-- [ ] Investigate JACK applications
-- [ ] Investigate WhatsApp for Linux options
+- [ ] Merits of Flake
+- [ ] If JACK applications are necessary
+- [ ] The best WhatsApp application candidate
+- [ ] Bluetooth on Nixos
 
 ## Configuration
 - [ ] Bitwarden
@@ -20,6 +21,7 @@
 ## Bugs
 - [ ] Keyring error on startup
 
-## Misc
+## Repository
 - [ ] Rename repository
+- [ ] Create a CHANGELOG.md
 
