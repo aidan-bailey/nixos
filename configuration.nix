@@ -9,7 +9,6 @@
 let
   basePackages = with pkgs; [
     wget
-    lxde.lxsession
     vim
     neovim
     curl
@@ -24,8 +23,7 @@ let
     gparted
     nvme-cli
     ddrescue
-    #gnome.gnome-keyring
-    #gnome.libgnome-keyring
+    gnome.gnome-keyring
     geeqie
   ];
 
@@ -245,31 +243,22 @@ in
   ];
 
   # Services
-  services.openssh.enable = true;
   services.printing.enable = true; # enable CUPS to print documents
-  #services.emacs.package = pkgs.emacs-unstable;
   services.xserver.windowManager.i3.package = pkgs.i3-gaps;
   services.gvfs.enable = true; # Mount, trash, and other functionalities
   services.tumbler.enable = true; # Thumbnail support for images
+  services.gnome.gnome-keyring.enable = true;
 
-  # Security
-  #security.polkit.enable = true;
-  #systemd = {
-  #  user.services.polkit-gnome-authentication-agent-1 = {
-  #    enable = true;
-  #    description = "polkit-gnome-authentication-agent-1";
-  #    wantedBy = [ "graphical-session.target" ];
-  #    wants = [ "graphical-session.target" ];
-  #    after = [ "graphical-session.target" ];
-  #    serviceConfig = {
-  #      Type = "simple";
-  #      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-  #      Restart = "on-failure";
-  #      RestartSec = 1;
-  #      TimeoutStopSec = 10;
-  #    };
-  #  };
-  #};
+  # SSH
+  services.openssh = {
+    enable = true;
+    settings = {
+      X11Forwarding = true;
+      PermitRootLogin = "no";
+      PasswordAuthentication = false;
+    };
+    openFirewall = true;
+  };
 
   # Virtualisation
   virtualisation.libvirtd = {
@@ -330,7 +319,6 @@ in
     dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
-
 
   environment.systemPackages = basePackages ++ guiPackages ++ devPackages;
 
