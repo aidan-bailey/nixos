@@ -5,6 +5,8 @@
 - [ ] Investigate JACK applications
 
 ## Configuration
+- [ ] Bitwarden
+- [ ] Clockify
 - [ ] Email
 - [ ] Slack
 - [ ] Automount secondary M.2
@@ -12,6 +14,7 @@
 ## X
 - [ ] Wallpaper
 - [ ] Configure HDR
+- [ ] Change font for doom
 
 ## Bugs
 - [ ] Keyring error on startup
