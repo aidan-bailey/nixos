@@ -24,4 +24,5 @@
 ## Repository
 - [ ] Rename repository
 - [ ] Create a CHANGELOG.md
+- [ ] Move TODO in README to own file
 
