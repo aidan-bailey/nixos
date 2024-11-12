@@ -1,7 +1,16 @@
 # Todo
 
-- [ ] Automount secondary M.2
+## Misc
 - [ ] Investigate Flake
-- [ ] Configure HDR
-- [ ] Fix keyring bug at start
+
+## X
 - [ ] Wallpaper
+- [ ] Configure HDR
+
+## Configuration
+- [x] Email
+- [ ] Slack
+- [ ] Automount secondary M.2
+
+## Bugs
+- [ ] Keyring error on startup
