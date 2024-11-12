@@ -24,7 +24,8 @@ let
     gparted
     nvme-cli
     ddrescue
-    gnome.gnome-keyring
+    #gnome.gnome-keyring
+    #gnome.libgnome-keyring
     geeqie
   ];
 
