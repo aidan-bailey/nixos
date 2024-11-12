@@ -205,8 +205,8 @@ bar {
     binding_mode       #FF5555 #FF5555 #F8F8F2
   }
 }
-gaps inner 11
-gaps outer 11
+gaps inner 5
+gaps outer 5
 
 smart_gaps on
 
@@ -220,7 +220,7 @@ popup_during_fullscreen smart
 bindsym $mod+Shift+f exec thunar
 exec feh --bg-scale /home/$USER/.config/i3/images/bg_2.jpg
 
-for_window [all] border pixel 0
+for_window [all] border pixel 1
 
 
 # class                 border  bground text    indicator child_border
