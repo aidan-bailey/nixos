@@ -333,6 +333,9 @@ in
     ];
     shell = pkgs.zsh;
     packages = apps ++ tools;
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHEbjAttdt+o26cZKZdfec8Bm1xuuE/2ToNXozF9PIgS aidanb@fresco"
+    ];
   };
 
 }
