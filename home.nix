@@ -29,6 +29,7 @@
       yzhang.markdown-all-in-one
       ms-python.python
       ms-python.debugpy
+      #aperricone.harbour
     ];
   };
 
