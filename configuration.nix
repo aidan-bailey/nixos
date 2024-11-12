@@ -43,6 +43,7 @@ let
     cmake
     gnumake
     gcc
+    stdenv
     # Shell
     shfmt
     shellcheck
@@ -95,6 +96,11 @@ let
     pkgs.emacs-git
     remmina
     virt-manager
+    clockify
+    pomodoro-gtk
+    protonvpn-gui
+    bitwarden-desktop
+    bitwarden-menu
   ];
 in
 {
@@ -109,6 +115,8 @@ in
     ./hardware-configuration.nix
     <home-manager/nixos>
   ];
+
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   services.postgresql = {
     enable = true;
@@ -125,6 +133,7 @@ in
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.extraModprobeConfig = "options kvm_amd sev=1";
 
   # Networking
   networking.hostName = "fresco"; # Define your hostname.
@@ -135,6 +144,10 @@ in
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # networking.firewall.enable = false;
+  networking.extraHosts =
+  ''
+    192.168.122.5 wesco
+  '';
 
   # Graphics
 
@@ -316,6 +329,7 @@ in
     dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
+
 
   environment.systemPackages = basePackages ++ guiPackages ++ devPackages;
 
