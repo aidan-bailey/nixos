@@ -5,6 +5,7 @@
 - [ ] If JACK applications are necessary
 - [ ] The best WhatsApp application candidate
 - [ ] Bluetooth on Nixos
+- [ ] Supernote support on Nixos
 
 ## Configuration
 - [ ] Bitwarden
