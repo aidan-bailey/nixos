@@ -34,6 +34,7 @@ let
     lxappearance
     pavucontrol
     pa_applet
+    networkmanagerapplet
   ];
 
   devPackages = with pkgs; [
