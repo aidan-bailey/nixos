@@ -3,6 +3,7 @@
 ## Investigations
 - [ ] Investigate Flake
 - [ ] Investigate JACK applications
+- [ ] Investigate WhatsApp for Linux options
 
 ## Configuration
 - [ ] Bitwarden
