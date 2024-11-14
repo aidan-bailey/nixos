@@ -11,7 +11,8 @@
 ## Configuration
 - [ ] Bitwarden
 - [ ] Clockify
-- [ ] Email
+- [ ] Email (Thunderbird)
+- [ ] Calendar (Thudnerbird)
 - [ ] Slack
 - [ ] Automount secondary M.2
 
