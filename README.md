@@ -1,20 +1,22 @@
 # Todo
 
 ## Investigations
-- [ ] Merits of Flake
+- [x] Merits of Flake
 - [ ] If JACK applications are necessary
 - [ ] The best WhatsApp application candidate
-- [ ] Bluetooth on Nixos
+- [x] Bluetooth on Nixos
 - [ ] Supernote support on Nixos
-- [x] Building TuneD
+- [ ] Building TuneD
 
 ## Configuration
-- [ ] Bitwarden
-- [ ] Clockify
+- [x] Bitwarden
+- [x] Clockify
+- [ ] Bluetooth
 - [ ] Email (Thunderbird)
-- [ ] Calendar (Thudnerbird)
+- [ ] Calendar (Thunderbird)
 - [ ] Slack
 - [ ] Automount secondary M.2
+- [ ] Swap to Flake to pin packages (why does emacs keep recompiling??!?!?)
 
 ## X
 - [ ] Wallpaper
@@ -22,7 +24,7 @@
 - [ ] Change font for doom
 
 ## Bugs
-- [ ] Keyring error on startup
+- [x] Keyring error on startup
 
 ## Repository
 - [ ] Rename repository
