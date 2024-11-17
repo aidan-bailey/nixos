@@ -7,6 +7,7 @@
 - [x] Bluetooth on Nixos
 - [ ] Supernote support on Nixos
 - [ ] Building TuneD
+- [ ] Commit hash of emacs-overlay with emacs v28
 
 ## Configuration
 - [x] Bitwarden

@@ -4,6 +4,7 @@
   config,
   pkgs,
   callPackage,
+  lib,
   ...
 }:
 let
@@ -25,6 +26,7 @@ let
     ddrescue
     gnome.gnome-keyring
     geeqie
+    zstd
   ];
 
   guiPackages = with pkgs; [
@@ -70,6 +72,10 @@ let
     guestfs-tools
     libosinfo
     # Python
+    (pkgs.writeShellScriptBin "python" ''
+      export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
+      exec ${pkgs.python3}/bin/python "$@"
+    '')
     python3Full
     pyright
     pyenv
@@ -295,12 +301,18 @@ in
   nixpkgs.overlays = [
     (import (
       builtins.fetchTarball {
-        url = "https://github.com/nix-community/emacs-overlay/archive/master.tar.gz";
+        url = "https://github.com/nix-community/emacs-overlay/archive/7ea05ee738796f89473a282568d333d7dff31b4c.tar.gz";
       }
     ))
   ];
 
-  programs.nix-ld.enable = true;
+  programs.nix-ld = {
+    enable = true;
+    libraries = [
+      pkgs.stdenv.cc.cc
+      pkgs.zlib
+    ];
+  };
 
   # Terminal
   programs.zsh = {
