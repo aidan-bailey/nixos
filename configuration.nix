@@ -34,6 +34,7 @@ let
     pavucontrol
     pa_applet
     networkmanagerapplet
+    blueman
   ];
 
   devPackages = with pkgs; [
@@ -77,6 +78,7 @@ let
     python311Packages.pyflakes
     python311Packages.isort
     python311Packages.pytest
+    ruff
   ];
 
   apps = with pkgs; [
@@ -140,13 +142,19 @@ in
   networking.networkmanager.enable = true;
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # networking.firewall.enable = false;
+  networking.firewall.allowedTCPPorts = [ 22 ];
+  networking.firewall.allowedUDPPorts = [ 22 ];
+  networking.firewall.enable = false;
   networking.extraHosts =
   ''
     192.168.122.5 wesco
   '';
+
+  # Bluetooth
+
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+  services.blueman.enable = true;
 
   # Graphics
 
@@ -291,6 +299,8 @@ in
       }
     ))
   ];
+
+  programs.nix-ld.enable = true;
 
   # Terminal
   programs.zsh = {
