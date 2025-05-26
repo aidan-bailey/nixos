@@ -19,7 +19,6 @@ let
     zsh
     alacritty
     xfce.thunar
-    home-manager
     smartmontools
     gparted
     nvme-cli
@@ -122,7 +121,6 @@ in
 
   imports = [
     ./hardware-configuration.nix
-    <home-manager/nixos>
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -348,7 +346,6 @@ in
     shellAliases = {
       ll = "ls -l";
       updaten = "sudo nixos-rebuild switch";
-      updateh = "home-manager switch";
       configure = "nvim /etc/nixos/configuration.nix";
     };
 
