@@ -27,6 +27,7 @@ let
     gnome.gnome-keyring
     geeqie
     zstd
+    nix-index
   ];
 
   guiPackages = with pkgs; [
@@ -37,10 +38,13 @@ let
     pa_applet
     networkmanagerapplet
     blueman
+    vlc
+    arandr
   ];
 
   devPackages = with pkgs; [
     # Essentials
+    direnv
     libtool
     cmake
     gnumake
@@ -72,10 +76,6 @@ let
     guestfs-tools
     libosinfo
     # Python
-    (pkgs.writeShellScriptBin "python" ''
-      export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
-      exec ${pkgs.python3}/bin/python "$@"
-    '')
     python3Full
     pyright
     pyenv
@@ -84,12 +84,13 @@ let
     python311Packages.pyflakes
     python311Packages.isort
     python311Packages.pytest
+    pipenv
     ruff
   ];
 
   apps = with pkgs; [
-    firefox
     brave
+    vivaldi
     thunderbird
     discord
     firefox
@@ -116,7 +117,8 @@ in
   # SYS CONFIG #
   ##############
 
-  system.stateVersion = "23.05";
+  #system.stateVersion = "25.05";
+  #system.autoUpgrade.channel = "https://channels.nixos.org/nixos-25.05";
 
   imports = [
     ./hardware-configuration.nix
@@ -125,17 +127,18 @@ in
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  services.postgresql = {
-    enable = true;
-    ensureDatabases = [ "postgres" ];
-    authentication = pkgs.lib.mkOverride 10 ''
-      #type database  DBuser  auth-method
-      local all       all     trust
-      local all all              trust
-      host  all all 127.0.0.1/32 trust
-      host  all all ::1/128      trust
-    '';
-  };
+  #services.postgresql = {
+  #  enable = true;
+  #  ensureDatabases = [ "postgres" ];
+  #  dataDir = "/tb/Databases/Postgres";
+  #  authentication = pkgs.lib.mkOverride 10 ''
+  #    #type database  DBuser  auth-method
+  #    local all       all     trust
+  #    local all all              trust
+  #    host  all all 127.0.0.1/32 trust
+  #    host  all all ::1/128      trust
+  #  '';
+  #};
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -148,13 +151,20 @@ in
   networking.networkmanager.enable = true;
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-  networking.firewall.allowedTCPPorts = [ 22 ];
-  networking.firewall.allowedUDPPorts = [ 22 ];
-  networking.firewall.enable = false;
   networking.extraHosts =
   ''
     192.168.122.5 wesco
+    192.168.10.40 unraid
   '';
+
+  networking.firewall = {
+  	enable = true;
+	allowedTCPPorts = [ 22 47984 47989 47990 48010 5900 ];
+  	allowedUDPPortRanges = [
+    		{ from = 22; to = 22; }
+    		{ from = 47998; to = 48000; }
+  	];
+  };
 
   # Bluetooth
 
@@ -167,10 +177,9 @@ in
   # Enable OpenGL
   hardware.opengl = {
     enable = true;
+    driSupport = true;
+    driSupport32Bit = true;
   };
-
-  # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware.nvidia = {
     modesetting.enable = true;
@@ -187,6 +196,7 @@ in
 
   # GUI
   services.xserver = {
+    videoDrivers = [ "nvidia" ];
     enable = true;
     desktopManager = {
       xterm.enable = false;
@@ -200,8 +210,13 @@ in
         i3blocks
       ];
     };
+
   };
+
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "aidanb";
   services.displayManager.defaultSession = "none+i3";
+
   programs.dconf.enable = true;
   services.picom = {
     enable = true;
@@ -301,7 +316,7 @@ in
   nixpkgs.overlays = [
     (import (
       builtins.fetchTarball {
-        url = "https://github.com/nix-community/emacs-overlay/archive/7ea05ee738796f89473a282568d333d7dff31b4c.tar.gz";
+        url = "https://github.com/nix-community/emacs-overlay/archive/29430cce2da82c0f658cd3310191434bf709f245.tar.gz";
       }
     ))
   ];
@@ -311,6 +326,17 @@ in
     libraries = [
       pkgs.stdenv.cc.cc
       pkgs.zlib
+      pkgs.zstd
+      pkgs.glib
+      pkgs.libGL
+      pkgs.libxkbcommon
+      pkgs.fontconfig
+      pkgs.xorg.libX11
+      pkgs.freetype
+      pkgs.dbus
+      pkgs.libkrb5
+      pkgs.krb5
+      pkgs.libpulseaudio
     ];
   };
 
@@ -359,5 +385,15 @@ in
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHEbjAttdt+o26cZKZdfec8Bm1xuuE/2ToNXozF9PIgS aidanb@fresco"
     ];
   };
+
+  fileSystems."/tb" = {
+    device = "/dev/disk/by-uuid/79138be4-b23e-46b5-8b8e-cd0f077b089a";
+    fsType = "ext4";
+    options = ["nofail" "rw"]; #["nofail" "postgres"]; #"rw"];
+  };
+
+  services.avahi.enable = true;
+  services.avahi.publish.enable = true;
+  services.avahi.publish.userServices = true;
 
 }
