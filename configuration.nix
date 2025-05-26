@@ -75,6 +75,7 @@ let
     guestfs-tools
     libosinfo
     # Python
+    python311
     python3Full
     pyright
     pyenv
@@ -261,7 +262,7 @@ in
 
   # Fonts
   fonts.packages = with pkgs; [
-    #nerd-fonts
+    nerd-fonts.noto
     #noto-fonts
     #noto-fonts-cjk-sans
     #noto-fonts-emoji
