@@ -23,7 +23,7 @@ let
     gparted
     nvme-cli
     ddrescue
-    gnome.gnome-keyring
+    pkgs.gnome-keyring
     geeqie
     zstd
     nix-index
@@ -116,7 +116,7 @@ in
   # SYS CONFIG #
   ##############
 
-  #system.stateVersion = "25.05";
+  system.stateVersion = "25.05";
   #system.autoUpgrade.channel = "https://channels.nixos.org/nixos-25.05";
 
   imports = [
@@ -173,10 +173,8 @@ in
   # Graphics
 
   # Enable OpenGL
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
   };
 
   hardware.nvidia = {
@@ -245,8 +243,8 @@ in
   console.useXkbConfig = true;
 
   # Enable sound with pipewire.
-  sound.enable = true;
-  hardware.pulseaudio.enable = false;
+  #sound.enable = true; # Cut in 25.05
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -263,10 +261,10 @@ in
 
   # Fonts
   fonts.packages = with pkgs; [
-    nerdfonts
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
+    #nerd-fonts
+    #noto-fonts
+    #noto-fonts-cjk-sans
+    #noto-fonts-emoji
   ];
 
   # Services
