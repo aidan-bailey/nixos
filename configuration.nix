@@ -74,6 +74,7 @@ let
     swtpm
     guestfs-tools
     libosinfo
+    virtiofsd
     # Python
     python311
     python3Full
@@ -86,16 +87,20 @@ let
     python311Packages.pytest
     pipenv
     ruff
+    # XML
+    libxslt
   ];
 
   apps = with pkgs; [
     brave
     vivaldi
     thunderbird
+    protonmail-bridge
     discord
     firefox
     spotify
     steam
+    gamescope
     cockatrice
   ];
   tools = with pkgs; [
@@ -158,10 +163,13 @@ in
 
   networking.firewall = {
   	enable = true;
-	allowedTCPPorts = [ 22 47984 47989 47990 48010 5900 ];
+	allowedTCPPorts = [ 
+		22 # SSH
+		47984 47989 47990 48010 # Sunshine + Moonlight
+	];
   	allowedUDPPortRanges = [
-    		{ from = 22; to = 22; }
-    		{ from = 47998; to = 48000; }
+    		{ from = 22; to = 22; } # SSH
+    		{ from = 47998; to = 48000; } # Sunshine + Moonlight
   	];
   };
 
@@ -216,12 +224,12 @@ in
 
   programs.dconf.enable = true;
   services.picom = {
-    enable = true;
+    enable = false;
     fade = false;
     #    vSync = true;
     shadow = true;
     fadeDelta = 1;
-    inactiveOpacity = 0.9;
+    inactiveOpacity = 1;
     activeOpacity = 1;
     #    backend = "glx";
     settings = {
@@ -293,6 +301,7 @@ in
       package = pkgs.qemu_kvm;
       runAsRoot = true;
       swtpm.enable = true;
+      vhostUserPackages = with pkgs; [ virtiofsd ];
       ovmf = {
         enable = true;
         packages = [
@@ -361,7 +370,30 @@ in
     enable = true;
     remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
     dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+    gamescopeSession.enable = true;
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
+    extraCompatPackages = [pkgs.proton-ge-bin pkgs.vkd3d-proton];
+  };
+
+  programs.gamescope = {
+    enable = true;
+    capSysNice = true;
+    args = [
+    "--rt"
+    "--expose-wayland"
+    ];
+  };
+
+  environment.sessionVariables = {
+    DISABLE_LAYER_AMD_SWITCHABLE_GRAPHICS_1 = "1";
+    ENABLE_VK_LAYER_VALVE_steam_overlay = "0";
+    ENABLE_VK_LAYER_VALVE_steam_fossilize = "0";
+    __NV_PRIME_RENDER_OFFLOAD = "1";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    __VK_LAYER_NV_optimus = "NVIDIA_only";
+    DXVK_FILTER_DEVICE_NAME = "NVIDIA";
+    DXVK_LOG_LEVEL = "warn";
+    WINEDEBUG = "-all";
   };
 
   environment.systemPackages = basePackages ++ guiPackages ++ devPackages;
