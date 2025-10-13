@@ -1,4 +1,4 @@
-# Aidan's NixOS config
+# Aidan's NixOS config — Wayland/Sway
 
 {
   config,
@@ -8,6 +8,7 @@
   ...
 }:
 let
+
   basePackages = with pkgs; [
     wget
     vim
@@ -20,25 +21,36 @@ let
     alacritty
     xfce.thunar
     smartmontools
+    zoom-us
     gparted
     nvme-cli
     ddrescue
-    pkgs.gnome-keyring
     geeqie
     zstd
     nix-index
+    wdisplays
+    maim
+    btop
+    glmark2
+    radeontop
+    libva
+    glxinfo
+    lact
+    brightnessctl
   ];
 
   guiPackages = with pkgs; [
-    rofi
-    feh
+    # Wayland-friendly replacements
+    wofi # replaces rofi
+    swaybg # replaces feh for wallpapers
     lxappearance
     pavucontrol
-    pa_applet
     networkmanagerapplet
     blueman
     vlc
-    arandr
+    kanshi # display profiles
+    wlr-randr # quick output changes
+    # arandr removed (XRandR/X11-only)
   ];
 
   devPackages = with pkgs; [
@@ -54,7 +66,7 @@ let
     shellcheck
     nodePackages.bash-language-server
     # Markdown
-    python311Packages.grip
+    uv
     pandoc
     marksman
     # Emacs
@@ -76,19 +88,25 @@ let
     libosinfo
     virtiofsd
     # Python
-    python311
-    python3Full
+    python3 #Full
     pyright
     pyenv
     semgrep
-    python311Packages.black
-    python311Packages.pyflakes
-    python311Packages.isort
-    python311Packages.pytest
     pipenv
     ruff
     # XML
     libxslt
+    # Rust
+    #cargo
+    rustup
+    lldb
+    #rust-analyzer
+    #rustc
+    #cargo
+    #rustfmt
+    #clippy
+    # Nix
+    nixfmt-rfc-style
   ];
 
   apps = with pkgs; [
@@ -103,10 +121,13 @@ let
     gamescope
     cockatrice
   ];
+
   tools = with pkgs; [
+    mupdf
+    qbittorrent-enhanced
     slack
     vscode
-    pkgs.emacs-git
+    pkgs.emacs-git-pgtk
     remmina
     virt-manager
     clockify
@@ -114,7 +135,28 @@ let
     protonvpn-gui
     bitwarden-desktop
     bitwarden-menu
+    waybar # panel for sway
+    swayidle
+    swaylock
+    grim
+    slurp # screenshots on Wayland
+    wl-clipboard # wl-copy / wl-paste
+    mako # Wayland notifications
+    # Cursor
+    code-cursor
+    element-desktop
+    teamviewer
   ];
+
+  scripts = [ 
+      (pkgs.writeShellScriptBin "qemu-system-x86_64-uefi" ''
+        qemu-system-x86_64 \
+          -bios ${pkgs.OVMF.fd}/FV/OVMF.fd \
+          "$@"
+      '')
+
+    ];
+
 in
 {
 
@@ -123,136 +165,297 @@ in
   ##############
 
   system.stateVersion = "25.05";
+  boot = {
+    kernelPackages = pkgs.linuxPackages_latest;
+    kernelParams = [
+      "resume=/dev/disk/by-uuid/8debf292-09a9-44aa-a9db-6a556aefb609"
+      "amd_pstate=active"
+      "amdgpu.dc=1"
+      "amdgpu.ppfeaturemask=0xffffffff"
+    ];
+  };
+  environment.pathsToLink = [ "/libexec" ];
+  hardware.firmware = with pkgs; [ linux-firmware ];
+  hardware.cpu.amd.updateMicrocode = true;
+  hardware.enableRedistributableFirmware = true;
   #system.autoUpgrade.channel = "https://channels.nixos.org/nixos-25.05";
 
   imports = [
     ./hardware-configuration.nix
   ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-  #services.postgresql = {
-  #  enable = true;
-  #  ensureDatabases = [ "postgres" ];
-  #  dataDir = "/tb/Databases/Postgres";
-  #  authentication = pkgs.lib.mkOverride 10 ''
-  #    #type database  DBuser  auth-method
-  #    local all       all     trust
-  #    local all all              trust
-  #    host  all all 127.0.0.1/32 trust
-  #    host  all all ::1/128      trust
-  #  '';
-  #};
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.extraModprobeConfig = "options kvm_amd sev=1";
 
-  # Networking
-  networking.hostName = "fresco"; # Define your hostname.
-  #networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true;
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-  networking.extraHosts =
-  ''
-    192.168.122.5 wesco
-    192.168.10.40 unraid
-  '';
+  ##############
+  # NETWORKING #
+  ##############
 
-  networking.firewall = {
-  	enable = true;
-	allowedTCPPorts = [ 
-		22 # SSH
-		47984 47989 47990 48010 # Sunshine + Moonlight
-	];
-  	allowedUDPPortRanges = [
-    		{ from = 22; to = 22; } # SSH
-    		{ from = 47998; to = 48000; } # Sunshine + Moonlight
-  	];
+  networking = {
+    networkmanager.enable = true;
+    hostName = "nesco";
+    extraHosts = ''
+    192.168.122.23 winesco
+    '';
+    firewall = {
+      enable = true;
+      allowedTCPPorts = [
+        22 # SSH
+	#137 138 139 445 # SAMBA
+      ];
+      allowedUDPPorts = [
+      	22 # SSH
+	#137 138 # SAMBA
+      ];
+    };
   };
 
-  # Bluetooth
-
-  hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
+  # - bluetooth - #
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
   services.blueman.enable = true;
 
-  # Graphics
+  # - SSH - #
+  services.openssh = {
+    enable = true;
+    settings = {
+      X11Forwarding = true; # harmless w/ Wayland, for remote X11 apps
+      PermitRootLogin = "no";
+      PasswordAuthentication = false;
+    };
+    openFirewall = true;
+  };
 
-  # Enable OpenGL
+  #########
+  # POWER #
+  #########
+
+  powerManagement.enable = true;
+
+  services.tlp = {
+    enable = true;
+    settings = {
+      CPU_SCALING_GOVERNOR_ON_AC = "performance";
+      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+      CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+      CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+      #CPU_MIN_PERF_ON_AC = 0;
+      #CPU_MAX_PERF_ON_AC = 100;
+      #CPU_MIN_PERF_ON_BAT = 0;
+      #CPU_MAX_PERF_ON_BAT = 20;
+      # optional battery thresholds:
+      # START_CHARGE_THRESH_BAT0 = 40;
+      STOP_CHARGE_THRESH_BAT0 = 80;
+    };
+  };
+
+  ###############
+  # HIBERNATION #
+  ###############
+
+  systemd.sleep.extraConfig = ''
+    [Sleep]
+    HibernateMode=shutdown
+    AllowSuspend=yes
+    AllowHibernation=yes
+    AllowSuspendThenHibernate=yes
+    AllowHybridSleep=no
+    HibernateDelaySec=20min
+  '';
+
+  systemd.services.hibernate-on-low-battery = {
+    description = "Hibernate when battery critically low";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = ''
+        /bin/sh -c '
+          CAP_FILE=/sys/class/power_supply/BAT0/capacity
+          STAT_FILE=/sys/class/power_supply/BAT0/status
+          [ -r "$CAP_FILE" ] || exit 0
+          CAP=$(cat "$CAP_FILE")
+          STAT=$(cat "$STAT_FILE" 2>/dev/null || echo Unknown)
+          if [ "$STAT" = "Discharging" ] && [ "$CAP" -le 5 ]; then
+            systemctl hibernate
+          fi
+        '
+      '';
+    };
+  };
+
+  systemd.timers.hibernate-on-low-battery = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "2min";
+      OnUnitActiveSec = "2min";
+      AccuracySec = "30s";
+    };
+  };
+
+  # Script to unload/load Wi-Fi around sleep/hibernate
+  environment.etc."systemd/system-sleep/mt7925e".text = ''
+    #!/bin/sh
+    case "$1" in
+      pre)
+        # Bring down networking cleanly (optional but nice)
+        ${pkgs.networkmanager}/bin/nmcli radio wifi off 2>/dev/null || true
+        # Unload the MT7925e Wi-Fi module (the one that times out)
+        ${pkgs.kmod}/bin/modprobe -r mt7925e || true
+        ;;
+      post)
+        # Reload after resume
+        ${pkgs.kmod}/bin/modprobe mt7925e || true
+        # Let NetworkManager re-associate
+        ${pkgs.networkmanager}/bin/nmcli radio wifi on 2>/dev/null || true
+        ;;
+    esac
+  '';
+  environment.etc."systemd/system-sleep/mt7925e".mode = "0755";
+
+  boot.resumeDevice = "/dev/disk/by-uuid/8debf292-09a9-44aa-a9db-6a556aefb609";
+
+  services.logind.settings.Login = {
+    lidSwitch = "hibernate";
+    lidSwitchExternalPower = "suspend-then-hibernate";
+    extraConfig = ''
+        # If some apps inhibit sleep, ignore the inhibitor on lid close:
+        LidSwitchIgnoreInhibited=yes
+        # If you want a delay when using suspend-then-hibernate:
+        HibernateDelaySec=10min
+      	IdleAction=suspend-then-hibernate
+      	IdleActionSec=30min
+    '';
+  };
+
+  # In your configuration.nix
+  xdg.mime = {
+    enable = true;
+    defaultApplications = {
+      "text/html" = [ "firefox.desktop" ];
+      "x-scheme-handler/http" = [ "firefox.desktop" ];
+      "x-scheme-handler/https" = [ "firefox.desktop" ];
+      "x-scheme-handler/about" = [ "firefox.desktop" ];
+      "x-scheme-handler/unknown" = [ "firefox.desktop" ];
+    };
+  };
+
+  #########
+  # USERS #
+  #########
+
+  services.getty = {
+    autologinUser = "aidanb";
+    autologinOnce = true;
+  };
+  environment.loginShellInit = ''
+    [[ "$(tty)" == /dev/tty1 ]] && sway
+  '';
+
+  ############
+  # GRAPHICS #
+  ############
+
   hardware.graphics = {
     enable = true;
+    extraPackages = with pkgs; [
+      mesa
+      libvdpau-va-gl
+      vaapiVdpau
+    ];
   };
-
-  hardware.nvidia = {
-    modesetting.enable = true;
-    powerManagement.enable = false;
-    powerManagement.finegrained = false;
-    open = false;
-    nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
-  };
+  services.picom.enable = lib.mkForce false;
 
   # Locale + TZ.
   time.timeZone = "Africa/Johannesburg";
   i18n.defaultLocale = "en_ZA.UTF-8";
+  environment.sessionVariables = {
+    DEFAULT_BROWSER = "${pkgs.firefox}/bin/firefox";
+    NIXOS_OZONE_WL = "1";
+  };
 
-  # GUI
-  services.xserver = {
-    videoDrivers = [ "nvidia" ];
+  ################
+  # WAYLAND/SWAY #
+  ################
+
+  services.xserver.enable = false;
+  programs.sway = {
     enable = true;
-    desktopManager = {
-      xterm.enable = false;
-    };
-    windowManager.i3 = {
-      enable = true;
-      extraPackages = with pkgs; [
-        dmenu
-        i3status
-        i3lock
-        i3blocks
-      ];
-    };
+    wrapperFeatures.gtk = true;
+    xwayland.enable = true;
+    extraSessionCommands = "
+    	export XDG_CURRENT_DESKTOP=sway
+	    export XDG_SESSION_DESKTOP=sway
+    ";
+
+    extraPackages = with pkgs; [
+      waybar
+      swaybg
+      swayidle
+      swaylock
+      wofi
+      kanshi
+      wlr-randr
+      grim
+      slurp
+      wl-clipboard
+      mako
+      xdg-desktop-portal-wlr
+    ];
 
   };
 
-  services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "aidanb";
-  services.displayManager.defaultSession = "none+i3";
+  # kanshi systemd service
+  systemd.user.services.kanshi = {
+    description = "kanshi daemon";
+    #environment = {
+    #  WAYLAND_DISPLAY="wayland-1";
+    #  DISPLAY = ":0";
+    #};
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = ''${pkgs.kanshi}/bin/kanshi -c /home/aidanb/.config/kanshi/config'';
+    };
+  };
+  programs.waybar.enable = true;
 
+  # Portals for Wayland (screensharing, file dialogs)
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-wlr
+      pkgs.xdg-desktop-portal-gtk
+    ];
+  };
+
+  security.polkit.enable = true;
+  services.dbus.enable = true;
   programs.dconf.enable = true;
-  services.picom = {
-    enable = false;
-    fade = false;
-    #    vSync = true;
-    shadow = true;
-    fadeDelta = 1;
-    inactiveOpacity = 1;
-    activeOpacity = 1;
-    #    backend = "glx";
-    settings = {
-      blur = {
-        #method = "dual_kawase";
-        #	background = true;
-        strength = 5;
-      };
-    };
-  };
 
-  # Keyboard
-  services.xserver = {
-    xkb = {
-      layout = "za";
-      variant = "";
-      options = "caps:swapescape";
-    };
+  # Keyboard layout (exports XKB_* for Wayland too)
+  services.xserver.xkb = {
+    layout = "za";
+    variant = "";
+    options = "caps:swapescape";
   };
   console.useXkbConfig = true;
 
-  # Enable sound with pipewire.
-  #sound.enable = true; # Cut in 25.05
+  programs.firefox.package = pkgs.wrapFirefox (pkgs.firefox-unwrapped.override {
+  pipewireSupport = true;
+}) {};
+
+  #########
+  # AUDIO #
+  #########
+
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -260,41 +463,55 @@ in
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    #jack.enable = true;
   };
 
-  # RDP
-  services.xrdp.enable = true;
-  services.xrdp.defaultWindowManager = "i3";
-  services.xrdp.openFirewall = true;
+  # RDP: xrdp is Xorg-based. Consider wayvnc for Wayland remote desktop.
+  services.xrdp.enable = lib.mkForce false;
+  # Example to try:
+  # services.wayvnc = {
+  #   enable = true;
+  #   users = [ "aidanb" ];
+  #   openFirewall = true;
+  #   settings = { address = "0.0.0.0"; };
+  # };
 
   # Fonts
   fonts.packages = with pkgs; [
     nerd-fonts.noto
-    #noto-fonts
-    #noto-fonts-cjk-sans
-    #noto-fonts-emoji
   ];
 
   # Services
-  services.printing.enable = true; # enable CUPS to print documents
-  services.xserver.windowManager.i3.package = pkgs.i3-gaps;
-  services.gvfs.enable = true; # Mount, trash, and other functionalities
-  services.tumbler.enable = true; # Thumbnail support for images
-  services.gnome.gnome-keyring.enable = true;
+  services.printing.enable = true; # CUPS
+  services.gvfs.enable = true; # Mount, trash, etc
+  services.tumbler.enable = true; # Thumbnails
 
-  # SSH
-  services.openssh = {
+  ##################
+  # VIRTUALISATION #
+  ##################
+
+  # Enable Samba server
+  services.samba = {
     enable = true;
     settings = {
-      X11Forwarding = true;
-      PermitRootLogin = "no";
-      PasswordAuthentication = false;
+      vmshare = {
+        path = "/srv/vm-shared";
+        browseable = true;
+        "read only" = false;
+        "guest ok" = true;			
+	"create mask" = "0666";      # permissions for new files
+        "directory mask" = "0777";   # permissions for new folders
+      };
     };
-    openFirewall = true;
   };
 
-  # Virtualisation
+  system.activationScripts.createVmShare = {
+    text = ''
+      mkdir -p /srv/vm-shared
+      chmod 777 /srv/vm-shared
+    '';
+  };
+
+  programs.virt-manager.enable = true;
   virtualisation.libvirtd = {
     enable = true;
     qemu = {
@@ -314,6 +531,15 @@ in
     };
   };
 
+  services.avahi = {
+     enable = true;
+     publish = {
+     	enable = true;
+	userServices = true;
+     };
+  };
+
+
   ############
   # PACKAGES #
   ############
@@ -322,6 +548,7 @@ in
   nixpkgs.overlays = [
     (import (
       builtins.fetchTarball {
+        # pin emacs overlay as you had it
         url = "https://github.com/nix-community/emacs-overlay/archive/29430cce2da82c0f658cd3310191434bf709f245.tar.gz";
       }
     ))
@@ -329,24 +556,37 @@ in
 
   programs.nix-ld = {
     enable = true;
-    libraries = [
-      pkgs.stdenv.cc.cc
-      pkgs.zlib
-      pkgs.zstd
-      pkgs.glib
-      pkgs.libGL
-      pkgs.libxkbcommon
-      pkgs.fontconfig
-      pkgs.xorg.libX11
-      pkgs.freetype
-      pkgs.dbus
-      pkgs.libkrb5
-      pkgs.krb5
-      pkgs.libpulseaudio
+    libraries = with pkgs; [
+      stdenv.cc.cc
+      zlib
+      zstd
+      glib
+      libGL
+      libxkbcommon
+      fontconfig
+      xorg.libX11 # keep for some legacy apps (via XWayland)
+      freetype
+      dbus
+      libkrb5
+      krb5
+      libpulseaudio
+      xorg.libxcb
+      xorg.xcbutil
+      xorg.xcbutilimage
+      xorg.xcbutilkeysyms
+      xorg.xcbutilwm
+      xorg.xcbutilcursor # this is the “xcb-cursor0 / libxcb-cursor0” that Qt demands
+      # NEW: PipeWire for QtMultimedia (6.9 tries pipewire-0.3)
+      pipewire
+      # Wayland client libs (helpful even if you use xcb via XWayland sometimes)
+      wayland
+      wayland-protocols
+      # Optional but sometimes needed for decorations on Wayland:
+      libdecor
     ];
   };
 
-  # Terminal
+  # Terminal + zsh
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -362,43 +602,27 @@ in
       plugins = [ "git" ];
       theme = "robbyrussell";
     };
-
   };
 
-  # Steam
+  #########
+  # STEAM #
+  #########
+
   programs.steam = {
     enable = true;
-    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
     gamescopeSession.enable = true;
-    localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
-    extraCompatPackages = [pkgs.proton-ge-bin pkgs.vkd3d-proton];
-  };
-
-  programs.gamescope = {
-    enable = true;
-    capSysNice = true;
-    args = [
-    "--rt"
-    "--expose-wayland"
+    localNetworkGameTransfers.openFirewall = true;
+    extraCompatPackages = [
+      pkgs.proton-ge-bin
+      pkgs.vkd3d-proton
     ];
   };
 
-  environment.sessionVariables = {
-    DISABLE_LAYER_AMD_SWITCHABLE_GRAPHICS_1 = "1";
-    ENABLE_VK_LAYER_VALVE_steam_overlay = "0";
-    ENABLE_VK_LAYER_VALVE_steam_fossilize = "0";
-    __NV_PRIME_RENDER_OFFLOAD = "1";
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-    __VK_LAYER_NV_optimus = "NVIDIA_only";
-    DXVK_FILTER_DEVICE_NAME = "NVIDIA";
-    DXVK_LOG_LEVEL = "warn";
-    WINEDEBUG = "-all";
-  };
+  environment.systemPackages = basePackages ++ guiPackages ++ devPackages ++ scripts;
 
-  environment.systemPackages = basePackages ++ guiPackages ++ devPackages;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # User
   users.users.aidanb = {
     isNormalUser = true;
     description = "Aidan Bailey";
@@ -406,22 +630,13 @@ in
       "libvirtd"
       "networkmanager"
       "wheel"
+      # "input" "video" # add if some Wayland apps complain about permissions
     ];
     shell = pkgs.zsh;
     packages = apps ++ tools;
     openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHEbjAttdt+o26cZKZdfec8Bm1xuuE/2ToNXozF9PIgS aidanb@fresco"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOX/kOPgPyOn9iJ5YhPK9+F2Ek9YaYqvrA6k2Ki+ALQ1 aidanb@nesco"
     ];
   };
-
-  fileSystems."/tb" = {
-    device = "/dev/disk/by-uuid/79138be4-b23e-46b5-8b8e-cd0f077b089a";
-    fsType = "ext4";
-    options = ["nofail" "rw"]; #["nofail" "postgres"]; #"rw"];
-  };
-
-  services.avahi.enable = true;
-  services.avahi.publish.enable = true;
-  services.avahi.publish.userServices = true;
 
 }
