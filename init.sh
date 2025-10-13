@@ -84,8 +84,12 @@ moveifexists "$HOME/Videos" "$MEDIADIR/Videos"
 ln -sfn "$DOOMDIR" "$DOOMTRG"
 sudo ln -sfn "$NIXCFG" "$NIXTRG"
 sudo ln -sfn "$FLAKECFG" "$FLAKETRG"
-sudo cp -f "$HARDWARECFGSRC" "$HARDWARETRG"
-sudo ln -sfn "$HARDWARETRG" "$HARDWARECFG"
+
+if ! [ -f "$HARDWARETRG" ]; then
+    sudo cp -f "$HARDWARECFGSRC" "$HARDWARETRG"
+    sudo ln -sfn "$HARDWARETRG" "$HARDWARECFG"
+fi
+
 ln -sfn "$I3CFG" "$I3CFGTRG"
 ln -sfn "$ZSHRC" "$ZSHRCTRG"
 mkdir -p "$HOME/.config/home-manager"
