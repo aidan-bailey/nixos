@@ -18,7 +18,7 @@ DOOMTRG="$HOME/.doom.d"
 NIXTRG="/etc/nixos/configuration.nix"
 I3CFGTRG="$HOME/.config/i3/config"
 ZSHRCTRG="$HOME/.zshrc"
-HOMECFGTRG="$HOME/.config/home-manager/home.nix"
+#HOMECFGTRG="$HOME/.config/home-manager/home.nix"
 
 #####################
 # ARRANGE MEDIA DIR #
@@ -55,12 +55,12 @@ moveifexists "$HOME/Videos" "$MEDIADIR/Videos"
 # SETUP LINKS #
 ###############
 
-ln -s "$DOOMDIR" "$DOOMTRG"
-ln -s "$NIXCFG" "$NIXTRG"
-ln -s "$I3CFG" "$I3CFGTRG"
-ln -s "$ZSHRC" "$ZSHRCTRG"
+ln -sfn "$DOOMDIR" "$DOOMTRG"
+ln -sfn "$NIXCFG" "$NIXTRG"
+ln -sfn "$I3CFG" "$I3CFGTRG"
+ln -sfn "$ZSHRC" "$ZSHRCTRG"
 mkdir -p "$HOME/.config/home-manager"
-ln -s "$HOMECFG" "$HOMECFGTRG"
+#ln -s "$HOMECFG" "$HOMECFGTRG"
 
 ################
 # HOME MANAGER #
