@@ -95,6 +95,8 @@ ln -sfn "$ZSHRC" "$ZSHRCTRG"
 mkdir -p "$HOME/.config/home-manager"
 #ln -s "$HOMECFG" "$HOMECFGTRG"
 
+echo "Configuration complete"
+
 ################
 # HOME MANAGER #
 ################
