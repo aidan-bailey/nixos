@@ -3,8 +3,8 @@
 {
   config,
   pkgs,
-  callPackage,
   lib,
+  inputs,
   ...
 }:
 let

@@ -13,9 +13,11 @@ NIXCFG=$(pwd)/configuration.nix
 I3CFG=$(pwd)/configs/config
 ZSHRC=$(pwd)/configs/zshrc
 HOMECFG=$(pwd)/home.nix
+FLAKECFG=$(pwd)/flake.nix
 
 DOOMTRG="$HOME/.doom.d"
 NIXTRG="/etc/nixos/configuration.nix"
+FLAKETRG="/etc/nixos/flake.nix"
 I3CFGTRG="$HOME/.config/i3/config"
 ZSHRCTRG="$HOME/.zshrc"
 #HOMECFGTRG="$HOME/.config/home-manager/home.nix"
@@ -56,7 +58,8 @@ moveifexists "$HOME/Videos" "$MEDIADIR/Videos"
 ###############
 
 ln -sfn "$DOOMDIR" "$DOOMTRG"
-ln -sfn "$NIXCFG" "$NIXTRG"
+sudo ln -sfn "$NIXCFG" "$NIXTRG"
+sudo ln -sfn "$FLAKECFG" "$FLAKETRG"
 ln -sfn "$I3CFG" "$I3CFGTRG"
 ln -sfn "$ZSHRC" "$ZSHRCTRG"
 mkdir -p "$HOME/.config/home-manager"

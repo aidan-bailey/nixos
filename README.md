@@ -7,7 +7,7 @@
 - [x] Bluetooth on Nixos
 - [ ] Supernote support on Nixos
 - [ ] Building TuneD
-- [ ] Commit hash of emacs-overlay with emacs v28
+- [x] Commit hash of emacs-overlay with emacs v28
 
 ## Configuration
 - [x] Bitwarden
@@ -17,7 +17,7 @@
 - [ ] Calendar (Thunderbird)
 - [ ] Slack
 - [ ] Automount secondary M.2
-- [ ] Swap to Flake to pin packages (why does emacs keep recompiling??!?!?)
+- [ ] Swap to Flake to pin packages
 
 ## X
 - [ ] Wallpaper
