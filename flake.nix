@@ -2,7 +2,7 @@
   description = "Aidan's NixOS configuration — Wayland/Sway flake setup";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # Optional: add home-manager, flake-utils, etc later if desired
   };
 
