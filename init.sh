@@ -4,22 +4,44 @@
 # VARS #
 ########
 
+# Check if host name argument is provided
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <hostname>"
+    echo "Available hosts:"
+    ls -1 hosts/ 2>/dev/null || echo "No hosts directory found"
+    exit 1
+fi
+
+HOSTNAME="$1"
+HOSTDIR="hosts/$HOSTNAME"
+
+# Validate that the host directory exists
+if [ ! -d "$HOSTDIR" ]; then
+    echo "Error: Host directory '$HOSTDIR' does not exist"
+    echo "Available hosts:"
+    ls -1 hosts/ 2>/dev/null || echo "No hosts directory found"
+    exit 1
+fi
+
+echo "Configuring system for host: $HOSTNAME"
+
 SRCDIR="$HOME/Source"
 MEDIADIR="$HOME/Media"
 CURDIR=$(pwd)
 
 DOOMDIR=$(pwd)/configs/doom.d
-NIXCFG=$(pwd)/configuration.nix
+NIXCFG=$(pwd)/$HOSTDIR/configuration.nix
 I3CFG=$(pwd)/configs/config
 ZSHRC=$(pwd)/configs/zshrc
 HOMECFG=$(pwd)/home.nix
 FLAKECFG=$(pwd)/flake.nix
 HARDWARECFG=/etc/nixos/hardware-configuration.nix
+HARDWARECFGSRC=$(pwd)/$HOSTDIR/hardware-configuration.nix
 
 DOOMTRG="$HOME/.doom.d"
 NIXTRG="/etc/nixos/configuration.nix"
 FLAKETRG="/etc/nixos/flake.nix"
-HARDWARETRG="$HOME/System/hardware-configuration.nix"
+HARDWARETRG="$HOME/System/$HOSTDIR/hardware-configuration.nix"
 I3CFGTRG="$HOME/.config/i3/config"
 ZSHRCTRG="$HOME/.zshrc"
 #HOMECFGTRG="$HOME/.config/home-manager/home.nix"
@@ -62,7 +84,7 @@ moveifexists "$HOME/Videos" "$MEDIADIR/Videos"
 ln -sfn "$DOOMDIR" "$DOOMTRG"
 sudo ln -sfn "$NIXCFG" "$NIXTRG"
 sudo ln -sfn "$FLAKECFG" "$FLAKETRG"
-sudo cp -f "$HARDWARECFG" "$HARDWARETRG"
+sudo cp -f "$HARDWARECFGSRC" "$HARDWARETRG"
 sudo ln -sfn "$HARDWARETRG" "$HARDWARECFG"
 ln -sfn "$I3CFG" "$I3CFGTRG"
 ln -sfn "$ZSHRC" "$ZSHRCTRG"
