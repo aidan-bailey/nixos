@@ -550,6 +550,7 @@ in
       builtins.fetchTarball {
         # pin emacs overlay as you had it
         url = "https://github.com/nix-community/emacs-overlay/archive/29430cce2da82c0f658cd3310191434bf709f245.tar.gz";
+        sha256 = "02l1f9d3qr634ja32psj63938wh0lp87fpnkgcmk7a82vpbk3qjh";
       }
     ))
   ];
