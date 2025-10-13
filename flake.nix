@@ -1,21 +1,32 @@
 {
-  description = "Aidan's NixOS configuration — Wayland/Sway flake setup";
+  description = "Aidan's NixOS config — modular flake (Wayland/Sway + libvirt)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # Optional: add home-manager, flake-utils, etc later if desired
   };
 
-  outputs = { self, nixpkgs, ... }@inputs: {
-    nixosConfigurations.nesco = nixpkgs.lib.nixosSystem {
+  outputs =
+    {
+      self,
+      nixpkgs,
+      ...
+    }@inputs:
+    let
       system = "x86_64-linux";
-      modules = [
-        ./configuration.nix
-      ];
-
-      specialArgs = {
-        inherit inputs;
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [ ];
+      };
+    in
+    {
+      nixosConfigurations = {
+        nesco = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            ./hosts/nesco/configuration.nix
+          ];
+          specialArgs = { inherit inputs pkgs; };
+        };
       };
     };
-  };
 }

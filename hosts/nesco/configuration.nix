@@ -88,7 +88,7 @@ let
     libosinfo
     virtiofsd
     # Python
-    python3 #Full
+    python3 # Full
     pyright
     pyenv
     semgrep
@@ -148,13 +148,13 @@ let
     teamviewer
   ];
 
-  scripts = [ 
-      (pkgs.writeShellScriptBin "qemu-system-x86_64-uefi" ''
-        qemu-system-x86_64 \
-          -bios ${pkgs.OVMF.fd}/FV/OVMF.fd \
-          "$@"
-      '')
-    ];
+  scripts = [
+    (pkgs.writeShellScriptBin "qemu-system-x86_64-uefi" ''
+      qemu-system-x86_64 \
+        -bios ${pkgs.OVMF.fd}/FV/OVMF.fd \
+        "$@"
+    '')
+  ];
 
 in
 {
@@ -181,6 +181,7 @@ in
 
   imports = [
     ./hardware-configuration.nix
+    ../../modules/sway.nix
   ];
 
   nix.settings.experimental-features = [
@@ -201,17 +202,17 @@ in
     networkmanager.enable = true;
     hostName = "nesco";
     extraHosts = ''
-    192.168.122.23 winesco
+      192.168.122.23 winesco
     '';
     firewall = {
       enable = true;
       allowedTCPPorts = [
         22 # SSH
-	#137 138 139 445 # SAMBA
+        #137 138 139 445 # SAMBA
       ];
       allowedUDPPorts = [
-      	22 # SSH
-	#137 138 # SAMBA
+        22 # SSH
+        #137 138 # SAMBA
       ];
     };
   };
@@ -354,9 +355,6 @@ in
     autologinUser = "aidanb";
     autologinOnce = true;
   };
-  environment.loginShellInit = ''
-    [[ "$(tty)" == /dev/tty1 ]] && sway
-  '';
 
   ############
   # GRAPHICS #
@@ -448,8 +446,8 @@ in
   console.useXkbConfig = true;
 
   programs.firefox.package = pkgs.wrapFirefox (pkgs.firefox-unwrapped.override {
-  pipewireSupport = true;
-}) {};
+    pipewireSupport = true;
+  }) { };
 
   #########
   # AUDIO #
@@ -496,9 +494,9 @@ in
         path = "/srv/vm-shared";
         browseable = true;
         "read only" = false;
-        "guest ok" = true;			
-	"create mask" = "0666";      # permissions for new files
-        "directory mask" = "0777";   # permissions for new folders
+        "guest ok" = true;
+        "create mask" = "0666"; # permissions for new files
+        "directory mask" = "0777"; # permissions for new folders
       };
     };
   };
@@ -522,13 +520,12 @@ in
   };
 
   services.avahi = {
-     enable = true;
-     publish = {
-     	enable = true;
-	userServices = true;
-     };
+    enable = true;
+    publish = {
+      enable = true;
+      userServices = true;
+    };
   };
-
 
   ############
   # PACKAGES #
