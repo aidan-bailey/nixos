@@ -45,7 +45,7 @@
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
        smooth-scroll     ; So smooth you won't believe it's not butter
        ;;tabs              ; a tab bar for Emacs
-       treemacs          ; a project drawer, like neotree but cooler
+       (treemacs +lsp)          ; a project drawer, like neotree but cooler
        unicode           ; extended unicode support for various languages
        (vc-gutter +pretty) ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
@@ -57,7 +57,7 @@
        (evil +everywhere); come to the dark side, we have cookies
        file-templates    ; auto-snippets for empty files
        fold              ; (nigh) universal code folding
-       format ;;(format +onsave)  ; automated prettiness
+       (format +onsave)  ; automated prettiness
        ;;god               ; run Emacs commands without modifier keys
        ;;lispy             ; vim for lisp, for people who don't like vim
        ;;multiple-cursors  ; editing in many places at once
@@ -72,6 +72,7 @@
        electric          ; smarter, keyword-based electric-indent
        ;;eww               ; the internet is gross
        (ibuffer +icon)           ; interactive buffer management
+       tramp             ; remote files at your arthritic fingertips
        undo              ; persistent, smarter undo for your inevitable mistakes
        vc                ; version-control and Emacs, sitting in a tree
 
@@ -98,7 +99,7 @@
        (eval +overlay)     ; run code, run (also, repls)
        lookup              ; navigate your code and its documentation
        ;;llm               ; when I said you needed friends, I didn't mean...
-       (lsp +peek)               ; M-x vscode
+       (lsp +peek)      ; M-x vscode
        magit             ; a git porcelain for Emacs
        make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
@@ -113,6 +114,7 @@
        ;;tty               ; improve the terminal Emacs experience
 
        :lang
+       ;;ada               ; In strong typing we (blindly) trust
        ;;agda              ; types of types of types of types...
        ;;beancount         ; mind the GAAP
        ;;(cc +lsp)         ; C > C++ == 1
@@ -152,7 +154,7 @@
        ;;lua               ; one-based indices? one-based indices
        markdown          ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c
-       ;;nix               ; I hereby declare "nix geht mehr!"
+       nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
        (org +dragndrop +gnuplot +hugo +pandoc +pretty)               ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother

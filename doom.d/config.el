@@ -75,11 +75,28 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-;; accept completion from copilot and fallback to company
 (use-package! copilot
   :hook (prog-mode . copilot-mode)
   :bind (:map copilot-completion-map
               ("<C-tab>" . 'copilot-accept-completion)
               ("C-TAB" . 'copilot-accept-completion)
               ("C-<tab>" . 'copilot-accept-completion)))
+
+(set-formatter! 'rustfmt
+  '("rustfmt" "--edition" "2021" "--emit" "stdout")
+  :modes '(rust-mode rustic-mode))
+
+(with-eval-after-load 'flycheck
+  (flycheck-define-checker rust-clippy
+    "A Rust syntax and semantics checker using cargo-clippy."
+    :command ("cargo" "clippy" "--message-format=json" "--quiet")
+    :error-parser flycheck-parse-rust
+    :error-filter
+    (lambda (errors)
+      (seq-remove
+       (lambda (err) (string-match-p "warning: crate `clippy`" (flycheck-error-message err)))
+       errors))
+    :modes rustic-mode)
+
+  (add-to-list 'flycheck-checkers 'rust-clippy))
 
