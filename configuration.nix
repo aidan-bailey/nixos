@@ -154,7 +154,6 @@ let
           -bios ${pkgs.OVMF.fd}/FV/OVMF.fd \
           "$@"
       '')
-
     ];
 
 in
@@ -519,15 +518,6 @@ in
       runAsRoot = true;
       swtpm.enable = true;
       vhostUserPackages = with pkgs; [ virtiofsd ];
-      ovmf = {
-        enable = true;
-        packages = [
-          (pkgs.OVMF.override {
-            secureBoot = true;
-            tpmSupport = true;
-          }).fd
-        ];
-      };
     };
   };
 
