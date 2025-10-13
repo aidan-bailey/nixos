@@ -8,10 +8,10 @@ SRCDIR="$HOME/Source"
 MEDIADIR="$HOME/Media"
 CURDIR=$(pwd)
 
-DOOMDIR=$(pwd)/doom.d
+DOOMDIR=$(pwd)/configs/doom.d
 NIXCFG=$(pwd)/configuration.nix
-I3CFG=$(pwd)/config
-ZSHRC=$(pwd)/zshrc
+I3CFG=$(pwd)/configs/config
+ZSHRC=$(pwd)/configs/zshrc
 HOMECFG=$(pwd)/home.nix
 
 DOOMTRG="$HOME/.doom.d"
