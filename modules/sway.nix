@@ -46,6 +46,8 @@
     kanshi # display profiles
   ];
 
+  services.picom.enable = lib.mkForce false;
+
   systemd.user.services.kanshi = {
     description = "kanshi daemon";
     #environment = {

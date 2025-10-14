@@ -178,6 +178,7 @@ in
     ../../modules/sway.nix
     ../../modules/bluetooth.nix
     ../../modules/networking.nix
+    ../../modules/amd_graphics.nix
   ];
 
   nix.settings.experimental-features = [
@@ -314,16 +315,6 @@ in
   ############
   # GRAPHICS #
   ############
-
-  hardware.graphics = {
-    enable = true;
-    extraPackages = with pkgs; [
-      mesa
-      libvdpau-va-gl
-      vaapiVdpau
-    ];
-  };
-  services.picom.enable = lib.mkForce false;
 
   # Locale + TZ.
   time.timeZone = "Africa/Johannesburg";
