@@ -17,8 +17,6 @@ let
     htop
     git
     unzip
-    zsh
-    alacritty
     xfce.thunar
     smartmontools
     zoom-us
@@ -171,6 +169,7 @@ in
     ./hardware-configuration.nix
     ../../modules/sway.nix
     ../../modules/audio.nix
+    ../../modules/terminal.nix
     ../../modules/bluetooth.nix
     ../../modules/networking.nix
     ../../modules/amd_graphics.nix
@@ -214,16 +213,7 @@ in
   i18n.defaultLocale = "en_ZA.UTF-8";
   environment.sessionVariables = {
     DEFAULT_BROWSER = "${pkgs.firefox}/bin/firefox";
-    NIXOS_OZONE_WL = "1";
   };
-
-  ################
-  # WAYLAND/SWAY #
-  ################
-
-  programs.firefox.package = pkgs.wrapFirefox (pkgs.firefox-unwrapped.override {
-    pipewireSupport = true;
-  }) { };
 
   #########
   # AUDIO #
@@ -288,24 +278,6 @@ in
       # Optional but sometimes needed for decorations on Wayland:
       libdecor
     ];
-  };
-
-  # Terminal + zsh
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-
-    shellAliases = {
-      ll = "ls -l";
-      updaten = "sudo nixos-rebuild switch";
-      configure = "nvim /etc/nixos/configuration.nix";
-    };
-
-    ohMyZsh = {
-      enable = true;
-      plugins = [ "git" ];
-      theme = "robbyrussell";
-    };
   };
 
   #########
