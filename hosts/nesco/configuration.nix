@@ -112,7 +112,6 @@ let
     discord
     firefox
     spotify
-    steam
     gamescope
     cockatrice
   ];
@@ -167,6 +166,7 @@ in
     ../../modules/terminal.nix
     ../../modules/bluetooth.nix
     ../../modules/networking.nix
+    ../../modules/gaming.nix
     ../../modules/virtualisation.nix
     ../../modules/zenbook_s16/power.nix
     ../../modules/amd/cpu.nix
@@ -272,22 +272,6 @@ in
       wayland-protocols
       # Optional but sometimes needed for decorations on Wayland:
       libdecor
-    ];
-  };
-
-  #########
-  # STEAM #
-  #########
-
-  programs.steam = {
-    enable = true;
-    remotePlay.openFirewall = true;
-    dedicatedServer.openFirewall = true;
-    gamescopeSession.enable = true;
-    localNetworkGameTransfers.openFirewall = true;
-    extraCompatPackages = [
-      pkgs.proton-ge-bin
-      pkgs.vkd3d-proton
     ];
   };
 
