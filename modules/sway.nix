@@ -40,4 +40,53 @@
 
   programs.waybar.enable = true;
 
+  environment.systemPackages = with pkgs; [
+    wdisplays
+    brightnessctl
+    kanshi # display profiles
+  ];
+
+  systemd.user.services.kanshi = {
+    description = "kanshi daemon";
+    #environment = {
+    #  WAYLAND_DISPLAY="wayland-1";
+    #  DISPLAY = ":0";
+    #};
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = ''${pkgs.kanshi}/bin/kanshi -c /home/aidanb/.config/kanshi/config'';
+    };
+  };
+
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-wlr
+      pkgs.xdg-desktop-portal-gtk
+    ];
+  };
+
+  security.polkit.enable = true;
+  services.dbus.enable = true;
+  programs.dconf.enable = true;
+
+  # Keyboard layout (exports XKB_* for Wayland too)
+  services.xserver.xkb = {
+    layout = "za";
+    variant = "";
+    options = "caps:swapescape";
+  };
+  console.useXkbConfig = true;
+
+  services.xrdp.enable = lib.mkForce false;
+
+  # Example to try:
+  # services.wayvnc = {
+  #   enable = true;
+  #   users = [ "aidanb" ];
+  #   openFirewall = true;
+  #   settings = { address = "0.0.0.0"; };
+  # };
+
 }

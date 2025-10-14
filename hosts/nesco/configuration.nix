@@ -36,7 +36,6 @@ let
     libva
     glxinfo
     lact
-    brightnessctl
   ];
 
   guiPackages = with pkgs; [
@@ -46,9 +45,7 @@ let
     lxappearance
     pavucontrol
     networkmanagerapplet
-    blueman
     vlc
-    kanshi # display profiles
     wlr-randr # quick output changes
     # arandr removed (XRandR/X11-only)
   ];
@@ -127,7 +124,7 @@ let
     qbittorrent-enhanced
     slack
     vscode
-    pkgs.emacs-git-pgtk
+    emacs-git
     remmina
     virt-manager
     clockify
@@ -135,9 +132,6 @@ let
     protonvpn-gui
     bitwarden-desktop
     bitwarden-menu
-    waybar # panel for sway
-    swayidle
-    swaylock
     grim
     slurp # screenshots on Wayland
     wl-clipboard # wl-copy / wl-paste
@@ -182,6 +176,7 @@ in
   imports = [
     ./hardware-configuration.nix
     ../../modules/sway.nix
+    ../../modules/bluetooth.nix
   ];
 
   nix.settings.experimental-features = [
@@ -216,13 +211,6 @@ in
       ];
     };
   };
-
-  # - bluetooth - #
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
-  };
-  services.blueman.enable = true;
 
   # - SSH - #
   services.openssh = {
@@ -382,69 +370,6 @@ in
   # WAYLAND/SWAY #
   ################
 
-  services.xserver.enable = false;
-  programs.sway = {
-    enable = true;
-    wrapperFeatures.gtk = true;
-    xwayland.enable = true;
-    extraSessionCommands = "
-    	export XDG_CURRENT_DESKTOP=sway
-	    export XDG_SESSION_DESKTOP=sway
-    ";
-
-    extraPackages = with pkgs; [
-      waybar
-      swaybg
-      swayidle
-      swaylock
-      wofi
-      kanshi
-      wlr-randr
-      grim
-      slurp
-      wl-clipboard
-      mako
-      xdg-desktop-portal-wlr
-    ];
-
-  };
-
-  # kanshi systemd service
-  systemd.user.services.kanshi = {
-    description = "kanshi daemon";
-    #environment = {
-    #  WAYLAND_DISPLAY="wayland-1";
-    #  DISPLAY = ":0";
-    #};
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = ''${pkgs.kanshi}/bin/kanshi -c /home/aidanb/.config/kanshi/config'';
-    };
-  };
-  programs.waybar.enable = true;
-
-  # Portals for Wayland (screensharing, file dialogs)
-  xdg.portal = {
-    enable = true;
-    wlr.enable = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-wlr
-      pkgs.xdg-desktop-portal-gtk
-    ];
-  };
-
-  security.polkit.enable = true;
-  services.dbus.enable = true;
-  programs.dconf.enable = true;
-
-  # Keyboard layout (exports XKB_* for Wayland too)
-  services.xserver.xkb = {
-    layout = "za";
-    variant = "";
-    options = "caps:swapescape";
-  };
-  console.useXkbConfig = true;
-
   programs.firefox.package = pkgs.wrapFirefox (pkgs.firefox-unwrapped.override {
     pipewireSupport = true;
   }) { };
@@ -461,16 +386,6 @@ in
     alsa.support32Bit = true;
     pulse.enable = true;
   };
-
-  # RDP: xrdp is Xorg-based. Consider wayvnc for Wayland remote desktop.
-  services.xrdp.enable = lib.mkForce false;
-  # Example to try:
-  # services.wayvnc = {
-  #   enable = true;
-  #   users = [ "aidanb" ];
-  #   openFirewall = true;
-  #   settings = { address = "0.0.0.0"; };
-  # };
 
   # Fonts
   fonts.packages = with pkgs; [
