@@ -174,7 +174,7 @@ in
     ../../modules/networking.nix
     ../../modules/amd_graphics.nix
     ../../modules/virtualisation.nix
-    ../../modules/zenbook_s16/sleep.nix
+    ../../modules/zenbook_s16/power.nix
   ];
 
   nix.settings.experimental-features = [
@@ -187,32 +187,6 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
   boot.extraModprobeConfig = "options kvm_amd sev=1";
 
-  #########
-  # POWER #
-  #########
-
-  powerManagement.enable = true;
-
-  services.tlp = {
-    enable = true;
-    settings = {
-      CPU_SCALING_GOVERNOR_ON_AC = "performance";
-      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-      CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-      CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
-      #CPU_MIN_PERF_ON_AC = 0;
-      #CPU_MAX_PERF_ON_AC = 100;
-      #CPU_MIN_PERF_ON_BAT = 0;
-      #CPU_MAX_PERF_ON_BAT = 20;
-      # optional battery thresholds:
-      # START_CHARGE_THRESH_BAT0 = 40;
-      STOP_CHARGE_THRESH_BAT0 = 80;
-    };
-  };
-
-  ###############
-  # HIBERNATION #
-  ###############
   # In your configuration.nix
   xdg.mime = {
     enable = true;
