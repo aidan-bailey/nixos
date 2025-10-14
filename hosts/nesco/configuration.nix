@@ -59,6 +59,7 @@ in
 
   imports = [
     ./hardware-configuration.nix
+    ../../modules/services.nix
     ../../modules/sway.nix
     ../../modules/apps.nix
     ../../modules/audio.nix
@@ -82,11 +83,6 @@ in
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
-  # Services
-  services.printing.enable = true; # CUPS
-  services.gvfs.enable = true; # Mount, trash, etc
-  services.tumbler.enable = true; # Thumbnails
 
   environment.systemPackages = basePackages ++ scripts;
 
