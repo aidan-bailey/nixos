@@ -33,7 +33,6 @@ let
     radeontop
     libva
     glxinfo
-    lact
   ];
 
   scripts = [
@@ -59,7 +58,7 @@ in
 
   imports = [
     ./hardware-configuration.nix
-    ../../modules/services.nix
+    ../../modules/base.nix
     ../../modules/sway.nix
     ../../modules/apps.nix
     ../../modules/audio.nix

@@ -13,6 +13,7 @@
       mesa
       libvdpau-va-gl
       vaapiVdpau
+      lact
     ];
   };
 
