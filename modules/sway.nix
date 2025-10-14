@@ -54,6 +54,7 @@
   programs.waybar.enable = true;
 
   environment.systemPackages = with pkgs; [
+    gnome-keyring
     wdisplays
     brightnessctl
     kanshi # display profiles
