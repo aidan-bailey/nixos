@@ -9,22 +9,8 @@
 }:
 let
 
-  scripts = [
-    (pkgs.writeShellScriptBin "qemu-system-x86_64-uefi" ''
-      qemu-system-x86_64 \
-        -bios ${pkgs.OVMF.fd}/FV/OVMF.fd \
-        "$@"
-    '')
-  ];
-
 in
 {
-
-  system.stateVersion = "25.05";
-  boot.kernelParams = [
-    "resume=/dev/disk/by-uuid/8debf292-09a9-44aa-a9db-6a556aefb609"
-  ];
-  environment.pathsToLink = [ "/libexec" ];
 
   imports = [
     ./hardware-configuration.nix
@@ -44,14 +30,20 @@ in
     ../../modules/amd/graphics.nix
   ];
 
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
+  boot.kernelParams = [
+    "resume=/dev/disk/by-uuid/8debf292-09a9-44aa-a9db-6a556aefb609"
   ];
 
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  environment.systemPackages = scripts;
+  environment = {
+    pathsToLink = [ "/libexec" ];
+    systemPackages = [
+      (pkgs.writeShellScriptBin "qemu-system-x86_64-uefi" ''
+        qemu-system-x86_64 \
+          -bios ${pkgs.OVMF.fd}/FV/OVMF.fd \
+          "$@"
+      '')
+
+    ];
+  };
 
 }
