@@ -45,63 +45,6 @@ let
     networkmanagerapplet
     vlc
     wlr-randr # quick output changes
-    # arandr removed (XRandR/X11-only)
-  ];
-
-  devPackages = with pkgs; [
-    # Essentials
-    direnv
-    libtool
-    cmake
-    gnumake
-    gcc
-    stdenv
-    # Shell
-    shfmt
-    shellcheck
-    nodePackages.bash-language-server
-    # Markdown
-    uv
-    pandoc
-    marksman
-    # Emacs
-    ripgrep
-    fd
-    # Nix
-    nixd
-    nixfmt-rfc-style
-    # JS
-    nodejs_22
-    # DB
-    postgresql
-    dbeaver-bin
-    # Emulation
-    qemu
-    libvirt
-    swtpm
-    guestfs-tools
-    libosinfo
-    virtiofsd
-    # Python
-    python3 # Full
-    pyright
-    pyenv
-    semgrep
-    pipenv
-    ruff
-    # XML
-    libxslt
-    # Rust
-    #cargo
-    rustup
-    lldb
-    #rust-analyzer
-    #rustc
-    #cargo
-    #rustfmt
-    #clippy
-    # Nix
-    nixfmt-rfc-style
   ];
 
   apps = with pkgs; [
@@ -167,6 +110,7 @@ in
     ../../modules/bluetooth.nix
     ../../modules/networking.nix
     ../../modules/gaming.nix
+    ../../modules/devtools.nix
     ../../modules/virtualisation.nix
     ../../modules/zenbook_s16/power.nix
     ../../modules/amd/cpu.nix
@@ -224,58 +168,11 @@ in
   services.gvfs.enable = true; # Mount, trash, etc
   services.tumbler.enable = true; # Thumbnails
 
-  ##################
-  # VIRTUALISATION #
-  ##################
-
   ############
   # PACKAGES #
   ############
 
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.overlays = [
-    (import (
-      builtins.fetchTarball {
-        # pin emacs overlay as you had it
-        url = "https://github.com/nix-community/emacs-overlay/archive/29430cce2da82c0f658cd3310191434bf709f245.tar.gz";
-        sha256 = "02l1f9d3qr634ja32psj63938wh0lp87fpnkgcmk7a82vpbk3qjh";
-      }
-    ))
-  ];
-
-  programs.nix-ld = {
-    enable = true;
-    libraries = with pkgs; [
-      stdenv.cc.cc
-      zlib
-      zstd
-      glib
-      libGL
-      libxkbcommon
-      fontconfig
-      xorg.libX11 # keep for some legacy apps (via XWayland)
-      freetype
-      dbus
-      libkrb5
-      krb5
-      libpulseaudio
-      xorg.libxcb
-      xorg.xcbutil
-      xorg.xcbutilimage
-      xorg.xcbutilkeysyms
-      xorg.xcbutilwm
-      xorg.xcbutilcursor # this is the “xcb-cursor0 / libxcb-cursor0” that Qt demands
-      # NEW: PipeWire for QtMultimedia (6.9 tries pipewire-0.3)
-      pipewire
-      # Wayland client libs (helpful even if you use xcb via XWayland sometimes)
-      wayland
-      wayland-protocols
-      # Optional but sometimes needed for decorations on Wayland:
-      libdecor
-    ];
-  };
-
-  environment.systemPackages = basePackages ++ guiPackages ++ devPackages ++ scripts;
+  environment.systemPackages = basePackages ++ guiPackages ++ scripts;
 
   # User
   users.users.aidanb = {
