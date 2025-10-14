@@ -5,9 +5,18 @@
   ...
 }:
 
-{
+let
+  tools = with pkgs; [
+    teamviewer
+    clockify
+    remmina
+    slack
+    vscode
+    emacs-git
+    code-cursor
+  ];
 
-  environment.systemPackages = with pkgs; [
+  devlibs = with pkgs; [
     # Essentials
     direnv
     libtool
@@ -54,36 +63,42 @@
     lldb
   ];
 
+  ldlibs = with pkgs; [
+    stdenv.cc.cc
+    zlib
+    zstd
+    glib
+    libGL
+    libxkbcommon
+    fontconfig
+    xorg.libX11 # keep for some legacy apps (via XWayland)
+    freetype
+    dbus
+    libkrb5
+    krb5
+    libpulseaudio
+    xorg.libxcb
+    xorg.xcbutilimage
+    xorg.xcbutilkeysyms
+    xorg.xcbutilwm
+    xorg.xcbutilcursor # this is the “xcb-cursor0 / libxcb-cursor0” that Qt demands
+    # NEW: PipeWire for QtMultimedia (6.9 tries pipewire-0.3)
+    pipewire
+    # Wayland client libs (helpful even if you use xcb via XWayland sometimes)
+    wayland
+    wayland-protocols
+    # Optional but sometimes needed for decorations on Wayland:
+    libdecor
+  ];
+
+in
+{
+
+  environment.systemPackages = devlibs ++ tools;
+
   programs.nix-ld = {
     enable = true;
-    libraries = with pkgs; [
-      stdenv.cc.cc
-      zlib
-      zstd
-      glib
-      libGL
-      libxkbcommon
-      fontconfig
-      xorg.libX11 # keep for some legacy apps (via XWayland)
-      freetype
-      dbus
-      libkrb5
-      krb5
-      libpulseaudio
-      xorg.libxcb
-      xorg.xcbutil
-      xorg.xcbutilimage
-      xorg.xcbutilkeysyms
-      xorg.xcbutilwm
-      xorg.xcbutilcursor # this is the “xcb-cursor0 / libxcb-cursor0” that Qt demands
-      # NEW: PipeWire for QtMultimedia (6.9 tries pipewire-0.3)
-      pipewire
-      # Wayland client libs (helpful even if you use xcb via XWayland sometimes)
-      wayland
-      wayland-protocols
-      # Optional but sometimes needed for decorations on Wayland:
-      libdecor
-    ];
+    libraries = ldlibs;
   };
 
 }

@@ -36,46 +36,6 @@ let
     lact
   ];
 
-  guiPackages = with pkgs; [
-    # Wayland-friendly replacements
-    wofi # replaces rofi
-    swaybg # replaces feh for wallpapers
-    lxappearance
-    pavucontrol
-    networkmanagerapplet
-    vlc
-    wlr-randr # quick output changes
-  ];
-
-  apps = with pkgs; [
-    brave
-    vivaldi
-    thunderbird
-    protonmail-bridge
-    discord
-    firefox
-    spotify
-    gamescope
-    cockatrice
-  ];
-
-  tools = with pkgs; [
-    mupdf
-    qbittorrent-enhanced
-    slack
-    vscode
-    emacs-git
-    remmina
-    clockify
-    pomodoro-gtk
-    protonvpn-gui
-    bitwarden-desktop
-    bitwarden-menu
-    code-cursor
-    element-desktop
-    teamviewer
-  ];
-
   scripts = [
     (pkgs.writeShellScriptBin "qemu-system-x86_64-uefi" ''
       qemu-system-x86_64 \
@@ -105,6 +65,7 @@ in
   imports = [
     ./hardware-configuration.nix
     ../../modules/sway.nix
+    ../../modules/apps.nix
     ../../modules/audio.nix
     ../../modules/terminal.nix
     ../../modules/bluetooth.nix
@@ -172,7 +133,7 @@ in
   # PACKAGES #
   ############
 
-  environment.systemPackages = basePackages ++ guiPackages ++ scripts;
+  environment.systemPackages = basePackages ++ scripts;
 
   # User
   users.users.aidanb = {

@@ -34,6 +34,10 @@
       wl-clipboard
       mako
       xdg-desktop-portal-wlr
+      wlr-randr
+      networkmanagerapplet
+      pavucontrol
+      lxappearance
     ];
 
   };
