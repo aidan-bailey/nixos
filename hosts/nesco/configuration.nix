@@ -170,6 +170,7 @@ in
   imports = [
     ./hardware-configuration.nix
     ../../modules/sway.nix
+    ../../modules/audio.nix
     ../../modules/bluetooth.nix
     ../../modules/networking.nix
     ../../modules/amd_graphics.nix
@@ -227,15 +228,6 @@ in
   #########
   # AUDIO #
   #########
-
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
 
   # Fonts
   fonts.packages = with pkgs; [
