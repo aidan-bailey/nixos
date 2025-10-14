@@ -15,4 +15,9 @@
     "amdgpu.ppfeaturemask=0xffffffff"
   ];
 
+  hardware.firmware = with pkgs; [ linux-firmware ];
+  hardware.enableRedistributableFirmware = true;
+
+  boot.kernalPackages = pkgs.linuxPackages_latest;
+
 }

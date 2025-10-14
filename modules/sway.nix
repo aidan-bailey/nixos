@@ -42,6 +42,11 @@
 
   };
 
+  # Fonts
+  fonts.packages = with pkgs; [
+    nerd-fonts.noto
+  ];
+
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
   };
