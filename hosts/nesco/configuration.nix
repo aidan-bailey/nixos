@@ -177,6 +177,7 @@ in
     ./hardware-configuration.nix
     ../../modules/sway.nix
     ../../modules/bluetooth.nix
+    ../../modules/networking.nix
   ];
 
   nix.settings.experimental-features = [
@@ -188,40 +189,6 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.extraModprobeConfig = "options kvm_amd sev=1";
-
-  ##############
-  # NETWORKING #
-  ##############
-
-  networking = {
-    networkmanager.enable = true;
-    hostName = "nesco";
-    extraHosts = ''
-      192.168.122.23 winesco
-    '';
-    firewall = {
-      enable = true;
-      allowedTCPPorts = [
-        22 # SSH
-        #137 138 139 445 # SAMBA
-      ];
-      allowedUDPPorts = [
-        22 # SSH
-        #137 138 # SAMBA
-      ];
-    };
-  };
-
-  # - SSH - #
-  services.openssh = {
-    enable = true;
-    settings = {
-      X11Forwarding = true; # harmless w/ Wayland, for remote X11 apps
-      PermitRootLogin = "no";
-      PasswordAuthentication = false;
-    };
-    openFirewall = true;
-  };
 
   #########
   # POWER #
