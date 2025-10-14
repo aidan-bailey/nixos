@@ -13,8 +13,15 @@
       mesa
       libvdpau-va-gl
       vaapiVdpau
-      lact
     ];
   };
+
+  environment.systemPackages = with pkgs; [
+    lact
+    glxinfo
+    radeontop
+    glmark2
+    libva
+  ];
 
 }

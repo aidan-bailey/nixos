@@ -9,32 +9,6 @@
 }:
 let
 
-  basePackages = with pkgs; [
-    wget
-    vim
-    neovim
-    curl
-    htop
-    git
-    unzip
-    xfce.thunar
-    smartmontools
-    zoom-us
-    gparted
-    nvme-cli
-    ddrescue
-    geeqie
-    zstd
-    nix-index
-    wdisplays
-    maim
-    btop
-    glmark2
-    radeontop
-    libva
-    glxinfo
-  ];
-
   scripts = [
     (pkgs.writeShellScriptBin "qemu-system-x86_64-uefi" ''
       qemu-system-x86_64 \
@@ -45,10 +19,6 @@ let
 
 in
 {
-
-  ##############
-  # SYS CONFIG #
-  ##############
 
   system.stateVersion = "25.05";
   boot.kernelParams = [
@@ -82,7 +52,6 @@ in
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
-  environment.systemPackages = basePackages ++ scripts;
+  environment.systemPackages = scripts;
 
 }

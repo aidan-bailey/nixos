@@ -57,6 +57,7 @@
     wdisplays
     brightnessctl
     kanshi # display profiles
+    wdisplays
   ];
 
   services.picom.enable = lib.mkForce false;

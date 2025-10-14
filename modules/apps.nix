@@ -20,6 +20,8 @@ let
     bitwarden-desktop
     bitwarden-menu
     element-desktop
+    zoom-us
+    xfce.thunar
   ];
 in
 {
