@@ -4,15 +4,16 @@
 # VARS #
 ########
 
-# Check if host name argument is provided
-if [ $# -eq 0 ]; then
-    echo "Usage: $0 <hostname>"
-    echo "Available hosts:"
-    ls -1 hosts/ 2>/dev/null || echo "No hosts directory found"
+# Determine host name from environment only
+DETECTED_HOST="${HOSTNAME:-${HOST:-}}"
+if [ -z "$DETECTED_HOST" ]; then
+    echo "Error: HOSTNAME/HOST not set in environment"
+    echo "Set HOSTNAME or HOST to the short hostname and re-run."
     exit 1
 fi
+# use short name (strip domain)
+HOSTNAME=${DETECTED_HOST%%.*}
 
-HOSTNAME="$1"
 HOSTDIR="hosts/$HOSTNAME"
 
 # Validate that the host directory exists
@@ -100,4 +101,3 @@ echo "Configuration complete"
 ################
 # HOME MANAGER #
 ################
-
