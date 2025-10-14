@@ -10,6 +10,7 @@
   environment.systemPackages = with pkgs; [
     alacritty
     zsh
+    neovim
   ];
 
   programs.zsh = {
@@ -18,7 +19,6 @@
 
     shellAliases = {
       ll = "ls -l";
-      updaten = "sudo nixos-rebuild switch";
       configure = "nvim /etc/nixos/configuration.nix";
     };
 
