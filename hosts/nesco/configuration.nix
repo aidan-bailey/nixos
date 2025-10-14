@@ -154,16 +154,11 @@ in
     kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = [
       "resume=/dev/disk/by-uuid/8debf292-09a9-44aa-a9db-6a556aefb609"
-      "amd_pstate=active"
-      "amdgpu.dc=1"
-      "amdgpu.ppfeaturemask=0xffffffff"
     ];
   };
   environment.pathsToLink = [ "/libexec" ];
   hardware.firmware = with pkgs; [ linux-firmware ];
-  hardware.cpu.amd.updateMicrocode = true;
   hardware.enableRedistributableFirmware = true;
-  #system.autoUpgrade.channel = "https://channels.nixos.org/nixos-25.05";
 
   imports = [
     ./hardware-configuration.nix
@@ -172,9 +167,10 @@ in
     ../../modules/terminal.nix
     ../../modules/bluetooth.nix
     ../../modules/networking.nix
-    ../../modules/amd_graphics.nix
     ../../modules/virtualisation.nix
     ../../modules/zenbook_s16/power.nix
+    ../../modules/amd/cpu.nix
+    ../../modules/amd/graphics.nix
   ];
 
   nix.settings.experimental-features = [
@@ -185,7 +181,6 @@ in
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.extraModprobeConfig = "options kvm_amd sev=1";
 
   # In your configuration.nix
   xdg.mime = {
