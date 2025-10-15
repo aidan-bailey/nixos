@@ -1,3 +1,4 @@
+# flakes/doom-emacs/flake.nix
 {
   description = "Reusable Doom Emacs flake (PGTK + native-comp + built-in config)";
 
@@ -24,20 +25,6 @@
     in
     {
 
-      nixosModules.default =
-        { config, lib, ... }:
-        {
-          imports = [ doom-emacs.nixosModules.default ];
-
-          programs.doom-emacs = {
-            enable = true;
-            emacsPackage = pkgs.emacs-pgtk.override {
-              withNativeCompilation = true;
-            };
-            doomPrivateDir = ./doom-config;
-          };
-        };
-
       homeManagerModules.default =
         { config, lib, ... }:
         {
@@ -52,6 +39,7 @@
           };
         };
 
+      # Optional package
       packages.${system}.doom = pkgs.callPackage doom-emacs.packages.default {
         emacsPackage = pkgs.emacs-pgtk.override {
           withNativeCompilation = true;
