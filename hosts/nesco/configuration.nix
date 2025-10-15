@@ -18,6 +18,7 @@ in
     ../../modules/sway.nix
     ../../modules/apps.nix
     ../../modules/audio.nix
+    ../../modules/emacs.nix
     ../../modules/terminal.nix
     ../../modules/bluetooth.nix
     ../../modules/networking.nix

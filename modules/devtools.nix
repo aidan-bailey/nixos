@@ -12,7 +12,6 @@ let
     remmina
     slack
     vscode
-    emacs-git
     code-cursor
   ];
 
@@ -32,9 +31,6 @@ let
     uv
     pandoc
     marksman
-    # Emacs
-    ripgrep
-    fd
     # Nix
     nixd
     nixfmt-rfc-style

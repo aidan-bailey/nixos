@@ -7,6 +7,7 @@
 
 let
   basePackages = with pkgs; [
+    pass
     htop
     git
     unzip

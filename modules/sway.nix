@@ -29,7 +29,6 @@
       wofi
       kanshi
       wlr-randr
-      grim
       slurp
       wl-clipboard
       mako
@@ -54,6 +53,7 @@
   programs.waybar.enable = true;
 
   environment.systemPackages = with pkgs; [
+    grim
     gnome-keyring
     wdisplays
     brightnessctl

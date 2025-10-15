@@ -24,6 +24,7 @@ let
     xfce.thunar
     protonmail-bridge
     protonmail-bridge-gui
+    gimp
   ];
 in
 {
