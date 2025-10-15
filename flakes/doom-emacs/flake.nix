@@ -4,15 +4,13 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    emacs-overlay.url = "github:nix-community/emacs-overlay";
-    doom-emacs.url = "github:nix-community/nix-doom-emacs";
   };
 
   outputs =
     {
       self,
+      inputs,
       nixpkgs,
-      emacs-overlay,
       doom-emacs,
       ...
     }:
@@ -20,7 +18,15 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [ emacs-overlay.overlay ];
+        overlays = [
+          (pkgs.doomEmacs {
+            doomDir = inputs.doom-config;
+            # If you stored your Doom configuration in the same flake, use
+            #   doomDir = ./path/to/doom/config;
+            # instead.
+            doomLocalDir = "~/.local/share/nix-doom";
+          })
+        ];
       };
     in
     {
@@ -39,12 +45,5 @@
           };
         };
 
-      # Optional package
-      packages.${system}.doom = pkgs.callPackage doom-emacs.packages.default {
-        emacsPackage = pkgs.emacs-pgtk.override {
-          withNativeCompilation = true;
-        };
-        doomPrivateDir = ./doom-config;
-      };
     };
 }
