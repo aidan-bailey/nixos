@@ -3,20 +3,20 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    doom-flake.url = "path:./flakes/doom-emacs";
   };
 
   outputs =
     {
       self,
       nixpkgs,
-      emacs-overlay,
+      doom-flake,
       ...
     }@inputs:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [ emacs-overlay.overlay ];
       };
     in
     {
@@ -25,11 +25,10 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/nesco/configuration.nix
-
+            doom-flake.nixosModules.default
             {
               nixpkgs = {
                 config.allowUnfree = true;
-                overlays = [ inputs.emacs-overlay.overlay ];
               };
             }
           ];
