@@ -29,10 +29,20 @@
           environment.systemPackages = [
             (doomPkgs.emacsWithDoom {
               doomDir = ./doom.d;
-              doomLocalDir = "/home/aidan/.local/share/nix-doom";
+              doomLocalDir = "~/.local/share/nix-doom";
               emacs = doomPkgs.emacs-pgtk.override {
                 withNativeCompilation = true;
               };
+              extraPackages = epkgs: [
+                doomPkgs.shellcheck
+                doomPkgs.ripgrep
+                doomPkgs.shfmt
+                doomPkgs.fd
+                #python3Packages.black
+                #python3Packages.pyflakes
+                #python3Packages.isort
+                #python3Packages.pytest
+              ];
             })
           ];
         };
