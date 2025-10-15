@@ -1,49 +1,40 @@
-# flakes/doom-emacs/flake.nix
 {
   description = "Reusable Doom Emacs flake (PGTK + native-comp + built-in config)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nix-doom-emacs-unstraightened.url = "github:marienz/nix-doom-emacs-unstraightened";
   };
 
   outputs =
-    {
+    inputs@{
       self,
-      inputs,
       nixpkgs,
-      doom-emacs,
       ...
     }:
-    let
-      system = "x86_64-linux";
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [
-          (pkgs.doomEmacs {
-            doomDir = inputs.doom-config;
-            # If you stored your Doom configuration in the same flake, use
-            #   doomDir = ./path/to/doom/config;
-            # instead.
-            doomLocalDir = "~/.local/share/nix-doom";
-          })
-        ];
-      };
-    in
     {
-
-      homeManagerModules.default =
-        { config, lib, ... }:
+      nixosModules.default =
         {
-          imports = [ doom-emacs.hmModule ];
-
-          programs.doom-emacs = {
-            enable = true;
-            emacsPackage = pkgs.emacs-pgtk.override {
-              withNativeCompilation = true;
-            };
-            doomPrivateDir = ./doom-config;
+          system ? "x86_64-linux",
+          ...
+        }:
+        let
+          doomPkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+            overlays = [ inputs.nix-doom-emacs-unstraightened.overlays.default ];
           };
+        in
+        {
+          environment.systemPackages = [
+            (doomPkgs.emacsWithDoom {
+              doomDir = ./doom.d;
+              doomLocalDir = "/home/aidan/.local/share/nix-doom";
+              emacs = doomPkgs.emacs-pgtk.override {
+                withNativeCompilation = true;
+              };
+            })
+          ];
         };
-
     };
 }

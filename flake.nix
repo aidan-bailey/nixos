@@ -15,27 +15,19 @@
     }@inputs:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs {
-        inherit system;
-      };
+      pkgs = import nixpkgs { inherit system; };
     in
     {
-      nixosConfigurations = {
-        nesco = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            ./hosts/nesco/configuration.nix
-            doom-flake.nixosModules.default
-            {
-              nixpkgs = {
-                config.allowUnfree = true;
-              };
-            }
-          ];
-
-          specialArgs = { inherit inputs; };
-        };
+      nixosConfigurations.nesco = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          ./hosts/nesco/configuration.nix
+          doom-flake.nixosModules.default
+          {
+            nixpkgs.config.allowUnfree = true;
+          }
+        ];
+        specialArgs = { inherit inputs system; };
       };
-
     };
 }
