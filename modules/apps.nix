@@ -22,6 +22,8 @@ let
     element-desktop
     zoom-us
     xfce.thunar
+    protonmail-bridge
+    protonmail-bridge-gui
   ];
 in
 {
