@@ -9,7 +9,14 @@
 
   environment.systemPackages = with pkgs; [
     virt-manager
+    docker
   ];
+
+  # Enable Docker
+  virtualisation.docker = {
+    enable = true;
+  };
+
 
   # Enable Samba server
   services.samba = {

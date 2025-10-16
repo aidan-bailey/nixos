@@ -30,7 +30,6 @@ SRCDIR="$HOME/Source"
 MEDIADIR="$HOME/Media"
 CURDIR=$(pwd)
 
-DOOMDIR=$(pwd)/configs/doom.d
 NIXCFG=$(pwd)/$HOSTDIR/configuration.nix
 I3CFG=$(pwd)/configs/config
 ZSHRC=$(pwd)/configs/zshrc
@@ -39,7 +38,6 @@ FLAKECFG=$(pwd)/flake.nix
 HARDWARECFG=/etc/nixos/hardware-configuration.nix
 HARDWARECFGSRC=$(pwd)/$HOSTDIR/hardware-configuration.nix
 
-DOOMTRG="$HOME/.doom.d"
 NIXTRG="/etc/nixos/configuration.nix"
 FLAKETRG="/etc/nixos/flake.nix"
 HARDWARETRG="$HOME/System/$HOSTDIR/hardware-configuration.nix"
@@ -82,7 +80,6 @@ moveifexists "$HOME/Videos" "$MEDIADIR/Videos"
 # SETUP LINKS #
 ###############
 
-ln -sfn "$DOOMDIR" "$DOOMTRG"
 sudo ln -sfn "$NIXCFG" "$NIXTRG"
 sudo ln -sfn "$FLAKECFG" "$FLAKETRG"
 
