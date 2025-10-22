@@ -12,13 +12,17 @@
   '';
 
   services.xserver.enable = false;
+
+  chaotic.hdr.enable = true;
+
   programs.sway = {
     enable = true;
+    package = pkgs.sway_git;
     wrapperFeatures.gtk = true;
     xwayland.enable = true;
     extraSessionCommands = "
     	export XDG_CURRENT_DESKTOP=sway
-	    export XDG_SESSION_DESKTOP=sway
+	export XDG_SESSION_DESKTOP=sway
     ";
 
     extraPackages = with pkgs; [
@@ -47,6 +51,10 @@
   ];
 
   environment.sessionVariables = {
+    SDL_VIDEODRIVER = "wayland";
+    QT_QPA_PLATFORM = "wayland";
+    XDG_SESSION_TYPE = "wayland";
+    CLUTTER_BACKEND = "wayland";
     NIXOS_OZONE_WL = "1";
   };
 
@@ -59,7 +67,11 @@
     brightnessctl
     kanshi # display profiles
     wdisplays
+    wayland_git
+    wlroots_git
   ];
+
+  services.gnome.gnome-keyring.enable = true;
 
   services.picom.enable = lib.mkForce false;
 
