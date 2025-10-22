@@ -34,16 +34,24 @@
                 withNativeCompilation = true;
               };
               extraPackages = epkgs: [
-                doomPkgs.shellcheck
-                doomPkgs.ripgrep
-                doomPkgs.shfmt
-                doomPkgs.fd
+                #doomPkgs.shellcheck
+                #doomPkgs.ripgrep
+                #doomPkgs.shfmt
+                #doomPkgs.fd
                 #python3Packages.black
                 #python3Packages.pyflakes
                 #python3Packages.isort
                 #python3Packages.pytest
               ];
             })
+            doomPkgs.shellcheck
+            doomPkgs.ripgrep
+            doomPkgs.shfmt
+            doomPkgs.fd
+            doomPkgs.python313Packages.black
+            doomPkgs.python313Packages.pyflakes
+            doomPkgs.python313Packages.isort
+            doomPkgs.python313Packages.pytest
           ];
         };
     };
