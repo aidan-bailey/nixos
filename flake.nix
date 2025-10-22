@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     doom-flake.url = "path:./flakes/doom-emacs";
   };
 
@@ -11,6 +12,7 @@
       self,
       nixpkgs,
       doom-flake,
+      chaotic,
       ...
     }@inputs:
     let
@@ -23,6 +25,7 @@
         modules = [
           ./hosts/nesco/configuration.nix
           doom-flake.nixosModules.default
+          chaotic.nixosModules.default
           {
             nixpkgs.config.allowUnfree = true;
           }
