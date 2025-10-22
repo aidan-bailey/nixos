@@ -10,6 +10,8 @@
   environment.systemPackages = with pkgs; [
     virt-manager
     docker
+    docker-compose
+    docker-buildx
   ];
 
   # Enable Docker
