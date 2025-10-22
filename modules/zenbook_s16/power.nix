@@ -40,17 +40,15 @@
     description = "Hibernate when battery critically low";
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = ''
-        /bin/sh -c '
-          CAP_FILE=/sys/class/power_supply/BAT0/capacity
-          STAT_FILE=/sys/class/power_supply/BAT0/status
-          [ -r "$CAP_FILE" ] || exit 0
-          CAP=$(cat "$CAP_FILE")
-          STAT=$(cat "$STAT_FILE" 2>/dev/null || echo Unknown)
-          if [ "$STAT" = "Discharging" ] && [ "$CAP" -le 5 ]; then
-            systemctl hibernate
-          fi
-        '
+      ExecStart = pkgs.writeShellScript "hibernate-on-low-battery" ''
+        CAP_FILE=/sys/class/power_supply/BAT0/capacity
+        STAT_FILE=/sys/class/power_supply/BAT0/status
+        [ -r "$CAP_FILE" ] || exit 0
+        CAP=$(cat "$CAP_FILE")
+        STAT=$(cat "$STAT_FILE" 2>/dev/null || echo Unknown)
+        if [ "$STAT" = "Discharging" ] && [ "$CAP" -le 5 ]; then
+          systemctl hibernate
+        fi
       '';
     };
   };
@@ -93,7 +91,6 @@
         # If some apps inhibit sleep, ignore the inhibitor on lid close:
         LidSwitchIgnoreInhibited=yes
         # If you want a delay when using suspend-then-hibernate:
-        HibernateDelaySec=10min
       	IdleAction=suspend-then-hibernate
       	IdleActionSec=30min
     '';
