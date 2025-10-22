@@ -18,6 +18,6 @@
   hardware.firmware = with pkgs; [ linux-firmware ];
   hardware.enableRedistributableFirmware = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_cachyos;
 
 }
