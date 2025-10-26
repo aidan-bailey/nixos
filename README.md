@@ -8,6 +8,7 @@
 - [ ] Building TuneD for optimised VM
 
 ## Configuration
+- [ ] sccache
 - [ ] Email (Thunderbird)
 - [ ] Calendar (Thunderbird)
 - [ ] Slack
@@ -18,6 +19,4 @@
 - [ ] Wallpaper
 - [ ] Float Picture-in-Picture windows
 - [ ] Screenshotting
-- [ ] Configure HDR
 - [ ] Change font for doom
-
