@@ -95,7 +95,6 @@ in
   environment.systemPackages = devlibs ++ tools;
 
   programs.ccache.enable = true;
-  programs.sccache.enable = true;
 
   environment.sessionVariables.LD = "mold";
 
