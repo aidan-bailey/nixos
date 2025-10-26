@@ -47,6 +47,8 @@ exec_always swayidle -w \
 bindsym XF86MonBrightnessUp exec brightnessctl set +10%
 bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 
+output * adaptive_sync on
+
 # timeout 600 'swaymsg "output * power off"' \
 # resume 'swaymsg "output * power on"' \
 
