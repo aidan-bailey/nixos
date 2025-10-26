@@ -30,9 +30,17 @@ in
     ../../modules/amd/graphics.nix
   ];
 
+  nix.settings.system-features = [ "gccarch-znver5" "benchmark" "big-parallel" "kvm" "nixos-test" ];
+
   boot.kernelParams = [
     "resume=/dev/disk/by-uuid/8debf292-09a9-44aa-a9db-6a556aefb609"
   ];
+
+  nixpkgs.hostPlatform = {
+    system = "x86_64-linux";
+    gcc.arch = "znver5";
+    gcc.tune = "znver5";
+  };
 
   environment = {
     pathsToLink = [ "/libexec" ];
