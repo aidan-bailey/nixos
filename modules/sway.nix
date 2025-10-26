@@ -6,6 +6,14 @@
 }:
 
 {
+  # Force all packages to use wayland_git instead of stable wayland
+  nixpkgs.overlays = [
+    (final: prev: {
+      #wayland = prev.wayland_git;
+      #sdl3 = prev.sdl3.overrideAttrs (_: { doCheck = false; });
+      #xdg-desktop-portal = prev.xdg-desktop-portal.overrideAttrs (_: { doCheck = false; });
+    })
+  ];
 
   environment.loginShellInit = ''
     [[ "$(tty)" == /dev/tty1 ]] && sway
@@ -67,8 +75,6 @@
     brightnessctl
     kanshi # display profiles
     wdisplays
-    wayland_git
-    wlroots_git
   ];
 
   services.gnome.gnome-keyring.enable = true;
