@@ -23,6 +23,8 @@ let
     gnumake
     gcc
     stdenv
+    mold
+    sccache
     # Shell
     shfmt
     shellcheck
@@ -91,6 +93,11 @@ in
 {
 
   environment.systemPackages = devlibs ++ tools;
+
+  programs.ccache.enable = true;
+  programs.sccache.enable = true;
+
+  environment.sessionVariables.LD = "mold";
 
   programs.nix-ld = {
     enable = true;

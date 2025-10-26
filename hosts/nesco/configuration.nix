@@ -42,6 +42,11 @@ in
     gcc.tune = "znver5";
   };
 
+  environment.sessionVariables = {
+    RUSTFLAGS = "-C target-cpu=znver5 -C link-arg=-flto";
+    GOAMD64 = "v4";
+  };
+
   environment = {
     pathsToLink = [ "/libexec" ];
     systemPackages = [
