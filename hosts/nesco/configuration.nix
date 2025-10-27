@@ -15,8 +15,7 @@ in
   imports = [
     ./hardware-configuration.nix
     ../../modules/kernel/cachyos.nix
-    ../../modules/amd/zen5.nix
-    ../../modules/amd/graphics.nix
+    ../../modules/devices/zenbook_s16.nix
     ../../modules/base.nix
     ../../modules/sway.nix
     ../../modules/apps.nix
@@ -28,7 +27,7 @@ in
     ../../modules/gaming.nix
     ../../modules/devtools.nix
     ../../modules/virtualisation.nix
-    ../../modules/zenbook_s16/power.nix
+    ../../modules/power.nix
   ];
 
   nix.settings.system-features = [ "gccarch-znver5" "benchmark" "big-parallel" "kvm" "nixos-test" ];

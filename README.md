@@ -29,7 +29,7 @@ A modular NixOS configuration for AMD Zen 5 systems with optimizations for perfo
 │   ├── terminal.nix       # Terminal emulator setup
 │   ├── user.nix           # User account configuration
 │   ├── virtualisation.nix # VM and container setup
-│   └── zenbook_s16/       # Device-specific optimizations
+│   ├── zenbook_s16/       # Device-specific optimizations
 │       └── power.nix
 ├── configs/               # Configuration files
 │   ├── doom.d/           # Doom Emacs configuration
