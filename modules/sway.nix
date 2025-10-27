@@ -77,6 +77,9 @@
     brightnessctl
     kanshi # display profiles
     wdisplays
+    gnome-themes-extra
+    adwaita-icon-theme
+    adwaita-qt
   ];
 
   services.gnome.gnome-keyring.enable = true;
