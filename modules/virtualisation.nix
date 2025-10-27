@@ -33,6 +33,11 @@ in
     docker
     docker-compose
     docker-buildx
+    (pkgs.writeShellScriptBin "qemu-system-x86_64-uefi" ''
+        qemu-system-x86_64 \
+          -bios ${pkgs.OVMF.fd}/FV/OVMF.fd \
+          "$@"
+      '')
   ];
 
   nixpkgs.overlays = [
@@ -92,17 +97,6 @@ in
     };
   };
 
-  environment = {
-    pathsToLink = [ "/libexec" ];
-    systemPackages = [
-      (pkgs.writeShellScriptBin "qemu-system-x86_64-uefi" ''
-        qemu-system-x86_64 \
-          -bios ${pkgs.OVMF.fd}/FV/OVMF.fd \
-          "$@"
-      '')
-
-    ];
-  };
-
+  environment.pathsToLink = [ "/libexec" ];
 
 }
