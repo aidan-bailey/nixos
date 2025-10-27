@@ -59,6 +59,8 @@
   ];
 
   environment.sessionVariables = {
+    GTK_THEME = "Adwaita:dark";
+    QT_QPA_PLATFORMTHEME = "gtk3";
     SDL_VIDEODRIVER = "wayland";
     QT_QPA_PLATFORM = "wayland";
     XDG_SESSION_TYPE = "wayland";
