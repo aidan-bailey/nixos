@@ -27,6 +27,7 @@ in
     ../../modules/virtualisation.nix
     ../../modules/zenbook_s16/power.nix
     ../../modules/amd/cpu.nix
+    ../../modules/amd/zen5.nix
     ../../modules/amd/graphics.nix
   ];
 
