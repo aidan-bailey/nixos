@@ -38,27 +38,5 @@ in
     "resume=/dev/disk/by-uuid/8debf292-09a9-44aa-a9db-6a556aefb609"
   ];
 
-  nixpkgs.hostPlatform = {
-    system = "x86_64-linux";
-    gcc.arch = "znver5";
-    gcc.tune = "znver5";
-  };
-
-  environment.sessionVariables = {
-    RUSTFLAGS = "-C target-cpu=znver5 -C link-arg=-flto";
-    GOAMD64 = "v4";
-  };
-
-  environment = {
-    pathsToLink = [ "/libexec" ];
-    systemPackages = [
-      (pkgs.writeShellScriptBin "qemu-system-x86_64-uefi" ''
-        qemu-system-x86_64 \
-          -bios ${pkgs.OVMF.fd}/FV/OVMF.fd \
-          "$@"
-      '')
-
-    ];
-  };
 
 }
