@@ -36,4 +36,10 @@
   # Device-specific resume partition
   boot.resumeDevice = "/dev/disk/by-uuid/8debf292-09a9-44aa-a9db-6a556aefb609";
 
+  nix.settings.system-features = [ "gccarch-znver5" "benchmark" "big-parallel" "kvm" "nixos-test" ];
+
+  boot.kernelParams = [
+    "resume=/dev/disk/by-uuid/8debf292-09a9-44aa-a9db-6a556aefb609"
+  ];
+
 }
