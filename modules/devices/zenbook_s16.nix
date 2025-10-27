@@ -10,7 +10,7 @@
   imports = [
     ../amd/graphics.nix
     ../amd/zen5.nix
-  ]
+  ];
 
   # Script to unload/load Wi-Fi around sleep/hibernate
   # Specific to MT7925e Wi-Fi module in Zenbook S16
