@@ -1,17 +1,7 @@
-# Aidan's NixOS config — Wayland/Sway
-
 {
-  config,
-  pkgs,
-  lib,
-  inputs,
   ...
 }:
-let
-
-in
 {
-
   imports = [
     ./hardware-configuration.nix
     ../../modules/kernel/cachyos.nix
@@ -29,7 +19,4 @@ in
     ../../modules/virtualisation.nix
     ../../modules/power.nix
   ];
-
-
-
 }
