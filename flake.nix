@@ -6,7 +6,7 @@
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     doom-flake.url = "path:./flakes/doom-emacs";
     nixarr.url = "github:rasmus-kirk/nixarr";
-    ccache-flake.url = "path:./flakes/ccache";
+    #ccache-flake.url = "path:./flakes/ccache";
     #gcc-lto-pgo.url = "path:./flakes/gcc-lto-pgo";
   };
 
@@ -15,7 +15,7 @@
       self,
       nixpkgs,
       doom-flake,
-      ccache-flake,
+      #ccache-flake,
       chaotic,
       nixarr,
       #gcc-lto-pgo,
@@ -32,7 +32,7 @@
         inherit system;
         modules = [
           ./hosts/nesco/configuration.nix
-          ccache-flake.nixosModules.ccache
+          #ccache-flake.nixosModules.ccache
           doom-flake.nixosModules.default
           chaotic.nixosModules.default
           nixarr.nixosModules.default
