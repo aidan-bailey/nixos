@@ -36,31 +36,31 @@
     HibernateDelaySec=20min
   '';
 
-  systemd.services.hibernate-on-low-battery = {
-    description = "Hibernate when battery critically low";
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = pkgs.writeShellScript "hibernate-on-low-battery" ''
-        CAP_FILE=/sys/class/power_supply/BAT0/capacity
-        STAT_FILE=/sys/class/power_supply/BAT0/status
-        [ -r "$CAP_FILE" ] || exit 0
-        CAP=$(cat "$CAP_FILE")
-        STAT=$(cat "$STAT_FILE" 2>/dev/null || echo Unknown)
-        if [ "$STAT" = "Discharging" ] && [ "$CAP" -le 5 ]; then
-          systemctl hibernate
-        fi
-      '';
-    };
-  };
+  #systemd.services.hibernate-on-low-battery = {
+  #  description = "Hibernate when battery critically low";
+  #  serviceConfig = {
+  #    Type = "oneshot";
+  #    ExecStart = pkgs.writeShellScript "hibernate-on-low-battery" ''
+  #      CAP_FILE=/sys/class/power_supply/BAT0/capacity
+  #      STAT_FILE=/sys/class/power_supply/BAT0/status
+  #      [ -r "$CAP_FILE" ] || exit 0
+  #      CAP=$(cat "$CAP_FILE")
+  #      STAT=$(cat "$STAT_FILE" 2>/dev/null || echo Unknown)
+  #      if [ "$STAT" = "Discharging" ] && [ "$CAP" -le 5 ]; then
+  #        systemctl hibernate
+  #      fi
+  #    '';
+  #  };
+  #};
 
-  systemd.timers.hibernate-on-low-battery = {
-    wantedBy = [ "timers.target" ];
-    timerConfig = {
-      OnBootSec = "2min";
-      OnUnitActiveSec = "2min";
-      AccuracySec = "30s";
-    };
-  };
+  #systemd.timers.hibernate-on-low-battery = {
+  #  wantedBy = [ "timers.target" ];
+  #  timerConfig = {
+  #    OnBootSec = "2min";
+  #    OnUnitActiveSec = "2min";
+  #    AccuracySec = "30s";
+  #  };
+  #};
 
   services.logind.settings.Login = {
     lidSwitch = "hibernate";
