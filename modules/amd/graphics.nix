@@ -23,8 +23,13 @@
     ];
   };
 
+  environment.variables = {
+    LIBVA_DRIVER_NAME = "radeonsi";
+  };
+
 
   environment.systemPackages = with pkgs; [
+    libva-utils
     lact
     glxinfo
     radeontop
