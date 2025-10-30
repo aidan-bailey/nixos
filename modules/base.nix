@@ -21,6 +21,7 @@ let
     zstd
     smartmontools
     geeqie
+    pciutils
   ];
 
 in
