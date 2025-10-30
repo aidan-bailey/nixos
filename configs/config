@@ -17,14 +17,18 @@ font pango:monospace 11
 # 'dex -ae sway' will only start entries matching this session
 exec_always dex -ae sway
 
-# Ensure systemd user services (like portals) inherit the Sway env
-set $envfix dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP=sway XDG_SESSION_DESKTOP=sway
+### Environment & portals
+# Make systemd user services aware of Sway's Wayland environment
+exec_always dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway XDG_SESSION_DESKTOP=sway SWAYSOCK
 
-exec_always $envfix
-exec_always systemctl --user restart xdg-desktop-portal-wlr.service
-exec_always systemctl --user restart xdg-desktop-portal.service
+# Import these vars into systemd so it can start portals correctly
+exec_always systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP SWAYSOCK
 
-exec_always waybar
+# Start (not restart) the portals once Wayland is ready
+exec_always systemctl --user start xdg-desktop-portal-wlr.service
+exec_always systemctl --user start xdg-desktop-portal.service
+
+exec waybar
 
 # Wallpaper (feh -> swaybg)
 # exec_always swaybg --image /home/$USER/.config/i3/images/bg_2.jpg --mode fill
