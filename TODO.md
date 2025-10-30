@@ -6,14 +6,17 @@
 - [ ] The best WhatsApp application candidate
 - [ ] Supernote support on Nixos
 - [ ] Building TuneD for optimised VM
+- [ ] AI dmenu alternative
+
+## Bugfix
+- [ ] Screen sharing
 
 ## Configuration
 - [ ] sccache
 - [ ] Email (Thunderbird)
 - [ ] Calendar (Thunderbird)
 - [ ] Slack
-- [ ] Automount secondary M.2
-- [ ] Swap to Flake to pin packages
+- [ ] Screenshotting
 
 ## Packages
 - [ ] Swap from Firefox to Zen
