@@ -6,11 +6,17 @@
 }:
 
 let
+
+  
+  firefoxWrapped = (pkgs.wrapFirefox (pkgs.firefox-unwrapped.override {
+      pipewireSupport = true;
+    }) {});
+
   apps = with pkgs; [
     thunderbird
     protonmail-bridge
     discord
-    firefox
+    firefoxWrapped
     spotify
     vlc
     mupdf
