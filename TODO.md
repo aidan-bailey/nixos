@@ -15,9 +15,14 @@
 - [ ] Automount secondary M.2
 - [ ] Swap to Flake to pin packages
 
+## Packages
+- [ ] Swap from Firefox to Zen
+
 ## Wayland
 - [ ] Wallpaper
 - [ ] Float Picture-in-Picture windows
 - [ ] Screenshotting
 - [ ] Change font for doom
 
+## Module Structure
+- [ ] Segment sway.nix into sway.nix and wayland.nix
