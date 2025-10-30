@@ -23,6 +23,13 @@
 
   chaotic.hdr.enable = true;
 
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    pulse.enable = true;
+    jack.enable = true;
+  };
+
   programs.sway = {
     enable = true;
     package = pkgs.sway_git;
@@ -31,6 +38,14 @@
     extraSessionCommands = "
     	export XDG_CURRENT_DESKTOP=sway
 	export XDG_SESSION_DESKTOP=sway
+    	export GTK_THEME=Adwaita:dark
+    	export QT_QPA_PLATFORMTHEME=gtk3
+    	export SDL_VIDEODRIVER=wayland
+    	export QT_QPA_PLATFORM=wayland
+    	export XDG_SESSION_TYPE=wayland
+    	export CLUTTER_BACKEND=wayland
+    	export NIXOS_OZONE_WL=1
+    	export MOZ_ENABLE_WAYLAND=1
     ";
 
     extraPackages = with pkgs; [
@@ -66,6 +81,7 @@
     XDG_SESSION_TYPE = "wayland";
     CLUTTER_BACKEND = "wayland";
     NIXOS_OZONE_WL = "1";
+    MOZ_ENABLE_WAYLAND = "1";
   };
 
   programs.waybar.enable = true;
@@ -88,10 +104,10 @@
 
   systemd.user.services.kanshi = {
     description = "kanshi daemon";
-    #environment = {
-    #  WAYLAND_DISPLAY="wayland-1";
-    #  DISPLAY = ":0";
-    #};
+    environment = {
+      WAYLAND_DISPLAY="wayland-1";
+      DISPLAY = ":0";
+    };
     serviceConfig = {
       Type = "simple";
       ExecStart = ''${pkgs.kanshi}/bin/kanshi -c /home/aidanb/.config/kanshi/config'';
