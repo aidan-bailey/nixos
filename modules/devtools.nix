@@ -17,9 +17,12 @@ let
 
   devlibs = with pkgs; [
     # Essentials
+    ffmpeg
     direnv
     libtool
     cmake
+    clang
+    llvm
     gnumake
     gcc
     stdenv
