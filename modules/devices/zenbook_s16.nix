@@ -9,7 +9,7 @@
 
   imports = [
     ../amd/graphics.nix
-    ../amd/zen5.nix
+    ../amd/cpu.nix
   ];
 
   # Script to unload/load Wi-Fi around sleep/hibernate
