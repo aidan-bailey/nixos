@@ -63,15 +63,11 @@
   #};
 
   services.logind.settings.Login = {
-    lidSwitch = "hibernate";
-    lidSwitchExternalPower = "suspend-then-hibernate";
-    extraConfig = ''
-        # If some apps inhibit sleep, ignore the inhibitor on lid close:
-        LidSwitchIgnoreInhibited=yes
-        # If you want a delay when using suspend-then-hibernate:
-      	IdleAction=suspend-then-hibernate
-      	IdleActionSec=30min
-    '';
+    HandleLidSwitch = "suspend-then-hibernate";
+    HandleLidSwitchExternalPower = "suspend-then-hibernate";
+    LidSwitchIgnoreInhibited = "yes";
+    IdleAction = "suspend-then-hibernate";
+    IdleActionSec = "30min";
   };
 
 }
