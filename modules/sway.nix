@@ -10,8 +10,9 @@
   nixpkgs.overlays = [
     (final: prev: {
       #wayland = prev.wayland_git;
+      #wlroots = prev.wlroots_git;
       #sdl3 = prev.sdl3.overrideAttrs (_: { doCheck = false; });
-      #xdg-desktop-portal = prev.xdg-desktop-portal.overrideAttrs (_: { doCheck = false; });
+      xdg-desktop-portal-wlr = prev.xdg-desktop-portal-wlr_git;
     })
   ];
 
@@ -19,9 +20,11 @@
     [[ "$(tty)" == /dev/tty1 ]] && sway
   '';
 
+  security.rtkit.enable = true;
+
   services.xserver.enable = false;
 
-  chaotic.hdr.enable = true;
+  #chaotic.hdr.enable = true;
 
   services.pipewire = {
     enable = true;
@@ -60,7 +63,6 @@
       wl-clipboard
       mako
       xdg-desktop-portal-wlr
-      wlr-randr
       networkmanagerapplet
       pavucontrol
       lxappearance
@@ -87,6 +89,7 @@
   programs.waybar.enable = true;
 
   environment.systemPackages = with pkgs; [
+    wf-recorder
     grim
     gnome-keyring
     wdisplays
@@ -118,7 +121,6 @@
     enable = true;
     wlr.enable = true;
     extraPortals = [
-      pkgs.xdg-desktop-portal-wlr
       pkgs.xdg-desktop-portal-gtk
     ];
   };
