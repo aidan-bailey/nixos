@@ -19,5 +19,6 @@
     ../../modules/virtualisation.nix
     ../../modules/power.nix
     ../../modules/mediaserver.nix
+    ../../modules/research.nix
   ];
 }
