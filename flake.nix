@@ -43,5 +43,18 @@
         ];
         specialArgs = { inherit inputs system; };
       };
+      nixosConfigurations.fresco = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          ./hosts/fresco/configuration.nix
+          doom-flake.nixosModules.default
+          chaotic.nixosModules.default
+          nixarr.nixosModules.default
+          {
+            nixpkgs.config.allowUnfree = true;
+          }
+        ];
+        specialArgs = { inherit inputs system; };
+      };
     };
 }
