@@ -64,10 +64,12 @@ let
   ];
 
   ldlibs = with pkgs; [
+    brotli
     stdenv.cc.cc
     zlib
     zstd
     glib
+    gcc
     libGL
     libxkbcommon
     fontconfig
