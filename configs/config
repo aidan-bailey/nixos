@@ -52,10 +52,10 @@ bindsym XF86MonBrightnessUp exec brightnessctl set +10%
 bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 
 output * {
-  adaptive_sync on
-  render_bit_depth 10
-  hdr on
-  bg ~/Media/Pictures/wallpaper.jpg fill
+  #adaptive_sync on
+  #render_bit_depth 10
+  #hdr on
+  #bg ~/Media/Pictures/wallpaper.jpg fill
 }
 
 # timeout 600 'swaymsg "output * power off"' \
