@@ -9,7 +9,11 @@
 
   chaotic.mesa-git.enable = true;
 
-  boot.initrd.kernelModules = [ "amdgpu" ];
+  boot.initrd.kernelModules = [ 
+    "amdgpu"
+    "amdgpu.dc=1"
+    "amdgpu.ppfeaturemask=0xffffffff"
+  ];
   hardware.amdgpu.initrd.enable = lib.mkDefault true;
   
   services.xserver.videoDrivers = [ "amdgpu" ];
