@@ -99,6 +99,7 @@
     gnome-themes-extra
     adwaita-icon-theme
     adwaita-qt
+    wayvnc
   ];
 
   services.gnome.gnome-keyring.enable = true;
@@ -138,13 +139,5 @@
   console.useXkbConfig = true;
 
   services.xrdp.enable = lib.mkForce false;
-
-  # Example to try:
-  # services.wayvnc = {
-  #   enable = true;
-  #   users = [ "aidanb" ];
-  #   openFirewall = true;
-  #   settings = { address = "0.0.0.0"; };
-  # };
 
 }
