@@ -5,6 +5,8 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/kernel/cachyos.nix
+    ../../modules/amd/cpu.nix
+    ../../modules/nvidia/graphics.nix
     ../../modules/base.nix
     ../../modules/sway.nix
     ../../modules/apps.nix
