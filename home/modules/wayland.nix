@@ -51,6 +51,7 @@
   # Sway configuration
   # Manage sway config file from configs/config
   xdg.configFile."sway/config".source = ../../configs/sway;
+  xdg.configFile."sway/wallpaper.jpg".source = ../../resources/wallpaper.jpg;
 
   # Kanshi display profile daemon (user service)
   systemd.user.services.kanshi = {

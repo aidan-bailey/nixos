@@ -31,7 +31,7 @@ exec_always systemctl --user start xdg-desktop-portal.service
 exec waybar
 
 # Wallpaper (feh -> swaybg)
-# exec_always swaybg --image /home/$USER/.config/i3/images/bg_2.jpg --mode fill
+exec_always swaybg --image ~/.config/sway/wallpaper.jpg --mode fill
 
 # Applets (Waybar has a tray, these will dock there)
 exec_always nm-applet
@@ -55,7 +55,6 @@ output * {
   #adaptive_sync on
   #render_bit_depth 10
   #hdr on
-  #bg ~/Media/Pictures/wallpaper.jpg fill
 }
 
 # timeout 600 'swaymsg "output * power off"' \
