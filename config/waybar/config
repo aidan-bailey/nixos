@@ -1,9 +1,9 @@
 {
   "position": "bottom",
   "height": 24,
-  "modules-left": ["sway/workspaces", "sway/mode", "sway/scratchpad", "custom/media"],
+  "modules-left": ["sway/workspaces", "sway/mode", "sway/scratchpad"],
   "modules-center": ["sway/window"],
-  "modules-right": ["mpd", "idle_inhibitor", "temperature", "cpu", "memory","network", "pulseaudio", "backlight", "keyboard-state", "battery", "battery#bat2", "tray", "clock"],
+  "modules-right": ["mpd", "idle_inhibitor", "temperature", "cpu", "memory","network", "pulseaudio", "backlight", "battery", "tray", "clock"],
   "keyboard-state": {
       "numlock": true,
       "capslock": true,
@@ -95,9 +95,6 @@
       "format-plugged": " {capacity}%",
       "format-alt": "{icon} {time}",
       "format-icons": ["", "", "", "", ""]
-  },
-  "battery#bat2": {
-      "bat": "BAT2"
   },
   "network": {
       "format-wifi": "{essid} ({signalStrength}%) ",
