@@ -1,4 +1,5 @@
 {
+  "ipc": true,
   "position": "bottom",
   "height": 24,
   "modules-left": ["sway/workspaces", "sway/mode", "sway/scratchpad"],

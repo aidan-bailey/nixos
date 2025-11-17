@@ -226,3 +226,11 @@ input type:touchpad {
     pointer_accel 0.3
 }
 
+bar {
+    swaybar_command waybar
+    position bottom
+    mode hide 
+    hidden_state hide
+    modifier Mod4
+}
+
