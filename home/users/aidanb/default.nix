@@ -23,6 +23,11 @@
   home.username = "aidanb";
   home.homeDirectory = "/home/aidanb";
 
+  programs.git = {
+    userName = "Aidan Bailey";
+    userEmail = "dev@aidanbailey.me";
+  };
+
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new Home Manager release introduces backwards

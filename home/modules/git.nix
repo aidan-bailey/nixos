@@ -5,10 +5,6 @@
   programs.git = {
     enable = true;
     
-    # Uncomment and fill in your details:
-    # userName = "Aidan Bailey";
-    # userEmail = "your@email.com";
-    
     # Git settings (aliases and config merged)
     settings = {
       # Aliases
