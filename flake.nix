@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     doom-flake.url = "path:./flakes/doom-emacs";
     nixarr.url = "github:rasmus-kirk/nixarr";
     #ccache-flake.url = "path:./flakes/ccache";
@@ -14,6 +18,7 @@
     {
       self,
       nixpkgs,
+      home-manager,
       doom-flake,
       #ccache-flake,
       chaotic,
@@ -37,8 +42,12 @@
           chaotic.nixosModules.default
           nixarr.nixosModules.default
           #gcc-lto-pgo.nixosModules.default
+          home-manager.nixosModules.home-manager
           {
             nixpkgs.config.allowUnfree = true;
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.aidanb = import ./home/users/aidanb;
           }
         ];
         specialArgs = { inherit inputs system; };
@@ -50,8 +59,12 @@
           doom-flake.nixosModules.default
           chaotic.nixosModules.default
           nixarr.nixosModules.default
+          home-manager.nixosModules.home-manager
           {
             nixpkgs.config.allowUnfree = true;
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.aidanb = import ./home/users/aidanb;
           }
         ];
         specialArgs = { inherit inputs system; };

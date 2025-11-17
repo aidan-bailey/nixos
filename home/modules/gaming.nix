@@ -1,12 +1,7 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, pkgs, ... }:
 
 {
-
+  # Steam gaming configuration
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
@@ -19,9 +14,10 @@
     ];
   };
 
-  environment.systemPackages = with pkgs; [
+  # Gaming applications
+  home.packages = with pkgs; [
     steam
     cockatrice
   ];
-
 }
+

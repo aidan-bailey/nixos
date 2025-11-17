@@ -6,27 +6,15 @@
 }:
 
 {
+  # System-level terminal configuration
+  # User-specific terminal configuration (zsh, alacritty, neovim) now managed via Home Manager
 
+  # Enable zsh at system level (required for it to work as user shell)
+  programs.zsh.enable = true;
+
+  # Keep direnv at system level as it's often needed system-wide
   environment.systemPackages = with pkgs; [
-    alacritty
-    zsh
-    neovim
+    direnv
   ];
-
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-
-    shellAliases = {
-      ll = "ls -l";
-      configure = "nvim /etc/nixos/configuration.nix";
-    };
-
-    ohMyZsh = {
-      enable = true;
-      plugins = [ "git" ];
-      theme = "robbyrussell";
-    };
-  };
 
 }

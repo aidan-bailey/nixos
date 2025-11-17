@@ -1,18 +1,13 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, pkgs, ... }:
 
 let
-
-  
   firefoxWrapped = (pkgs.wrapFirefox (pkgs.firefox-unwrapped.override {
-      pipewireSupport = true;
-    }) {});
-
-  apps = with pkgs; [
+    pipewireSupport = true;
+  }) {});
+in
+{
+  # User applications
+  home.packages = with pkgs; [
     thunderbird
     protonmail-bridge
     discord
@@ -32,17 +27,14 @@ let
     protonmail-bridge-gui
     gimp
   ];
-in
-{
 
-  environment.systemPackages = apps;
-
-  environment.sessionVariables = {
+  # Session variables
+  home.sessionVariables = {
     DEFAULT_BROWSER = "${pkgs.firefox}/bin/firefox";
   };
 
-  # In your configuration.nix
-  xdg.mime = {
+  # Default applications for MIME types
+  xdg.mimeApps = {
     enable = true;
     defaultApplications = {
       "text/html" = [ "firefox.desktop" ];
@@ -54,3 +46,4 @@ in
   };
 
 }
+
