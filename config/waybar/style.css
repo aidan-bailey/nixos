@@ -1,0 +1,5 @@
+* { font-family: monospace; font-size: 12pt; }
+window#waybar { background: #082902; color: #F8F8F2; }
+#workspaces button { color: #BFBFBF; }
+#workspaces button.focused { background: #44475A; color: #F8F8F2; }
+#tray, #pulseaudio, #network, #bluetooth, #battery, #clock { padding: 0 10px; }

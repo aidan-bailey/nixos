@@ -49,9 +49,12 @@
   programs.waybar.enable = true;
 
   # Sway configuration
-  # Manage sway config file from configs/config
-  xdg.configFile."sway/config".source = ../../configs/sway;
-  xdg.configFile."sway/wallpaper.jpg".source = ../../resources/wallpaper.jpg;
+  xdg.configFile."sway/config".source = ../../config/sway/config;
+  xdg.configFile."sway/wallpaper.jpg".source = ../../config/sway/wallpaper.jpg;
+
+  # Waybar configuration
+  xdg.configFile."waybar/config".source = ../../config/waybar/config;
+  xdg.configFile."waybar/style.css".source = ../../config/waybar/style.css;
 
   # Kanshi display profile daemon (user service)
   systemd.user.services.kanshi = {

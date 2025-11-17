@@ -1,0 +1,12 @@
+{
+  "layer": "top",
+  "position": "bottom",
+  "height": 34,
+  "modules-left": ["sway/workspaces", "sway/mode"],
+  "modules-center": [],
+  "modules-right": ["tray", "pulseaudio", "network", "bluetooth", "battery", "clock"],
+  "tray": { "spacing": 8 },
+  "clock": { "format": "{:%a %d %b %H:%M}" },
+  "battery": { "format": "{capacity}% {icon}" },
+  "pulseaudio": { "format": "{volume}% {icon}", "scroll-step": 5 }
+}
