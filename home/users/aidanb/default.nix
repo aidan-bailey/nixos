@@ -14,7 +14,7 @@
     ../../modules/devtools.nix
     ../../modules/research.nix
     ../../modules/apps.nix
-    #../../modules/gaming.nix
+    ../../modules/gaming.nix
     ../../modules/wayland.nix
   ];
 
@@ -23,9 +23,9 @@
   home.username = "aidanb";
   home.homeDirectory = "/home/aidanb";
 
-  programs.git = {
-    userName = "Aidan Bailey";
-    userEmail = "dev@aidanbailey.me";
+  programs.git.settings.user = {
+    name = "Aidan Bailey";
+    email = "dev@aidanbailey.me";
   };
 
   # This value determines the Home Manager release that your

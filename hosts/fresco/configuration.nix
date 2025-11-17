@@ -12,6 +12,7 @@
     ../../modules/bluetooth.nix
     ../../modules/networking.nix
     ../../modules/user.nix
+    ../../modules/gaming.nix
     ../../modules/nix-ld.nix
     ../../modules/virtualisation.nix
     ../../modules/power.nix
