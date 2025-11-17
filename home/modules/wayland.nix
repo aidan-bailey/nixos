@@ -48,7 +48,11 @@
   # Waybar configuration
   programs.waybar.enable = true;
 
-    # Kanshi display profile daemon (user service)
+  # Sway configuration
+  # Manage sway config file from configs/config
+  xdg.configFile."sway/config".source = ../../configs/sway;
+
+  # Kanshi display profile daemon (user service)
   systemd.user.services.kanshi = {
     Unit = {
       Description = "kanshi daemon";
