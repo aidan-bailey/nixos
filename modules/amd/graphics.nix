@@ -7,8 +7,6 @@
 
 {
 
-  chaotic.mesa-git.enable = true;
-
   boot.initrd.kernelModules = [ "amdgpu" ];
   hardware.amdgpu.initrd.enable = lib.mkDefault true;
   
