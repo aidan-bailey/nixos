@@ -6,15 +6,6 @@
 }:
 
 {
-  # Force all packages to use wayland_git instead of stable wayland
-  nixpkgs.overlays = [
-    (final: prev: {
-      #wayland = prev.wayland_git;
-      #wlroots = prev.wlroots_git;
-      #sdl3 = prev.sdl3.overrideAttrs (_: { doCheck = false; });
-      xdg-desktop-portal-wlr = prev.xdg-desktop-portal-wlr_git;
-    })
-  ];
 
   environment.loginShellInit = ''
     [[ "$(tty)" == /dev/tty1 ]] && sway
@@ -23,8 +14,6 @@
   security.rtkit.enable = true;
 
   services.xserver.enable = false;
-
-  #chaotic.hdr.enable = true;
 
   services.pipewire = {
     enable = true;
