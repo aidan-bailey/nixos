@@ -16,6 +16,8 @@
     slurp
     wl-clipboard
     mako
+    libnotify
+    xdg-user-dirs
     xdg-desktop-portal-wlr
     networkmanagerapplet
     pavucontrol
@@ -70,6 +72,26 @@
       ExecStart = ''${pkgs.kanshi}/bin/kanshi -c ${config.home.homeDirectory}/.config/kanshi/config'';
     };
   };
+
+  # Configure XDG user directories
+  # This sets up the standard directories (Pictures, Documents, etc.)
+  # Customized to match your Media directory structure from init.sh
+  # Note: XDG only supports standard directory types (PICTURES, MUSIC, etc.)
+  # Custom directories like "screenshots" aren't part of the XDG spec
+  xdg.userDirs = {
+    enable = true;
+    documents = "${config.home.homeDirectory}/Documents";
+    download = "${config.home.homeDirectory}/Downloads";
+    music = "${config.home.homeDirectory}/Media/Music";
+    pictures = "${config.home.homeDirectory}/Media/Pictures";
+    videos = "${config.home.homeDirectory}/Media/Videos";
+    desktop = "${config.home.homeDirectory}/Desktop";
+    publicShare = "${config.home.homeDirectory}/Public";
+    templates = "${config.home.homeDirectory}/Templates";
+  };
+
+  # Custom environment variable for screenshots directory
+  home.sessionVariables.SCREENSHOTS_DIR = "${config.home.homeDirectory}/Media/Pictures/Screenshots";
 
 }
 
