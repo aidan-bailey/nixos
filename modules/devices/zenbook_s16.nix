@@ -12,6 +12,8 @@
     ../amd/cpu.nix
   ];
 
+  chaotic.hdr.enable = true;
+
   # Script to unload/load Wi-Fi around sleep/hibernate
   # Specific to MT7925e Wi-Fi module in Zenbook S16
   environment.etc."systemd/system-sleep/mt7925e".text = ''
