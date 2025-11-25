@@ -36,6 +36,7 @@
   # Fonts (system-level)
   fonts.packages = with pkgs; [
     nerd-fonts.noto
+    libsecret
   ];
 
   xdg.portal = {
