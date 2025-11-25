@@ -28,6 +28,9 @@ exec_always systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESK
 exec_always systemctl --user start xdg-desktop-portal-wlr.service
 exec_always systemctl --user start xdg-desktop-portal.service
 
+# Initialize the keyring daemon and export the variables it creates
+exec --no-startup-id /run/current-system/sw/bin/gnome-keyring-daemon --start --components=secrets
+
 exec waybar
 
 # Wallpaper (feh -> swaybg)
