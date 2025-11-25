@@ -5,6 +5,8 @@
   home.packages = with pkgs; [
     texliveFull
     zotero
+    typst
+    tinymist
   ];
 }
 
