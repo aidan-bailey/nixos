@@ -42,6 +42,7 @@
                 #python3Packages.pyflakes
                 #python3Packages.isort
                 #python3Packages.pytest
+		            epkgs.treesit-grammars.with-all-grammars
               ];
             })
             doomPkgs.shellcheck
