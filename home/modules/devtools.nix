@@ -18,6 +18,8 @@ let
     cmake
     clang
     llvm
+    curl
+    pkg-config
     gnumake
     # gcc removed - conflicts with clang (both provide bin/ld)
     # stdenv removed - not a user package, it's the build environment
@@ -56,6 +58,8 @@ let
     # Rust
     rustup
     lldb
+    autoconf
+    automake
   ];
 in
 {
