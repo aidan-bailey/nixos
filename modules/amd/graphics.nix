@@ -17,7 +17,7 @@
     extraPackages = with pkgs; [
       mesa
       libvdpau-va-gl
-      vaapiVdpau
+      libva-vdpau-driver
     ];
   };
 
@@ -29,9 +29,8 @@
   environment.systemPackages = with pkgs; [
     libva-utils
     lact
-    glxinfo
-    radeontop
     mesa-demos
+    radeontop
     vulkan-tools
     glmark2
     libva
