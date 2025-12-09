@@ -105,11 +105,3 @@
   :config
   (setq typst-ts-mode-indent-config '((tab-width . 2)))
   )
-
-(use-package! typst-preview
-  :after typst-ts-mode ; Ensure it loads after the major mode
-  :config
-  (setq typst-preview-autostart t    ; Start preview automatically
-        typst-preview-open-browser-automatically t ; Open browser
-        typst-preview-executable "tinymist") ; Check your binary name
-  (add-hook 'typst-ts-mode-hook 'typst-preview-mode))
