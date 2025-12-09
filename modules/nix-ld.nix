@@ -13,6 +13,11 @@ let
     zstd
     glib
     gcc
+    curl.dev
+    gtk2
+    cairo
+    pkg-config
+    openssl
     libGL
     libxkbcommon
     fontconfig
