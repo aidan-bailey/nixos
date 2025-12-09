@@ -22,6 +22,7 @@ let
     smartmontools
     geeqie
     pciutils
+    usbutils
   ];
 
 in
