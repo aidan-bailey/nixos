@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, system, ... }:
 
 let
   tools = with pkgs; [
@@ -35,6 +35,8 @@ let
     # Nix
     nixd
     nixfmt-rfc-style
+    # Antigravity
+    inputs.antigravity-nix.packages.${system}.default
     # JS
     nodejs_22
     # DB

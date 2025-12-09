@@ -10,6 +10,10 @@
     };
     doom-flake.url = "path:./flakes/doom-emacs";
     nixarr.url = "github:rasmus-kirk/nixarr";
+    antigravity-nix = {
+      url = "github:jacopone/antigravity-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     #ccache-flake.url = "path:./flakes/ccache";
     #gcc-lto-pgo.url = "path:./flakes/gcc-lto-pgo";
   };
@@ -23,6 +27,7 @@
       #ccache-flake,
       chaotic,
       nixarr,
+      antigravity-nix,
       #gcc-lto-pgo,
       ...
     }@inputs:
@@ -47,6 +52,7 @@
             nixpkgs.config.allowUnfree = true;
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { inherit inputs system; };
             home-manager.users.aidanb = import ./home/users/aidanb;
           }
         ];
@@ -64,6 +70,7 @@
             nixpkgs.config.allowUnfree = true;
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { inherit inputs system; };
             home-manager.users.aidanb = import ./home/users/aidanb;
           }
         ];
