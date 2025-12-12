@@ -51,6 +51,7 @@ let
     virtiofsd
     # Python
     python3 # Full
+    python314FreeThreading
     pyright
     pyenv
     semgrep
