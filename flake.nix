@@ -14,6 +14,10 @@
       url = "github:jacopone/antigravity-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    harbour = {
+      url = "github:ankerdata/harbour-3.2.0core";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     #ccache-flake.url = "path:./flakes/ccache";
     #gcc-lto-pgo.url = "path:./flakes/gcc-lto-pgo";
   };
@@ -28,6 +32,7 @@
       chaotic,
       nixarr,
       antigravity-nix,
+      harbour,
       #gcc-lto-pgo,
       ...
     }@inputs:
