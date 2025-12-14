@@ -37,13 +37,14 @@ let
     nixfmt-rfc-style
     # Antigravity
     inputs.antigravity-nix.packages.${system}.default
-    #(inputs.harbour.lib.mkHarbour {
-    #  inherit pkgs;
-    #  buildOpts = {
-    #    enableFreeImage = false;
-    #    enableCurl = true;
-    #  };
-    #})
+    (inputs.harbour.lib.mkHarbour {
+      inherit pkgs;
+      buildOpts = {
+        enableFreeImage = false;
+        enableCurl = true;
+        enableOpenSSL = true;
+      };
+    })
     # JS
     nodejs_22
     # DB
