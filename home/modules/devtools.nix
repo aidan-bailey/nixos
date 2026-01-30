@@ -8,6 +8,7 @@ let
     slack
     vscode
     code-cursor
+    opencode
   ];
 
   devlibs = with pkgs; [
@@ -28,6 +29,7 @@ let
     shfmt
     shellcheck
     nodePackages.bash-language-server
+    nodePackages.pnpm
     # Markdown
     uv
     pandoc
