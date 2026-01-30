@@ -24,7 +24,8 @@
       "networkmanager"
       "wheel"
       "docker"
-      # "input" "video" # add if some Wayland apps complain about permissions
+      #"input"
+      "video" # add if some Wayland apps complain about permissions
     ];
     shell = pkgs.zsh;
     openssh.authorizedKeys.keys = [
