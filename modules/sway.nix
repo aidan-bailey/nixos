@@ -24,7 +24,7 @@
 
   programs.sway = {
     enable = true;
-    package = pkgs.sway_git;
+    package = pkgs.sway;
     wrapperFeatures.gtk = true;
     xwayland.enable = true;
   };
