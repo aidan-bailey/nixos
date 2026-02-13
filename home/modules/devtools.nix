@@ -10,6 +10,7 @@ let
     #zed-editor-fhs
     code-cursor
     opencode
+    google-cloud-sdk
   ];
 
   devlibs = with pkgs; [
