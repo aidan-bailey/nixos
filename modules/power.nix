@@ -30,8 +30,8 @@
     [Sleep]
     HibernateMode=shutdown
     AllowSuspend=yes
-    AllowHibernation=yes
-    AllowSuspendThenHibernate=yes
+    AllowHibernation=no
+    AllowSuspendThenHibernate=no
     AllowHybridSleep=no
     HibernateDelaySec=20min
   '';
