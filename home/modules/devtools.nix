@@ -1,4 +1,11 @@
-{ config, pkgs, inputs, system, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  system,
+  ...
+}:
 
 let
   tools = with pkgs; [
@@ -7,9 +14,10 @@ let
     remmina
     slack
     vscode
-    #zed-editor-fhs
+    # zed-editor-fhs # Don't use this if using programs.zed-editor
     code-cursor
     opencode
+    claude-code
     google-cloud-sdk
   ];
 
@@ -24,21 +32,23 @@ let
     curl
     pkg-config
     gnumake
-    # gcc removed - conflicts with clang (both provide bin/ld)
-    # stdenv removed - not a user package, it's the build environment
     mold
+
     # Shell
     shfmt
     shellcheck
     nodePackages.bash-language-server
     nodePackages.pnpm
+
     # Markdown
     uv
     pandoc
     marksman
+
     # Nix
     nixd
     nixfmt-rfc-style
+
     # Antigravity
     inputs.antigravity-nix.packages.${system}.default
     (inputs.harbour.lib.mkHarbour {
@@ -51,6 +61,7 @@ let
     })
     # JS
     nodejs_22
+
     # DB
     postgresql
     dbeaver-bin
@@ -62,8 +73,7 @@ let
     libosinfo
     virtiofsd
     # Python
-    python3 # Full
-    (lib.lowPrio python314FreeThreading)
+    python3
     pyright
     pyenv
     semgrep
@@ -71,58 +81,116 @@ let
     # XML
     libxslt
     # Rust
-    rustup
+    rustup # For the toolchain (cargo, rustc)
     lldb
     autoconf
     automake
   ];
 in
 {
-  # Development tools and libraries
+  # 1. Install all tools and libraries
   home.packages = tools ++ devlibs;
 
+  # 2. Configure Zed
   programs.zed-editor = {
-      enable = true;
-      # These extensions will be automatically installed
-      extensions = [ "opencode" "rust" "python" "ruff" "toml" "direnv" ];
+    enable = true;
 
-      userSettings = {
-        vim_mode = true;
-        ui_font_size = 16;
-        buffer_font_size = 14;
-        theme = "One Dark"; # Or your preferred theme
+    # Note: On NixOS, auto-installing extensions can sometimes fail
+    # (the "gzip" error in your logs). If this persists, comment this list out
+    # and install them manually inside Zed once, then let Nix manage the config.
+    extensions = [
+      "rust"
+      "python"
+      "toml"
+      "direnv"
+      "make"
+      "nix"
+    ];
 
-        # Language specific settings
-        languages = {
-          Python = {
-            language_servers = [ "pyright" "ruff" ];
-            format_on_save = "on";
-          };
-          Rust = {
-            language_servers = [ "rust-analyzer" ];
-            format_on_save = "on";
+    userSettings = {
+      vim_mode = true;
+      ui_font_size = 16;
+      buffer_font_size = 14;
+      theme = "One Dark";
+
+      # Environment setup
+      load_direnv = "direct"; # Uses the direnv extension
+
+      # Language specific settings
+      languages = {
+        Python = {
+          language_servers = [
+            "pyright"
+            "ruff"
+          ];
+          format_on_save = "on";
+          formatter = {
+            external = {
+              command = "${pkgs.ruff}/bin/ruff";
+              arguments = [
+                "format"
+                "--stdin-filename"
+                "{buffer_path}"
+              ];
+            };
           };
         };
-
-        # Force Zed to use Nix-provided binaries
-        lsp = {
-          rust-analyzer = {
-            binary = { path = "${pkgs.rust-analyzer}/bin/rust-analyzer"; };
-          };
-          pyright = {
-            binary = { path = "${pkgs.pyright}/bin/pyright-langserver"; arguments = [ "--stdio" ]; };
-          };
-
+        Rust = {
+          language_servers = [ "rust-analyzer" ];
+          format_on_save = "on";
         };
-        
-        load_direnv = "shell_hook";
-
-
+        Nix = {
+          language_servers = [ "nixd" ];
+          format_on_save = "on";
+        };
       };
+
+      userKeymaps = [
+        {
+          context = "Editor && menu_open";
+          bindings = {
+            "tab" = "menu::SelectNext";
+            "shift-tab" = "menu::SelectPrev";
+          };
+        }
+      ];
+
+      # HARDCORE LSP PATHS
+      # This fixes the "Invalid gzip header" / Download errors
+      # by forcing Zed to use the binaries installed by Nix.
+      lsp = {
+        rust-analyzer = {
+          binary = {
+            path = "${pkgs.rust-analyzer}/bin/rust-analyzer";
+          };
+        };
+
+        pyright = {
+          binary = {
+            path = "${pkgs.pyright}/bin/pyright-langserver";
+            arguments = [ "--stdio" ];
+          };
+        };
+
+        ruff = {
+          binary = {
+            path = "${pkgs.ruff}/bin/ruff";
+            # IMPORTANT: Ruff needs 'server' to act as an LSP
+            arguments = [ "server" ];
+          };
+        };
+
+        nixd = {
+          binary = {
+            path = "${pkgs.nixd}/bin/nixd";
+          };
+        };
+      };
+    };
   };
+
   # Session variables
   home.sessionVariables = {
     LD = "mold";
   };
 }
-
