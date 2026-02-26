@@ -19,6 +19,8 @@ let
     opencode
     claude-code
     google-cloud-sdk
+    gemini-cli
+    popsicle
   ];
 
   devlibs = with pkgs; [
