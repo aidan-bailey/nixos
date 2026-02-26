@@ -84,5 +84,23 @@
         ];
         specialArgs = { inherit inputs system; };
       };
+      nixosConfigurations.medesco = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          ./hosts/medesco/configuration.nix
+          doom-flake.nixosModules.default
+          chaotic.nixosModules.default
+          nixarr.nixosModules.default
+          home-manager.nixosModules.home-manager
+          {
+            nixpkgs.config.allowUnfree = true;
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { inherit inputs system; };
+            home-manager.users.aidanb = import ./home/users/aidanb;
+          }
+        ];
+        specialArgs = { inherit inputs system; };
+      };
     };
 }

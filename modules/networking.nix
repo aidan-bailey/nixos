@@ -9,7 +9,7 @@
 
   networking = {
     networkmanager.enable = true;
-    hostName = "nesco";
+    hostName = lib.mkDefault "nesco";
     extraHosts = ''
       192.168.122.23 winesco
     '';
