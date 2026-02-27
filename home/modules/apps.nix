@@ -22,8 +22,7 @@ in
     bitwarden-menu
     element-desktop
     zoom-us
-    xfce.thunar
-    protonmail-bridge
+    thunar
     protonmail-bridge-gui
     gimp
   ];

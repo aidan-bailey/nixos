@@ -36,6 +36,10 @@
   # Fonts (system-level)
   fonts.packages = with pkgs; [
     nerd-fonts.noto
+  ];
+
+  # Secrets management
+  environment.systemPackages = with pkgs; [
     libsecret
   ];
 

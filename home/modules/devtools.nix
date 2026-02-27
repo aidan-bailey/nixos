@@ -48,7 +48,7 @@ let
 
     # Nix
     nixd
-    nixfmt-rfc-style
+    nixfmt
 
     # Antigravity
     inputs.antigravity-nix.packages.${system}.default

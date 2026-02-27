@@ -6,6 +6,8 @@
 }:
 
 {
+  # Enable zsh system-wide (required when setting user shell to zsh)
+  programs.zsh.enable = true;
 
   # Locale + TZ.
   time.timeZone = "Africa/Johannesburg";
