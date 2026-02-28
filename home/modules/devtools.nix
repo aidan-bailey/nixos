@@ -22,6 +22,12 @@ let
     gemini-cli
   ];
 
+  # mkZedLsp: Build a Zed LSP config pointing at a Nix-provided binary.
+  # Fixes "Invalid gzip header" errors by bypassing Zed's auto-download.
+  mkZedLsp = { pkg, bin ? pkg.pname or (builtins.parseDrvName pkg.name).name, args ? [] }: {
+    binary = { path = "${pkg}/bin/${bin}"; } // lib.optionalAttrs (args != []) { arguments = args; };
+  };
+
   devlibs = with pkgs; [
     # Essentials
     ffmpeg
@@ -156,36 +162,12 @@ in
         }
       ];
 
-      # HARDCORE LSP PATHS
-      # This fixes the "Invalid gzip header" / Download errors
-      # by forcing Zed to use the binaries installed by Nix.
+      # Nix-provided LSP paths — bypasses Zed's auto-download
       lsp = {
-        rust-analyzer = {
-          binary = {
-            path = "${pkgs.rust-analyzer}/bin/rust-analyzer";
-          };
-        };
-
-        pyright = {
-          binary = {
-            path = "${pkgs.pyright}/bin/pyright-langserver";
-            arguments = [ "--stdio" ];
-          };
-        };
-
-        ruff = {
-          binary = {
-            path = "${pkgs.ruff}/bin/ruff";
-            # IMPORTANT: Ruff needs 'server' to act as an LSP
-            arguments = [ "server" ];
-          };
-        };
-
-        nixd = {
-          binary = {
-            path = "${pkgs.nixd}/bin/nixd";
-          };
-        };
+        rust-analyzer = mkZedLsp { pkg = pkgs.rust-analyzer; };
+        pyright = mkZedLsp { pkg = pkgs.pyright; bin = "pyright-langserver"; args = [ "--stdio" ]; };
+        ruff = mkZedLsp { pkg = pkgs.ruff; args = [ "server" ]; };
+        nixd = mkZedLsp { pkg = pkgs.nixd; };
       };
     };
   };
