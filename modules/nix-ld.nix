@@ -7,38 +7,48 @@
 
 let
   ldlibs = with pkgs; [
-    brotli
-    stdenv.cc.cc
-    zlib
-    zstd
-    glib
-    gcc
-    curl.dev
-    gtk2
-    cairo
-    pkg-config
-    openssl
-    libGL
-    libxkbcommon
-    fontconfig
-    libx11 # keep for some legacy apps (via XWayland)
-    freetype
-    dbus
-    libkrb5
-    krb5
-    libpulseaudio
-    libxcb
-    libxcb-image
-    libxcb-keysyms
-    libxcb-wm
-    libxcb-cursor # this is the "xcb-cursor0 / libxcb-cursor0" that Qt demands
-    # NEW: PipeWire for QtMultimedia (6.9 tries pipewire-0.3)
-    pipewire
-    # Wayland client libs (helpful even if you use xcb via XWayland sometimes)
-    wayland
-    wayland-protocols
-    # Optional but sometimes needed for decorations on Wayland:
-    libdecor
+    # Core C/C++ runtime and compression — needed by most dynamically-linked binaries
+    stdenv.cc.cc # libstdc++
+    gcc          # libgcc_s
+    zlib         # general-purpose compression (curl, git, Python, etc.)
+    zstd         # Zstandard compression (systemd, btrfs tools)
+    brotli       # HTTP content encoding (curl, browsers)
+
+    # Networking and security
+    curl.dev     # libcurl headers (code-cursor, various dev tools)
+    openssl      # TLS/SSL (curl, Python requests, Node.js)
+    libkrb5      # Kerberos auth (remmina, code-cursor)
+    krb5         # Kerberos client libraries
+
+    # Graphics and rendering
+    libGL        # OpenGL (Steam, gaming, GPU-accelerated apps)
+    cairo        # 2D graphics (GTK apps, Zed, Firefox)
+    freetype     # Font rendering (most GUI apps)
+    fontconfig   # Font discovery (most GUI apps)
+
+    # GUI toolkit dependencies
+    gtk2         # GTK2 apps (some legacy tools, Steam)
+    glib         # GLib (GTK apps, D-Bus clients)
+    dbus         # D-Bus IPC (desktop apps, system services)
+    pkg-config   # build-time dependency resolution
+
+    # X11/XCB — needed for XWayland compatibility
+    libx11       # legacy X11 apps via XWayland
+    libxkbcommon # keyboard handling (Sway, Wayland clients, Zed)
+    libxcb       # X protocol C bindings (Qt, Electron apps)
+    libxcb-image   # XCB image extension (Qt)
+    libxcb-keysyms # XCB key symbols (Qt)
+    libxcb-wm      # XCB window management (Qt)
+    libxcb-cursor  # xcb-cursor0 — required by Qt6
+
+    # Audio
+    libpulseaudio # PulseAudio client (Electron apps, Steam, Discord)
+    pipewire      # PipeWire client — QtMultimedia 6.9+ requires pipewire-0.3
+
+    # Wayland
+    wayland          # Wayland client protocol (native Wayland apps)
+    wayland-protocols # Wayland protocol extensions
+    libdecor         # client-side window decorations on Wayland
   ];
 in
 {
