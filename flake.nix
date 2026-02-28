@@ -52,19 +52,41 @@
         }
       ];
 
-      # mkHost: Takes a host-specific config, merges it with commonModules
-      # (doom-flake, chaotic, nixarr, home-manager), and builds a NixOS system.
-      mkHost = hostConfig: nixpkgs.lib.nixosSystem {
+      # Module profiles — composable sets of system modules.
+      # serverModules: minimal headless base (medesco)
+      # desktopModules: full desktop with gaming, audio, Sway (nesco, fresco)
+      serverModules = [
+        ./modules/base.nix
+        ./modules/user.nix
+        ./modules/networking.nix
+        ./modules/terminal.nix
+        ./modules/mediaserver.nix
+      ];
+
+      desktopModules = serverModules ++ [
+        ./modules/kernel/cachyos.nix
+        ./modules/sway.nix
+        ./modules/audio.nix
+        ./modules/bluetooth.nix
+        ./modules/gaming.nix
+        ./modules/nix-ld.nix
+        ./modules/virtualisation.nix
+        ./modules/power.nix
+      ];
+
+      # mkHost: Takes a host config and a module profile, merges with
+      # commonModules (flake inputs), and builds a NixOS system.
+      mkHost = { hostConfig, profile }: nixpkgs.lib.nixosSystem {
         inherit system;
-        modules = [ hostConfig ] ++ commonModules;
+        modules = [ hostConfig ] ++ profile ++ commonModules;
         specialArgs = { inherit inputs system; };
       };
     in
     {
       nixosConfigurations = {
-        nesco = mkHost ./hosts/nesco/configuration.nix;
-        fresco = mkHost ./hosts/fresco/configuration.nix;
-        medesco = mkHost ./hosts/medesco/configuration.nix;
+        nesco = mkHost { hostConfig = ./hosts/nesco/configuration.nix; profile = desktopModules; };
+        fresco = mkHost { hostConfig = ./hosts/fresco/configuration.nix; profile = desktopModules; };
+        medesco = mkHost { hostConfig = ./hosts/medesco/configuration.nix; profile = serverModules; };
       };
     };
 }
