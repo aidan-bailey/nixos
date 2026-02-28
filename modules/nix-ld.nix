@@ -21,17 +21,17 @@ let
     libGL
     libxkbcommon
     fontconfig
-    xorg.libX11 # keep for some legacy apps (via XWayland)
+    libx11 # keep for some legacy apps (via XWayland)
     freetype
     dbus
     libkrb5
     krb5
     libpulseaudio
-    xorg.libxcb
-    xorg.xcbutilimage
-    xorg.xcbutilkeysyms
-    xorg.xcbutilwm
-    xorg.xcbutilcursor # this is the "xcb-cursor0 / libxcb-cursor0" that Qt demands
+    libxcb
+    libxcb-image
+    libxcb-keysyms
+    libxcb-wm
+    libxcb-cursor # this is the "xcb-cursor0 / libxcb-cursor0" that Qt demands
     # NEW: PipeWire for QtMultimedia (6.9 tries pipewire-0.3)
     pipewire
     # Wayland client libs (helpful even if you use xcb via XWayland sometimes)
