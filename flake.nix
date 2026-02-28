@@ -21,8 +21,6 @@
       url = "github:ankerdata/harbour-3.2.0core";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    #ccache-flake.url = "path:./flakes/ccache";
-    #gcc-lto-pgo.url = "path:./flakes/gcc-lto-pgo";
   };
 
   outputs =
@@ -31,23 +29,19 @@
       nixpkgs,
       home-manager,
       doom-flake,
-      #ccache-flake,
       chaotic,
       nixarr,
       antigravity-nix,
       harbour,
-      #gcc-lto-pgo,
       ...
     }@inputs:
     let
       system = "x86_64-linux";
 
       commonModules = [
-        #ccache-flake.nixosModules.ccache
         doom-flake.nixosModules.default
         chaotic.nixosModules.default
         nixarr.nixosModules.default
-        #gcc-lto-pgo.nixosModules.default
         home-manager.nixosModules.home-manager
         {
           nixpkgs.config.allowUnfree = true;
@@ -58,6 +52,8 @@
         }
       ];
 
+      # mkHost: Takes a host-specific config, merges it with commonModules
+      # (doom-flake, chaotic, nixarr, home-manager), and builds a NixOS system.
       mkHost = hostConfig: nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [ hostConfig ] ++ commonModules;

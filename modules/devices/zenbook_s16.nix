@@ -29,7 +29,6 @@
   ];
 
   # Force suspend (s2idle) instead of hibernate/hybrid-sleep to rule out hibernation issues
-  # Force suspend (s2idle) instead of hibernate/hybrid-sleep to rule out hibernation issues
   services.logind.settings.Login.HandleLidSwitch = lib.mkForce "suspend";
 
 }
