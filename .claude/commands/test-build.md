@@ -1,0 +1,1 @@
+Run `nixos-rebuild build --flake .#nesco 2>&1`, `nixos-rebuild build --flake .#fresco 2>&1`, and `nixos-rebuild build --flake .#medesco 2>&1` (in parallel). Report the result for each host: success or failure. If any build fails, show the relevant error output and identify the root cause. Do not attempt to fix errors — only report them.
