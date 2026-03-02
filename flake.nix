@@ -21,6 +21,10 @@
       url = "github:ankerdata/harbour-3.2.0core";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -33,6 +37,7 @@
       nixarr,
       antigravity-nix,
       harbour,
+      sops-nix,
       ...
     }@inputs:
     let
@@ -42,11 +47,13 @@
         doom-flake.nixosModules.default
         chaotic.nixosModules.default
         nixarr.nixosModules.default
+        sops-nix.nixosModules.sops
         home-manager.nixosModules.home-manager
         {
           nixpkgs.config.allowUnfree = true;
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
+          home-manager.sharedModules = [ sops-nix.homeManagerModules.sops ];
           home-manager.extraSpecialArgs = { inherit inputs system; };
           home-manager.users.aidanb = import ./home/users/aidanb;
         }
@@ -61,6 +68,7 @@
         ./modules/networking.nix
         ./modules/terminal.nix
         ./modules/mediaserver.nix
+        ./modules/secrets.nix
       ];
 
       desktopModules = serverModules ++ [
@@ -76,17 +84,28 @@
 
       # mkHost: Takes a host config and a module profile, merges with
       # commonModules (flake inputs), and builds a NixOS system.
-      mkHost = { hostConfig, profile }: nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = [ hostConfig ] ++ profile ++ commonModules;
-        specialArgs = { inherit inputs system; };
-      };
+      mkHost =
+        { hostConfig, profile }:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [ hostConfig ] ++ profile ++ commonModules;
+          specialArgs = { inherit inputs system; };
+        };
     in
     {
       nixosConfigurations = {
-        nesco = mkHost { hostConfig = ./hosts/nesco/configuration.nix; profile = desktopModules; };
-        fresco = mkHost { hostConfig = ./hosts/fresco/configuration.nix; profile = desktopModules; };
-        medesco = mkHost { hostConfig = ./hosts/medesco/configuration.nix; profile = serverModules; };
+        nesco = mkHost {
+          hostConfig = ./hosts/nesco/configuration.nix;
+          profile = desktopModules;
+        };
+        fresco = mkHost {
+          hostConfig = ./hosts/fresco/configuration.nix;
+          profile = desktopModules;
+        };
+        medesco = mkHost {
+          hostConfig = ./hosts/medesco/configuration.nix;
+          profile = serverModules;
+        };
       };
     };
 }

@@ -179,4 +179,10 @@ in
     LD = "mold";
     RUSTC_WRAPPER = "${pkgs.sccache}/bin/sccache";
   };
+
+  # Secrets
+  sops.secrets.claude_code_oauth_token = {};
+  home.sessionVariablesExtra = ''
+    export CLAUDE_CODE_OAUTH_TOKEN="$(cat ${config.sops.secrets.claude_code_oauth_token.path})"
+  '';
 }
