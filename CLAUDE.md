@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A flake-based NixOS configuration for three hosts (nesco, fresco, medesco) targeting AMD Zen 5 hardware. Uses nixos-unstable, CachyOS kernel, home-manager, and Wayland/Sway.
+A flake-based NixOS configuration for three hosts (nesco, fresco, medesco) targeting AMD Zen 5 hardware. Uses nixos-unstable, CachyOS kernel, home-manager, sops-nix, and Wayland/Sway.
 
 ## Common Commands
 
@@ -37,11 +37,16 @@ nixfmt .
 
 ### Host / Module Split
 
-The flake defines a `mkHost` helper that combines a host-specific config with `commonModules` (chaotic, doom-flake, nixarr, home-manager). Each host imports only the system modules it needs:
+The flake defines a `mkHost` helper that combines a host-specific config with `commonModules` (chaotic, doom-flake, nixarr, home-manager, sops-nix). Module composition is done via two profiles defined in `flake.nix`:
 
-- **nesco** — Full desktop: Sway, gaming, audio, bluetooth, virtualisation, power, mediaserver, Zenbook S16 device module
-- **fresco** — Same as nesco without device-specific module
-- **medesco** — Minimal server: base, user, networking, terminal, mediaserver only
+- **serverModules** — base, user, networking, terminal, mediaserver, secrets
+- **desktopModules** — serverModules + cachyos kernel, sway, audio, bluetooth, gaming, nix-ld, virtualisation, power
+
+Each host selects a profile:
+
+- **nesco** — desktopModules + Zenbook S16 device module
+- **fresco** — desktopModules (no device-specific module)
+- **medesco** — serverModules only
 
 ### Two-Layer Module System
 
@@ -51,21 +56,31 @@ The flake defines a `mkHost` helper that combines a host-specific config with `c
 
 ### Key Modules
 
-- `modules/amd/zen5.nix` — Imports cpu.nix, sets `-march=znver5` compiler flags globally and patches the kernel for znver5
-- `modules/devices/zenbook_s16.nix` — Imports AMD graphics+CPU modules, adds device-specific kernel params and power behavior
-- `modules/sway.nix` — Enables Sway at system level with PipeWire, XDG portals, GNOME keyring, fonts; auto-starts Sway on tty1
-- `home/modules/wayland.nix` — User-side Sway config, Waybar, and Wayland tools; sources config files from `config/sway/` and `config/waybar/`
-- `home/modules/devtools.nix` — Development tools and Zed editor configuration with hardcoded LSP paths (nixd, pyright, ruff, rust-analyzer)
+- `modules/amd/zen5.nix` — Imports cpu.nix, sets `-march=znver5` compiler flags globally, patches kernel for znver5, sets RUSTFLAGS and GOAMD64
+- `modules/devices/zenbook_s16.nix` — Imports AMD graphics+CPU modules, enables HDR, asusd fan control, device-specific kernel params (PSR disable, RCU tuning)
+- `modules/base.nix` — Core system packages, zram swap (zstd, 50%), tmpfs /tmp, CUPS printing
+- `modules/networking.nix` — NetworkManager, encrypted DNS-over-TLS (1.1.1.1, 9.9.9.9), mDNS via Avahi, nftables firewall, SSH
+- `modules/audio.nix` — PipeWire with Bluetooth codec support (SBC-XQ, LDAC, aptX, aptX-HD)
+- `modules/sway.nix` — Enables Sway at system level with XDG portals, GNOME keyring, fonts (Nerd Fonts), OLED font rendering; auto-starts Sway on tty1
+- `modules/secrets.nix` — SOPS-nix with age encryption for system-level secrets
+- `home/modules/wayland.nix` — User-side Sway config, Waybar, Wayland tools, Gammastep night light, HiDPI cursor, polkit agent; sources config files from `config/sway/` and `config/waybar/`
+- `home/modules/devtools.nix` — Dev tools, Zed editor with vim mode and LSP configs (nixd, pyright, ruff, rust-analyzer), sccache, mold linker
+- `home/modules/secrets.nix` — SOPS-nix home-manager module for user secrets
 
 ### Config Files
 
 Static configuration files for Sway and Waybar live in `config/sway/` and `config/waybar/`. They are referenced by home-manager via `home.file` in `home/modules/wayland.nix`.
 
+### Secrets
+
+Encrypted secrets are managed by sops-nix with age encryption. Secrets live in `secrets/` (secrets.yaml for system, home.yaml for user). Key configuration is in `.sops.yaml`. The system keyfile is at `/var/lib/sops-nix/key.txt`, the user keyfile at `~/.config/sops/age/keys.txt`.
+
 ### Flake Inputs of Note
 
-- **chaotic** (CachyOS/nyx) — Provides optimized CachyOS kernel
+- **chaotic** (CachyOS/nyx) — Provides optimized CachyOS kernel and overlays
 - **doom-flake** (local, `flakes/doom-emacs/`) — Doom Emacs with PGTK + native-comp
 - **nixarr** — Media server stack (Jellyfin, Sonarr, Radarr, etc.)
+- **sops-nix** — Encrypted secrets management
 - **antigravity-nix**, **harbour** — Compilation optimization tools, exposed as packages in devtools
 
 ### Patterns
@@ -73,4 +88,5 @@ Static configuration files for Sway and Waybar live in `config/sway/` and `confi
 - Modules use `let` blocks to organize package lists before assigning them
 - `lib.mkForce` is used to explicitly disable unwanted services (picom, xrdp, xen)
 - Package overrides are done inline with `overrideAttrs` (see Cockatrice in `home/modules/gaming.nix`, Xen in `modules/virtualisation.nix`)
-- The user is `aidanb` with groups: wheel, docker, libvirtd, networkmanager
+- Module composition profiles (serverModules, desktopModules) are defined in `flake.nix` and shared across hosts
+- The user is `aidanb` with groups: wheel, docker, libvirtd, networkmanager, video
