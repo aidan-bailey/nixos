@@ -37,6 +37,7 @@ let
     clang
     llvm
     curl
+    gh
     pkg-config
     gnumake
     mold
@@ -89,6 +90,7 @@ let
     libxslt
     # Rust
     rustup # For the toolchain (cargo, rustc)
+    sccache # Rust compilation caching
     lldb
     autoconf
     automake
@@ -175,5 +177,6 @@ in
   # Session variables
   home.sessionVariables = {
     LD = "mold";
+    RUSTC_WRAPPER = "${pkgs.sccache}/bin/sccache";
   };
 }

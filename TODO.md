@@ -12,7 +12,7 @@
 - [ ] Screen sharing
 
 ## Configuration
-- [ ] sccache
+- [x] sccache
 - [ ] Email (Thunderbird)
 - [ ] Calendar (Thunderbird)
 - [ ] Slack
