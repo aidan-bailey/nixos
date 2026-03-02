@@ -29,4 +29,10 @@
     "rcu_nocbs=all"              # Offload RCU callbacks from all CPUs
   ];
 
+  # ASUS-specific daemon (fan profiles, platform profile switching)
+  services.asusd = {
+    enable = true;
+    enableUserService = true;
+  };
+
 }
