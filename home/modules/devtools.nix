@@ -178,6 +178,7 @@ in
   home.sessionVariables = {
     LD = "mold";
     RUSTC_WRAPPER = "${pkgs.sccache}/bin/sccache";
+    CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "true";
   };
 
   # Secrets
