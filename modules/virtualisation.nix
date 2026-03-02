@@ -6,6 +6,9 @@
 }:
 
 let
+  primaryUser = builtins.head (builtins.attrNames
+    (lib.filterAttrs (_: u: u.isNormalUser && builtins.elem "wheel" u.extraGroups) config.users.users));
+
   xenPatch = builtins.toFile "fix-xen.patch" ''
   diff --git a/xen/arch/x86/boot/Makefile b/xen/arch/x86/boot/Makefile
 index d45787665907..80c32163fbbd 100644
@@ -54,17 +57,22 @@ in
   };
 
 
-  # Enable Samba server
+  # Enable Samba server (VM bridge only)
   services.samba = {
     enable = true;
     settings = {
+      global = {
+        "interfaces" = "virbr0";
+        "bind interfaces only" = true;
+      };
       vmshare = {
         path = "/srv/vm-shared";
         browseable = true;
         "read only" = false;
-        "guest ok" = true;
-        "create mask" = "0666"; # permissions for new files
-        "directory mask" = "0777"; # permissions for new folders
+        "guest ok" = false;
+        "valid users" = primaryUser;
+        "create mask" = "0644";
+        "directory mask" = "0755";
       };
     };
   };
@@ -72,7 +80,8 @@ in
   system.activationScripts.createVmShare = {
     text = ''
       mkdir -p /srv/vm-shared
-      chmod 777 /srv/vm-shared
+      chown ${primaryUser}:users /srv/vm-shared
+      chmod 755 /srv/vm-shared
     '';
   };
 
