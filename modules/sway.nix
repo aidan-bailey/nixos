@@ -36,7 +36,22 @@
   # Fonts (system-level)
   fonts.packages = with pkgs; [
     nerd-fonts.noto
+    noto-fonts
+    noto-fonts-color-emoji
   ];
+
+  # Font rendering for OLED (no subpixels)
+  fonts.fontconfig = {
+    antialias = true;
+    hinting = {
+      enable = true;
+      style = "slight";
+    };
+    subpixel = {
+      rgba = "none";
+      lcdfilter = "none";
+    };
+  };
 
   # Secrets management
   environment.systemPackages = with pkgs; [

@@ -33,6 +33,15 @@
     wayvnc
   ];
 
+  # HiDPI cursor (Adwaita at 1.5x = 36)
+  home.pointerCursor = {
+    name = "Adwaita";
+    package = pkgs.adwaita-icon-theme;
+    size = 36;
+    gtk.enable = true;
+    x11.enable = true;
+  };
+
   # Wayland session variables
   home.sessionVariables = {
     GTK_THEME = "Adwaita:dark";
@@ -45,6 +54,20 @@
     MOZ_ENABLE_WAYLAND = "1";
     XDG_CURRENT_DESKTOP = "sway";
     XDG_SESSION_DESKTOP = "sway";
+    XCURSOR_SIZE = "36";
+  };
+
+  # Night light (color temperature adjustment)
+  services.gammastep = {
+    enable = true;
+    provider = "manual";
+    latitude = -33.9;
+    longitude = 18.4;
+    temperature = {
+      day = 6500;
+      night = 3500;
+    };
+    tray = true;
   };
 
   # Waybar configuration

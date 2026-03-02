@@ -55,14 +55,11 @@ exec_always swayidle -w \
 bindsym XF86MonBrightnessUp exec brightnessctl set +10%
 bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 
-output * {
-  #adaptive_sync on
-  #render_bit_depth 10
-  #hdr on
+### Output (Zenbook S16 OLED 2880x1800)
+output eDP-1 {
+  scale 1.5
+  adaptive_sync on
 }
-
-# timeout 600 'swaymsg "output * power off"' \
-# resume 'swaymsg "output * power on"' \
 
 ### Input (keyboard layout like your XKB settings)
 input * {
@@ -199,15 +196,13 @@ bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && $
 bindsym XF86AudioMute        exec wpctl set-mute   @DEFAULT_AUDIO_SINK@ toggle && $refresh
 bindsym XF86AudioMicMute     exec wpctl set-mute   @DEFAULT_AUDIO_SOURCE@ toggle && $refresh
 
-# Optional brightness keys (requires brightnessctl)
-# bindsym XF86MonBrightnessUp   exec brightnessctl set +10%
-# bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
-
-### Screenshots (grim + slurp)
-# Fullscreen - saves to Screenshots subdirectory
-bindsym Print exec bash -c 'SCREENSHOTS_DIR="${SCREENSHOTS_DIR:-$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Pictures")}/Screenshots" && FILE="$SCREENSHOTS_DIR/screenshot-$(date +%F_%H-%M-%S).png" && grim "$FILE" && notify-send "Screenshot saved" "$FILE"'
-# Select area
-bindsym Shift+Print exec bash -c 'SCREENSHOTS_DIR="${SCREENSHOTS_DIR:-$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Pictures")}/Screenshots" && FILE="$SCREENSHOTS_DIR/screenshot-$(date +%F_%H-%M-%S).png" && grim -g "$(slurp)" "$FILE" && notify-send "Screenshot saved" "$FILE"'
+### Screenshots (grim + slurp + clipboard)
+# Fullscreen - saves to file and copies to clipboard
+bindsym Print exec bash -c 'SCREENSHOTS_DIR="${SCREENSHOTS_DIR:-$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Pictures")}/Screenshots" && FILE="$SCREENSHOTS_DIR/screenshot-$(date +%F_%H-%M-%S).png" && grim "$FILE" && wl-copy < "$FILE" && notify-send "Screenshot saved & copied" "$FILE"'
+# Select area - saves to file and copies to clipboard
+bindsym Shift+Print exec bash -c 'SCREENSHOTS_DIR="${SCREENSHOTS_DIR:-$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Pictures")}/Screenshots" && FILE="$SCREENSHOTS_DIR/screenshot-$(date +%F_%H-%M-%S).png" && grim -g "$(slurp)" "$FILE" && wl-copy < "$FILE" && notify-send "Screenshot saved & copied" "$FILE"'
+# Quick area screenshot to clipboard only
+bindsym $mod+Shift+s exec grim -g "$(slurp)" - | wl-copy
 
 ### Colors (ported from your i3 theme)
 # class                 border   bground  text     indicator child_border
@@ -229,6 +224,15 @@ input type:touchpad {
     accel_profile adaptive
     pointer_accel 0.3
 }
+
+### Touchpad gestures (sway 1.8+)
+bindgesture swipe:right workspace prev
+bindgesture swipe:left workspace next
+bindgesture swipe:up exec $menu
+bindgesture swipe:down exec $term
+
+### Cursor (HiDPI)
+seat seat0 xcursor_theme Adwaita 36
 
 bar {
     swaybar_command waybar
