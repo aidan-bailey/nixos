@@ -25,10 +25,8 @@
     "resume=/dev/disk/by-uuid/8debf292-09a9-44aa-a9db-6a556aefb609"
     "amdgpu.dcdebugmask=0x600"   # Disables Panel Self Refresh (Critical for Zenbook S16)
     "amdgpu.sg_display=0"        # Fixes white/flashing screen artifacts (Recommended)
-    #"mem_sleep_default=deep"
+    "rcutree.enable_rcu_lazy=1"  # Batch RCU callbacks for 5-10% idle power savings
+    "rcu_nocbs=all"              # Offload RCU callbacks from all CPUs
   ];
-
-  # Force suspend (s2idle) instead of hibernate/hybrid-sleep to rule out hibernation issues
-  services.logind.settings.Login.HandleLidSwitch = lib.mkForce "suspend";
 
 }

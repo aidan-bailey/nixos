@@ -48,7 +48,8 @@ exec_always kanshi
 # Idle + lock (xss-lock/i3lock -> swayidle/swaylock)
 exec_always swayidle -w \
   timeout 300 'swaylock -f' \
-  timeout 600 'systemctl suspend-then-hibernate' \
+  timeout 600 'swaymsg "output * power off"' \
+  resume 'swaymsg "output * power on"' \
   before-sleep 'swaylock -f'
 
 bindsym XF86MonBrightnessUp exec brightnessctl set +10%
