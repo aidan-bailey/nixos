@@ -15,6 +15,7 @@
     wlr-randr
     slurp
     wl-clipboard
+    cliphist
     mako
     libnotify
     xdg-user-dirs
@@ -31,6 +32,8 @@
     adwaita-icon-theme
     adwaita-qt
     wayvnc
+    sway-audio-idle-inhibit
+    polkit_gnome
   ];
 
   # HiDPI cursor (Adwaita at 1.5x = 36)
@@ -81,19 +84,18 @@
   xdg.configFile."waybar/config".source = ../../config/waybar/config;
   xdg.configFile."waybar/style.css".source = ../../config/waybar/style.css;
 
-  # Kanshi display profile daemon (user service)
-  systemd.user.services.kanshi = {
+  # Polkit authentication agent for GUI privilege escalation
+  systemd.user.services.polkit-gnome = {
     Unit = {
-      Description = "kanshi daemon";
+      Description = "PolicyKit Authentication Agent";
+      After = [ "graphical-session.target" ];
     };
     Service = {
       Type = "simple";
-      Environment = [
-        "WAYLAND_DISPLAY=wayland-1"
-        "DISPLAY=:0"
-      ];
-      ExecStart = ''${pkgs.kanshi}/bin/kanshi -c ${config.home.homeDirectory}/.config/kanshi/config'';
+      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+      Restart = "on-failure";
     };
+    Install.WantedBy = [ "graphical-session.target" ];
   };
 
   # Configure XDG user directories

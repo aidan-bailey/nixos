@@ -42,8 +42,14 @@ exec_always blueman-applet
 # If you like a volume tray, pasystray works well:
 # exec pasystray
 
-# Display profiles (xrandr -> kanshi). See kanshi config below.
+# Display profiles
 exec_always kanshi
+
+# Clipboard history
+exec wl-paste --watch cliphist store
+
+# Prevent idle lock while audio is playing
+exec sway-audio-idle-inhibit
 
 # Idle + lock (xss-lock/i3lock -> swayidle/swaylock)
 exec_always swayidle -w \
@@ -188,6 +194,9 @@ popup_during_fullscreen smart
 
 ### App shortcuts
 bindsym $mod+Shift+f exec thunar
+
+### Clipboard history
+bindsym $mod+Shift+v exec cliphist list | wofi --dmenu --prompt "clipboard:" | cliphist decode | wl-copy
 
 ### Media keys (PipeWire)
 set $refresh killall -SIGUSR1 waybar
