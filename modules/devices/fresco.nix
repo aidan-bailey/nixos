@@ -95,7 +95,28 @@
     "w /sys/devices/system/cpu/cpufreq/policy*/energy_performance_preference - - - - performance"
   ];
 
-  # EXT4 noatime on root
-  fileSystems."/".options = [ "noatime" ];
+  # EXT4 mount tuning
+  fileSystems."/".options = [
+    "noatime"
+    "commit=60"
+  ];
+  fileSystems."/tb".options = [
+    "noatime"
+    "commit=60"
+  ];
+
+  # Weekly TRIM for NVMe longevity
+  services.fstrim.enable = true;
+
+  # Nix daemon scheduling — lower priority to avoid starving desktop
+  nix.daemonCPUSchedPolicy = "batch";
+  nix.daemonIOSchedClass = "best-effort";
+  nix.daemonIOSchedPriority = 7;
+
+  # Journal size limits
+  services.journald.extraConfig = ''
+    SystemMaxUse=500M
+    MaxRetentionSec=1month
+  '';
 
 }

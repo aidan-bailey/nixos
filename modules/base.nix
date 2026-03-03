@@ -37,6 +37,14 @@ in
 
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot.configurationLimit = 10;
+
+  # Compress initrd with zstd for faster boot
+  boot.initrd.compressor = "zstd";
+  boot.initrd.compressorArgs = [
+    "-19"
+    "-T0"
+  ];
 
   environment.systemPackages = basePackages;
 
@@ -51,6 +59,13 @@ in
   boot.tmp = {
     useTmpfs = true;
     tmpfsSize = "50%";
+  };
+
+  # Automatic Nix store garbage collection
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
   };
 
   services.printing.enable = true; # CUPS
