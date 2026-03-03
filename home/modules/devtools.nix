@@ -183,7 +183,7 @@ in
 
   # Secrets
   sops.secrets.claude_code_oauth_token = {};
-  home.sessionVariablesExtra = ''
+  programs.zsh.initContent = ''
     export CLAUDE_CODE_OAUTH_TOKEN="$(cat ${config.sops.secrets.claude_code_oauth_token.path})"
   '';
 }
