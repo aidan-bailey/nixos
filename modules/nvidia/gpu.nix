@@ -15,6 +15,7 @@
     powerManagement.finegrained = false;
     open = true;
     nvidiaSettings = true;
+    nvidiaPersistenced = true; # keep driver state loaded — faster app/CUDA launches
     package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
 
@@ -34,10 +35,17 @@
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     WLR_NO_HARDWARE_CURSORS = "1";
     LIBVA_DRIVER_NAME = "nvidia";
+    __GL_SHADER_DISK_CACHE = "1"; # persistent shader cache
+    __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = "1"; # don't prune old shaders
+    CUDA_CACHE_MAXSIZE = "4294967296"; # 4 GB CUDA kernel cache
   };
 
   boot.kernelParams = [
     "nvidia.NVreg_TemporaryFilePath=/var/tmp"
+    "nvidia.NVreg_UsePageAttributeTable=1" # enable PAT — improves memory access patterns
+    "nvidia-drm.fbdev=1" # framebuffer device for console — better VT switching
+    "nvidia.NVreg_InitializeSystemMemoryAllocations=0" # skip zeroing allocations — faster alloc
+    # "nvidia.NVreg_EnableResizableBar=1" # uncomment after enabling ReBAR/Above 4G in BIOS
   ];
 
   environment.systemPackages = with pkgs; [
