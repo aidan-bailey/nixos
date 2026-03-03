@@ -129,4 +129,10 @@
     MaxRetentionSec=1month
   '';
 
+  # sched-ext BPF userspace scheduler — better latency under mixed workloads
+  services.scx = {
+    enable = true;
+    scheduler = "scx_lavd";
+  };
+
 }
