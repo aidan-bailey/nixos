@@ -30,11 +30,11 @@ in
     element-desktop
     zoom-us
     thunar
-    xfce.thunar-volman
-    xfce.thunar-archive-plugin
-    xfce.thunar-media-tags-plugin
-    xfce.xfconf
-    xfce.tumbler
+    thunar-volman
+    thunar-archive-plugin
+    thunar-media-tags-plugin
+    xfconf
+    tumbler
     protonmail-bridge-gui
     gimp
   ];

@@ -25,14 +25,16 @@
   # Encrypted DNS (opportunistic DoT, falls back on captive portals)
   services.resolved = {
     enable = true;
-    dnssec = "allow-downgrade";
-    dnsovertls = "opportunistic";
-    fallbackDns = [
-      "1.1.1.1"
-      "9.9.9.9"
-      "2606:4700:4700::1111"
-      "2620:fe::fe"
-    ];
+    settings.Resolve = {
+      DNSSEC = "allow-downgrade";
+      DNSOverTLS = "opportunistic";
+      FallbackDNS = [
+        "1.1.1.1"
+        "9.9.9.9"
+        "2606:4700:4700::1111"
+        "2620:fe::fe"
+      ];
+    };
   };
 
   # Local network service discovery (.local hostnames)
