@@ -14,7 +14,13 @@
 
   networking.hostName = "fresco";
 
-  nix.settings.system-features = [ "gccarch-znver4" "benchmark" "big-parallel" "kvm" "nixos-test" ];
+  nix.settings.system-features = [
+    "gccarch-znver4"
+    "benchmark"
+    "big-parallel"
+    "kvm"
+    "nixos-test"
+  ];
 
   # Sway NVIDIA support
   programs.sway.extraOptions = [ "--unsupported-gpu" ];
@@ -33,8 +39,10 @@
   boot.extraModprobeConfig = "options mt7921e disable_aspm=1";
 
   boot.kernelParams = [
-    "mitigations=off"
     "transparent_hugepage=madvise"
+    "iommu=pt" # passthrough mode — reduces IOMMU overhead for direct device access
+    "split_lock_detect=off" # avoid performance penalty from split-lock #AC exceptions
+    "workqueue.power_efficient=0" # prefer performance over power saving for workqueues
   ];
 
   # Nix build tuning for 8-core workstation
@@ -54,6 +62,10 @@
     "vm.dirty_ratio" = 10;
     "vm.dirty_background_ratio" = 5;
     "kernel.sched_autogroup_enabled" = 1;
+    "kernel.nmi_watchdog" = 0; # disable NMI watchdog — saves a perf counter and reduces overhead
+    "vm.max_map_count" = 1048576; # needed by some games/apps (e.g. Star Citizen, Electron)
+    "vm.compaction_proactiveness" = 0; # disable proactive compaction — reduces latency spikes
+    "vm.watermark_boost_factor" = 0; # disable watermark boosting — avoids unnecessary reclaim
   };
 
   # NVMe I/O scheduler: none (NVMe has internal scheduling)
@@ -67,10 +79,21 @@
     freeMemThreshold = 5;
     freeSwapThreshold = 10;
     extraArgs = [
-      "--prefer" "^(cc1|cc1plus|ld|rustc|cargo)$"
-      "--avoid" "^(sway|waybar|firefox|emacs)$"
+      "--prefer"
+      "^(cc1|cc1plus|ld|rustc|cargo)$"
+      "--avoid"
+      "^(sway|waybar|firefox|emacs)$"
     ];
   };
+
+  # IRQ balancing across cores (with NixOS ProtectKernelTunables workaround)
+  services.irqbalance.enable = true;
+  systemd.services.irqbalance.serviceConfig.ProtectKernelTunables = lib.mkForce false;
+
+  # Force AMD EPP to performance on all cores at boot
+  systemd.tmpfiles.rules = [
+    "w /sys/devices/system/cpu/cpufreq/policy*/energy_performance_preference - - - - performance"
+  ];
 
   # EXT4 noatime on root
   fileSystems."/".options = [ "noatime" ];
