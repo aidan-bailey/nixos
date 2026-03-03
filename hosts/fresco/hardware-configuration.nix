@@ -27,6 +27,14 @@
   fileSystems."/tb" =
     { device = "/dev/disk/by-uuid/79138be4-b23e-46b5-8b8e-cd0f077b089a";
       fsType = "ext4";
+      neededForBoot = true;
+    };
+
+  fileSystems."/nix" =
+    { device = "/tb/nix";
+      fsType = "none";
+      options = ["bind"];
+      depends = [ "/tb" ];
     };
 
   swapDevices = [ ];
