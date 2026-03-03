@@ -76,8 +76,7 @@
   # Waybar configuration
   programs.waybar.enable = true;
 
-  # Sway configuration
-  xdg.configFile."sway/config".source = ../../config/sway/config;
+  # Sway configuration (per-host config sourced from home/hosts/<host>.nix)
   xdg.configFile."sway/wallpaper.jpg".source = ../../config/sway/wallpaper.jpg;
 
   # Waybar configuration

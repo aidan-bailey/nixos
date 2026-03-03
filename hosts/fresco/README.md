@@ -1,6 +1,6 @@
 # fresco
 
-Secondary system — same desktop stack as nesco without device-specific tweaks.
+Desktop workstation — AMD Zen 4 + NVIDIA on MSI B650M Mortar WiFi.
 
 ## Profile
 
@@ -8,7 +8,15 @@ Secondary system — same desktop stack as nesco without device-specific tweaks.
 
 ## Device Module
 
-None. Uses the desktop module profile directly without any hardware-specific overrides. The `hardware-configuration.nix` should be regenerated with `nixos-generate-config` for the target machine.
+`modules/devices/fresco.nix` — Zen 4 CPU optimizations (`-march=znver4`), NVIDIA GPU (Sway with `--unsupported-gpu`), LCD subpixel font rendering, MT7922 WiFi ASPM workaround, performance CPU governor, NVMe I/O scheduler tuning, earlyoom, and workstation build settings (4 jobs x 4 cores).
+
+## Hardware
+
+- **CPU**: AMD Ryzen 7 7700X
+- **GPU**: NVIDIA RTX 3070
+- **Motherboard**: MSI B650M Mortar WiFi
+- **WiFi**: MediaTek MT7922/mt7921e
+- **Storage**: NVMe (EXT4) + 1TB secondary (`/tb`)
 
 ## Build
 
