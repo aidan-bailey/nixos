@@ -8,7 +8,10 @@
 {
 
   networking = {
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      wifi.powersave = false; # disable WiFi power saving — reduces latency
+    };
     hostName = lib.mkDefault "nesco";
     extraHosts = ''
       192.168.122.23 winesco
