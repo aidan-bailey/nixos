@@ -28,26 +28,6 @@ echo "Configuring system for host: $HOSTNAME"
 
 SRCDIR="$HOME/Source"
 MEDIADIR="$HOME/Media"
-CURDIR=$(pwd)
-
-NIXCFG=$(pwd)/$HOSTDIR/configuration.nix
-I3CFG=$(pwd)/configs/config
-ZSHRC=$(pwd)/configs/zshrc
-HOMECFG=$(pwd)/home.nix
-FLAKECFG=$(pwd)/flake.nix
-HARDWARECFG=/etc/nixos/hardware-configuration.nix
-HARDWARECFGSRC=$(pwd)/$HOSTDIR/hardware-configuration.nix
-
-NIXTRG="/etc/nixos/configuration.nix"
-FLAKETRG="/etc/nixos/flake.nix"
-HARDWARETRG="$HOME/System/$HOSTDIR/hardware-configuration.nix"
-I3CFGTRG="$HOME/.config/i3/config"
-ZSHRCTRG="$HOME/.zshrc"
-#HOMECFGTRG="$HOME/.config/home-manager/home.nix"
-
-#####################
-# ARRANGE MEDIA DIR #
-#####################
 
 if ! [ -d "$SRCDIR" ]; then
     mkdir "$SRCDIR"
@@ -76,25 +56,7 @@ moveifexists "$HOME/Pictures" "$MEDIADIR/Pictures"
 moveifexists "$HOME/Music" "$MEDIADIR/Music"
 moveifexists "$HOME/Videos" "$MEDIADIR/Videos"
 
-############## #
-# SETUP LINKS #
-###############
 
-sudo ln -sfn "$NIXCFG" "$NIXTRG"
-sudo ln -sfn "$FLAKECFG" "$FLAKETRG"
-
-if ! [ -f "$HARDWARETRG" ]; then
-    sudo cp -f "$HARDWARECFGSRC" "$HARDWARETRG"
-    sudo ln -sfn "$HARDWARETRG" "$HARDWARECFG"
-fi
-
-ln -sfn "$I3CFG" "$I3CFGTRG"
-ln -sfn "$ZSHRC" "$ZSHRCTRG"
-mkdir -p "$HOME/.config/home-manager"
-#ln -s "$HOMECFG" "$HOMECFGTRG"
+#mkdir -p "$HOME/.config/home-manager"
 
 echo "Configuration complete"
-
-################
-# HOME MANAGER #
-################

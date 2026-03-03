@@ -1,0 +1,18 @@
+keys:
+  - &nesco age1kpq2nfhl9uly2e7nfl0sc5gd4w5m760w50l4ex0pvgx4cwhxhaysrf0l5f
+
+creation_rules:
+  - path_regex: secrets/secrets\.yaml$
+    key_groups:
+      - age:
+          - *nesco
+
+  - path_regex: secrets/home\.yaml$
+    key_groups:
+      - age:
+          - *nesco
+
+  - path_regex: secrets/nesco\.yaml$
+    key_groups:
+      - age:
+          - *nesco

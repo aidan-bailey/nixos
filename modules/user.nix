@@ -6,6 +6,8 @@
 }:
 
 {
+  # Enable zsh system-wide (required when setting user shell to zsh)
+  programs.zsh.enable = true;
 
   # Locale + TZ.
   time.timeZone = "Africa/Johannesburg";
@@ -24,7 +26,8 @@
       "networkmanager"
       "wheel"
       "docker"
-      # "input" "video" # add if some Wayland apps complain about permissions
+      #"input"
+      "video" # add if some Wayland apps complain about permissions
     ];
     shell = pkgs.zsh;
     openssh.authorizedKeys.keys = [

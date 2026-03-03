@@ -29,10 +29,13 @@ exec_always systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESK
 exec_always systemctl --user start xdg-desktop-portal-wlr.service
 exec_always systemctl --user start xdg-desktop-portal.service
 
+# Initialize the keyring daemon and export the variables it creates
+exec --no-startup-id /run/current-system/sw/bin/gnome-keyring-daemon --start --components=secrets
+
 exec waybar
 
 # Wallpaper (feh -> swaybg)
-# exec_always swaybg --image /home/$USER/.config/i3/images/bg_2.jpg --mode fill
+exec_always swaybg --image ~/.config/sway/wallpaper.jpg --mode fill
 
 # Applets (Waybar has a tray, these will dock there)
 exec_always nm-applet
@@ -40,27 +43,30 @@ exec_always blueman-applet
 # If you like a volume tray, pasystray works well:
 # exec pasystray
 
-# Display profiles (xrandr -> kanshi). See kanshi config below.
+# Display profiles
 exec_always kanshi
+
+# Clipboard history
+exec wl-paste --watch cliphist store
+
+# Prevent idle lock while audio is playing
+exec sway-audio-idle-inhibit
 
 # Idle + lock (xss-lock/i3lock -> swayidle/swaylock)
 exec_always swayidle -w \
   timeout 300 'swaylock -f' \
-  timeout 600 'systemctl suspend-then-hibernate' \
+  timeout 600 'swaymsg "output * power off"' \
+  resume 'swaymsg "output * power on"' \
   before-sleep 'swaylock -f'
 
 bindsym XF86MonBrightnessUp exec brightnessctl set +10%
 bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 
-output * {
-  #adaptive_sync on
-  #render_bit_depth 10
-  #hdr on
-  #bg ~/Media/Pictures/wallpaper.jpg fill
+### Output (Zenbook S16 OLED 2880x1800)
+output eDP-1 {
+  scale 1.5
+  adaptive_sync on
 }
-
-# timeout 600 'swaymsg "output * power off"' \
-# resume 'swaymsg "output * power on"' \
 
 ### Input (keyboard layout like your XKB settings)
 input * {
@@ -190,6 +196,9 @@ popup_during_fullscreen smart
 ### App shortcuts
 bindsym $mod+Shift+f exec thunar
 
+### Clipboard history
+bindsym $mod+Shift+v exec cliphist list | wofi --dmenu --prompt "clipboard:" | cliphist decode | wl-copy
+
 ### Media keys (PipeWire)
 set $refresh killall -SIGUSR1 waybar
 bindsym XF86AudioRaiseVolume exec wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+ && $refresh
@@ -197,15 +206,13 @@ bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && $
 bindsym XF86AudioMute        exec wpctl set-mute   @DEFAULT_AUDIO_SINK@ toggle && $refresh
 bindsym XF86AudioMicMute     exec wpctl set-mute   @DEFAULT_AUDIO_SOURCE@ toggle && $refresh
 
-# Optional brightness keys (requires brightnessctl)
-# bindsym XF86MonBrightnessUp   exec brightnessctl set +10%
-# bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
-
-### Screenshots (grim + slurp)
-# Fullscreen
-bindsym Print exec grim "$(xdg-user-dir PICTURES)/screenshot-$(date +%F_%H-%M-%S).png"
-# Select area
-bindsym Shift+Print exec grim -g "$(slurp)" "$(xdg-user-dir PICTURES)/screenshot-$(date +%F_%H-%M-%S).png"
+### Screenshots (grim + slurp + clipboard)
+# Fullscreen - saves to file and copies to clipboard
+bindsym Print exec bash -c 'SCREENSHOTS_DIR="${SCREENSHOTS_DIR:-$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Pictures")}/Screenshots" && FILE="$SCREENSHOTS_DIR/screenshot-$(date +%F_%H-%M-%S).png" && grim "$FILE" && wl-copy < "$FILE" && notify-send "Screenshot saved & copied" "$FILE"'
+# Select area - saves to file and copies to clipboard
+bindsym Shift+Print exec bash -c 'SCREENSHOTS_DIR="${SCREENSHOTS_DIR:-$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Pictures")}/Screenshots" && FILE="$SCREENSHOTS_DIR/screenshot-$(date +%F_%H-%M-%S).png" && grim -g "$(slurp)" "$FILE" && wl-copy < "$FILE" && notify-send "Screenshot saved & copied" "$FILE"'
+# Quick area screenshot to clipboard only
+bindsym $mod+Shift+s exec grim -g "$(slurp)" - | wl-copy
 
 ### Colors (ported from your i3 theme)
 # class                 border   bground  text     indicator child_border
@@ -231,4 +238,20 @@ input type:touchpad {
 ### VNC
 exec wayvnc 0.0.0.0 --config-path ~/.config/wayvnc/config
 
+### Touchpad gestures (sway 1.8+)
+bindgesture swipe:right workspace prev
+bindgesture swipe:left workspace next
+bindgesture swipe:up exec $menu
+bindgesture swipe:down exec $term
+
+### Cursor (HiDPI)
+seat seat0 xcursor_theme Adwaita 36
+
+bar {
+    swaybar_command waybar
+    position bottom
+    mode hide 
+    hidden_state hide
+    modifier Mod4
+}
 

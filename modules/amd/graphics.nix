@@ -7,13 +7,7 @@
 
 {
 
-  chaotic.mesa-git.enable = true;
-
-  boot.initrd.kernelModules = [ 
-    "amdgpu"
-    "amdgpu.dc=1"
-    "amdgpu.ppfeaturemask=0xffffffff"
-  ];
+  boot.initrd.kernelModules = [ "amdgpu" ];
   hardware.amdgpu.initrd.enable = lib.mkDefault true;
   
   services.xserver.videoDrivers = [ "amdgpu" ];
@@ -23,7 +17,7 @@
     extraPackages = with pkgs; [
       mesa
       libvdpau-va-gl
-      vaapiVdpau
+      libva-vdpau-driver
     ];
   };
 
@@ -35,9 +29,8 @@
   environment.systemPackages = with pkgs; [
     libva-utils
     lact
-    glxinfo
-    radeontop
     mesa-demos
+    radeontop
     vulkan-tools
     glmark2
     libva

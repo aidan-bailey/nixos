@@ -22,6 +22,7 @@ let
     smartmontools
     geeqie
     pciutils
+    usbutils
   ];
 
 in
@@ -38,6 +39,19 @@ in
   boot.loader.systemd-boot.enable = true;
 
   environment.systemPackages = basePackages;
+
+  # Compressed swap in RAM (reduces disk swap, improves responsiveness)
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 50;
+  };
+
+  # Use tmpfs for /tmp (faster, avoids disk writes)
+  boot.tmp = {
+    useTmpfs = true;
+    tmpfsSize = "50%";
+  };
 
   services.printing.enable = true; # CUPS
   services.gvfs.enable = true; # Mount, trash, etc

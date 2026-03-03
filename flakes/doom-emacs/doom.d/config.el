@@ -100,3 +100,8 @@
 
   (add-to-list 'flycheck-checkers 'rust-clippy))
 
+(use-package! typst-ts-mode
+  :mode "\\.typ\\'"
+  :config
+  (setq typst-ts-mode-indent-config '((tab-width . 2)))
+  )

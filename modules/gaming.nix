@@ -6,7 +6,7 @@
 }:
 
 {
-
+  # Steam gaming configuration (system-level)
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
@@ -18,10 +18,5 @@
       pkgs.vkd3d-proton
     ];
   };
-
-  environment.systemPackages = with pkgs; [
-    steam
-    cockatrice
-  ];
-
 }
+
