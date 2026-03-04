@@ -17,6 +17,7 @@
     ../../modules/gaming.nix
     ../../modules/wayland.nix
     ../../modules/secrets.nix
+    ../../modules/gpg.nix
   ];
 
   # Home Manager needs a bit of information about you and the
