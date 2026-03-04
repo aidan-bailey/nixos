@@ -12,6 +12,9 @@
     ../amd/cpu.nix
   ];
 
+  custom.hostType = "laptop";
+  custom.display.type = "oled";
+
   chaotic.hdr.enable = true;
 
 

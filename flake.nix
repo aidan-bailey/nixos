@@ -44,6 +44,7 @@
       system = "x86_64-linux";
 
       commonModules = [
+        ./modules/profile.nix
         doom-flake.nixosModules.default
         chaotic.nixosModules.default
         nixarr.nixosModules.default

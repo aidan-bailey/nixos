@@ -12,6 +12,9 @@
     ../amd/zen4.nix
   ];
 
+  custom.hostType = "desktop";
+  custom.display.type = "lcd";
+
   networking.hostName = "fresco";
 
   nix.settings.system-features = [
