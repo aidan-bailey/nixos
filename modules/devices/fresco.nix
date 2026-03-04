@@ -28,15 +28,8 @@
   # Sway NVIDIA support
   programs.sway.extraOptions = [ "--unsupported-gpu" ];
 
-  # Desktop power: disable TLP laptop power management, use performance governor
-  services.tlp.enable = lib.mkForce false;
+  # Desktop power: performance governor
   powerManagement.cpuFreqGovernor = "performance";
-
-  # LCD font rendering (override OLED defaults from sway.nix)
-  fonts.fontconfig.subpixel = {
-    rgba = lib.mkForce "rgb";
-    lcdfilter = lib.mkForce "default";
-  };
 
   # B650M Mortar WiFi (MT7922/mt7921e) — disable ASPM for stability
   boot.extraModprobeConfig = "options mt7921e disable_aspm=1";

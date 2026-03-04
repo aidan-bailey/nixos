@@ -40,17 +40,24 @@
     noto-fonts-color-emoji
   ];
 
-  # Font rendering for OLED (no subpixels)
+  # Font rendering — adapts to display panel technology
   fonts.fontconfig = {
     antialias = true;
     hinting = {
       enable = true;
       style = "slight";
     };
-    subpixel = {
-      rgba = "none";
-      lcdfilter = "none";
-    };
+    subpixel =
+      if config.custom.display.type == "lcd" then
+        {
+          rgba = "rgb";
+          lcdfilter = "default";
+        }
+      else
+        {
+          rgba = "none";
+          lcdfilter = "none";
+        };
   };
 
   # Secrets management
