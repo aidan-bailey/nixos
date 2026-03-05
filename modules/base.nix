@@ -36,6 +36,7 @@ in
   # - firefox: Clang can't honor #pragma GCC unroll in libstdc++ with znver cost model
   # - libtpms: passes Clang-only -Wno-self-assign to GCC, fatal with -Werror
   # - gsl: cholesky_invert precision exceeds tolerances with AVX-512/FMA
+  # - glibc: valgrind_unittest hits SIGILL on AVX-512 instructions
   nixpkgs.overlays = [
     (final: prev: {
       pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
@@ -52,17 +53,18 @@ in
           "-DVALGRIND_TESTS=OFF"
         ];
       });
-      firefox-unwrapped = prev.firefox-unwrapped.overrideAttrs (old: {
-        configureFlags = (old.configureFlags or [ ]) ++ [
-          "--disable-warnings-as-errors"
-        ];
-      });
+      firefox-unwrapped = prev.firefox-unwrapped.override {
+        extraConfigureFlags = [ "--disable-warnings-as-errors" ];
+      };
       libtpms = prev.libtpms.overrideAttrs (old: {
         configureFlags = (old.configureFlags or [ ]) ++ [
           "--disable-werror"
         ];
       });
       gsl = prev.gsl.overrideAttrs (_: {
+        doCheck = false;
+      });
+      glibc = prev.glibc.overrideAttrs (_: {
         doCheck = false;
       });
     })
