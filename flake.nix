@@ -70,6 +70,7 @@
         ./modules/terminal.nix
         ./modules/mediaserver.nix
         ./modules/secrets.nix
+        ./modules/benchmarking.nix
       ];
 
       desktopModules = serverModules ++ [
