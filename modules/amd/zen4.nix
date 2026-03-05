@@ -13,8 +13,8 @@
 
   nixpkgs.hostPlatform = {
     system = "x86_64-linux";
-    gcc.arch = "znver4";
-    gcc.tune = "znver4";
+    #gcc.arch = "znver4";
+    #gcc.tune = "znver4";
   };
 
   environment.sessionVariables = {
