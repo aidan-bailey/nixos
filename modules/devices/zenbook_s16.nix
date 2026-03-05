@@ -7,6 +7,9 @@
 
 {
 
+  # Zen 4 LTO kernel — compiled with -march=znver4 via Clang + ThinLTO
+  boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4;
+
   imports = [
     ../amd/graphics.nix
     ../amd/cpu.nix
