@@ -11,7 +11,6 @@ Primary laptop — ASUS Zenbook S16 (UM5606WA), AMD Zen 5.
 Imports `modules/devices/zenbook_s16.nix`, which adds:
 
 - AMDGPU + AMD CPU drivers
-- HDR support (chaotic.hdr)
 - asusd daemon for fan profiles and platform switching
 - Kernel params: Panel Self Refresh disabled (`amdgpu.dcdebugmask=0x600`), scatter/gather display fix, RCU lazy batching
 - Hibernate resume partition

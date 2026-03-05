@@ -15,8 +15,6 @@
   custom.hostType = "laptop";
   custom.display.type = "oled";
 
-  chaotic.hdr.enable = true;
-
   nix.settings.system-features = [
     "gccarch-znver5"
     "benchmark"

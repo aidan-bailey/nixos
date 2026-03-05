@@ -22,15 +22,5 @@
     GOAMD64 = "v4";
   };
 
-  boot.kernelPatches = [
-    {
-      name = "znver5-optimization";
-      patch = null;
-      extraConfig = ''
-        KCFLAGS="-march=znver5 -mtune=znver5 -O3 -pipe"
-      '';
-    }
-  ];
-
 }
 

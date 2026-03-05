@@ -3,9 +3,9 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    chaotic = {
-      url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
-      inputs.nixpkgs.follows = "nixpkgs";
+    nix-cachyos-kernel = {
+      url = "github:xddxdd/nix-cachyos-kernel/release";
+      # Must NOT follow nixpkgs — pins its own nixos-unstable-small
     };
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -33,7 +33,7 @@
       nixpkgs,
       home-manager,
       doom-flake,
-      chaotic,
+      nix-cachyos-kernel,
       nixarr,
       antigravity-nix,
       harbour,
@@ -46,7 +46,6 @@
       commonModules = [
         ./modules/profile.nix
         doom-flake.nixosModules.default
-        chaotic.nixosModules.default
         nixarr.nixosModules.default
         sops-nix.nixosModules.sops
         home-manager.nixosModules.home-manager

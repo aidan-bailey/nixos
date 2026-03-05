@@ -37,14 +37,14 @@ nixfmt .
 
 ### Host / Module Split
 
-The flake defines a `mkHost` helper that combines a host-specific config with `commonModules` (chaotic, doom-flake, nixarr, home-manager, sops-nix). Module composition is done via two profiles defined in `flake.nix`:
+The flake defines a `mkHost` helper that combines a host-specific config with `commonModules` (doom-flake, nixarr, home-manager, sops-nix). Module composition is done via two profiles defined in `flake.nix`:
 
 - **serverModules** — base, user, networking, terminal, mediaserver, secrets
 - **desktopModules** — serverModules + cachyos kernel, sway, audio, bluetooth, gaming, nix-ld, virtualisation, power
 
 Each host selects a profile and a device module:
 
-- **nesco** — desktopModules + `devices/zenbook_s16.nix` (AMD iGPU, asusd, HDR)
+- **nesco** — desktopModules + `devices/zenbook_s16.nix` (AMD iGPU, asusd)
 - **fresco** — desktopModules + `devices/fresco.nix` (Zen 4 + NVIDIA, performance tuning)
 - **medesco** — serverModules only (no device module)
 
@@ -59,7 +59,7 @@ Each host selects a profile and a device module:
 CPU and GPU support is layered — device modules pick the pieces they need:
 
 - `modules/amd/cpu.nix` — AMD microcode, `amd_pstate=active`, firmware (shared base)
-- `modules/amd/zen4.nix` — Imports cpu.nix, sets `hostPlatform.gcc.arch/tune = "znver4"`, kernel KCFLAGS, RUSTFLAGS, GOAMD64
+- `modules/amd/zen4.nix` — Imports cpu.nix, sets `hostPlatform`, RUSTFLAGS, GOAMD64
 - `modules/amd/zen5.nix` — Same pattern for znver5
 - `modules/amd/graphics.nix` — AMDGPU driver, Mesa, VA-API (used by zenbook_s16)
 - `modules/nvidia/gpu.nix` — NVIDIA open driver, VA-API/VDPAU, container toolkit, persistenced, shader cache, PAT (used by fresco)
@@ -72,9 +72,9 @@ Device modules compose these: `zenbook_s16.nix` imports `amd/graphics.nix` + `am
 - `modules/networking.nix` — NetworkManager, encrypted DNS-over-TLS (1.1.1.1, 9.9.9.9), mDNS via Avahi, nftables firewall, SSH
 - `modules/audio.nix` — PipeWire with Bluetooth codec support (SBC-XQ, LDAC, aptX, aptX-HD)
 - `modules/sway.nix` — Enables Sway at system level with XDG portals, GNOME keyring, fonts (Nerd Fonts), OLED font rendering; auto-starts Sway on tty1
-- `modules/kernel/cachyos.nix` — Sets `boot.kernelPackages = pkgs.linuxPackages_cachyos`
+- `modules/kernel/cachyos.nix` — CachyOS kernel via nix-cachyos-kernel overlay (LTO default, zen4-lto for fresco), binary cache config
 - `modules/secrets.nix` — SOPS-nix with age encryption for system-level secrets
-- `modules/devices/zenbook_s16.nix` — AMD iGPU, HDR, asusd fan control, PSR disable, RCU tuning, resume device
+- `modules/devices/zenbook_s16.nix` — AMD iGPU, asusd fan control, PSR disable, RCU tuning, resume device
 - `modules/devices/fresco.nix` — Zen 4 + NVIDIA, performance governor, EPP, sched-ext scx_lavd, TCP BBR, NVMe/EXT4 tuning, earlyoom, irqbalance, WiFi ASPM workaround
 - `home/modules/wayland.nix` — User-side Sway config, Waybar, Wayland tools, Gammastep night light, HiDPI cursor, polkit agent; sources config files from `config/sway/` and `config/waybar/`
 - `home/modules/devtools.nix` — Dev tools, Zed editor with vim mode and LSP configs (nixd, pyright, ruff, rust-analyzer), sccache, mold linker
@@ -90,7 +90,7 @@ Encrypted secrets are managed by sops-nix with age encryption. Secrets live in `
 
 ### Flake Inputs of Note
 
-- **chaotic** (CachyOS/nyx) — Provides optimized CachyOS kernel and overlays
+- **nix-cachyos-kernel** (xddxdd/nix-cachyos-kernel) — CachyOS kernel packages with LTO and arch-specific variants, served from binary cache
 - **doom-flake** (local, `flakes/doom-emacs/`) — Doom Emacs with PGTK + native-comp
 - **nixarr** — Media server stack (Jellyfin, Sonarr, Radarr, etc.)
 - **sops-nix** — Encrypted secrets management
