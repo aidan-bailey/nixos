@@ -53,9 +53,9 @@ in
           "-DVALGRIND_TESTS=OFF"
         ];
       });
-      firefox-unwrapped = prev.firefox-unwrapped.override {
-        extraConfigureFlags = [ "--disable-warnings-as-errors" ];
-      };
+      firefox-unwrapped = prev.firefox-unwrapped.overrideAttrs (old: {
+        configureFlags = old.configureFlags ++ [ "--disable-warnings-as-errors" ];
+      });
       libtpms = prev.libtpms.overrideAttrs (old: {
         configureFlags = (old.configureFlags or [ ]) ++ [
           "--disable-werror"
