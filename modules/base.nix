@@ -51,17 +51,9 @@ in
         ];
       });
       firefox-unwrapped = prev.firefox-unwrapped.overrideAttrs (old: {
-        env = (old.env or { }) // {
-          NIX_CFLAGS_COMPILE = builtins.toString (
-            (
-              if old ? env && old.env ? NIX_CFLAGS_COMPILE then
-                [ old.env.NIX_CFLAGS_COMPILE ]
-              else
-                [ ]
-            )
-            ++ [ "-Wno-error=pass-failed" ]
-          );
-        };
+        configureFlags = (old.configureFlags or [ ]) ++ [
+          "--disable-warnings-as-errors"
+        ];
       });
     })
   ];
