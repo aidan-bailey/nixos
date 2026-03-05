@@ -73,8 +73,10 @@
     tray = true;
   };
 
-  # Waybar configuration
+  # Waybar configuration — launched by Sway's bar block (swaybar_command),
+  # so disable the systemd service to avoid a duplicate instance.
   programs.waybar.enable = true;
+  programs.waybar.systemd.enable = false;
 
   # Sway configuration (per-host config sourced from home/hosts/<host>.nix)
   xdg.configFile."sway/wallpaper.jpg".source = ../../config/sway/wallpaper.jpg;

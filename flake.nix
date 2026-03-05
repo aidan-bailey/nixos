@@ -55,6 +55,7 @@
           home-manager.useUserPackages = true;
           home-manager.sharedModules = [ sops-nix.homeManagerModules.sops ];
           home-manager.extraSpecialArgs = { inherit inputs system; };
+          home-manager.backupFileExtension = "hm-backup";
           home-manager.users.aidanb = import ./home/users/aidanb;
         }
       ];
