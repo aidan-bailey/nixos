@@ -21,6 +21,7 @@ let
     zstd
     smartmontools
     geeqie
+    parted
     pciutils
     usbutils
     nix-output-monitor
