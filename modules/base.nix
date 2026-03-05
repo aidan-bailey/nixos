@@ -21,12 +21,36 @@ let
     zstd
     smartmontools
     geeqie
+    parted
     pciutils
     usbutils
+    nix-output-monitor
   ];
 
 in
 {
+
+  # Package test overrides for -march=znver4/znver5 builds:
+  # - scipy: AVX-512/FMA changes FFT rounding beyond test tolerances
+  # - rapidjson: valgrind doesn't support AVX-512 instructions (SIGILL)
+  nixpkgs.overlays = [
+    (final: prev: {
+      pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+        (python-final: python-prev: {
+          scipy = python-prev.scipy.overridePythonAttrs (old: {
+            disabledTests = (old.disabledTests or [ ]) ++ [
+              "test_roundtrip_scaling"
+            ];
+          });
+        })
+      ];
+      rapidjson = prev.rapidjson.overrideAttrs (old: {
+        cmakeFlags = (old.cmakeFlags or [ ]) ++ [
+          "-DVALGRIND_TESTS=OFF"
+        ];
+      });
+    })
+  ];
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -60,6 +84,22 @@ in
     useTmpfs = true;
     tmpfsSize = "50%";
   };
+
+  # External HDD as local binary cache
+  fileSystems."/mnt/nixos-cache" = {
+    device = "/dev/disk/by-uuid/3e8a24a2-b357-4d2b-9ec4-d05d02c91a2e";
+    fsType = "ext4";
+    options = [
+      "nosuid"
+      "nodev"
+      "nofail"
+      "x-systemd.automount"
+      "x-systemd.idle-timeout=60"
+      "user"
+    ];
+  };
+
+  nix.settings.substituters = [ "file:///mnt/nixos-cache" ];
 
   # Automatic Nix store garbage collection
   nix.gc = {

@@ -9,8 +9,9 @@
 
   powerManagement.enable = true;
 
+  # TLP is laptop-only — desktops manage power differently
   services.tlp = {
-    enable = true;
+    enable = config.custom.hostType == "laptop";
     settings = {
       # CPU governor and EPP hints (amd-pstate-epp active mode)
       CPU_SCALING_GOVERNOR_ON_AC = "performance";
@@ -43,7 +44,8 @@
     };
   };
 
-  systemd.sleep.extraConfig = ''
+  # Conservative sleep defaults — device modules can override without mkForce
+  systemd.sleep.extraConfig = lib.mkDefault ''
     [Sleep]
     AllowSuspend=yes
     AllowHibernation=no
@@ -51,7 +53,7 @@
     AllowHybridSleep=no
   '';
 
-  services.logind.settings.Login = {
+  services.logind.settings.Login = lib.mkDefault {
     HandleLidSwitch = "suspend";
     HandleLidSwitchExternalPower = "suspend";
     LidSwitchIgnoreInhibited = "yes";
