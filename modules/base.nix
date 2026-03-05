@@ -30,8 +30,9 @@ let
 in
 {
 
-  # Disable scipy tests that fail under -march=znver4/znver5 due to
-  # AVX-512/FMA changing FFT rounding beyond the test's tight tolerances.
+  # Package test overrides for -march=znver4/znver5 builds:
+  # - scipy: AVX-512/FMA changes FFT rounding beyond test tolerances
+  # - rapidjson: valgrind doesn't support AVX-512 instructions (SIGILL)
   nixpkgs.overlays = [
     (final: prev: {
       pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
@@ -43,6 +44,11 @@ in
           });
         })
       ];
+      rapidjson = prev.rapidjson.overrideAttrs (old: {
+        cmakeFlags = (old.cmakeFlags or [ ]) ++ [
+          "-DVALGRIND_TESTS=OFF"
+        ];
+      });
     })
   ];
 
