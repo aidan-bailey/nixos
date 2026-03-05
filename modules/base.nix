@@ -30,9 +30,10 @@ let
 in
 {
 
-  # Package test overrides for -march=znver4/znver5 builds:
+  # Package overrides for -march=znver4/znver5 builds:
   # - scipy: AVX-512/FMA changes FFT rounding beyond test tolerances
   # - rapidjson: valgrind doesn't support AVX-512 instructions (SIGILL)
+  # - firefox: Clang can't honor #pragma GCC unroll in libstdc++ with znver cost model
   nixpkgs.overlays = [
     (final: prev: {
       pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
@@ -48,6 +49,19 @@ in
         cmakeFlags = (old.cmakeFlags or [ ]) ++ [
           "-DVALGRIND_TESTS=OFF"
         ];
+      });
+      firefox-unwrapped = prev.firefox-unwrapped.overrideAttrs (old: {
+        env = (old.env or { }) // {
+          NIX_CFLAGS_COMPILE = builtins.toString (
+            (
+              if old ? env && old.env ? NIX_CFLAGS_COMPILE then
+                [ old.env.NIX_CFLAGS_COMPILE ]
+              else
+                [ ]
+            )
+            ++ [ "-Wno-error=pass-failed" ]
+          );
+        };
       });
     })
   ];
