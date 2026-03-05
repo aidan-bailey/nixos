@@ -30,6 +30,22 @@ let
 in
 {
 
+  # Disable scipy tests that fail under -march=znver4/znver5 due to
+  # AVX-512/FMA changing FFT rounding beyond the test's tight tolerances.
+  nixpkgs.overlays = [
+    (final: prev: {
+      pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+        (python-final: python-prev: {
+          scipy = python-prev.scipy.overridePythonAttrs (old: {
+            disabledTests = (old.disabledTests or [ ]) ++ [
+              "test_roundtrip_scaling"
+            ];
+          });
+        })
+      ];
+    })
+  ];
+
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
