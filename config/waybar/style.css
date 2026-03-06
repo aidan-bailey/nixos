@@ -90,19 +90,19 @@ window#waybar.hidden {
 
 /* ── Per-module tinted pills ───────────────────────────── */
 
-#cpu        { color: #89b4fa; background: rgba(137, 180, 250, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 64px; }
-#memory     { color: #a6e3a1; background: rgba(166, 227, 161, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 72px; }
-#disk       { color: #94e2d5; background: rgba(148, 226, 213, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 64px; }
-#temperature{ color: #fab387; background: rgba(250, 179, 135, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 60px; }
-#backlight  { color: #f9e2af; background: rgba(249, 226, 175, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 64px; }
-#network    { color: #89dceb; background: rgba(137, 220, 235, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 140px; }
-#pulseaudio { color: #cba6f7; background: rgba(203, 166, 247, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 64px; }
-#battery    { color: #a6e3a1; background: rgba(166, 227, 161, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 64px; }
+#cpu        { color: #89b4fa; background: rgba(137, 180, 250, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 100px; }
+#memory     { color: #a6e3a1; background: rgba(166, 227, 161, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 52px; }
+#disk       { color: #94e2d5; background: rgba(148, 226, 213, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 44px; }
+#temperature{ color: #fab387; background: rgba(250, 179, 135, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 40px; }
+#backlight  { color: #f9e2af; background: rgba(249, 226, 175, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 44px; }
+#network    { color: #89dceb; background: rgba(137, 220, 235, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 160px; }
+#pulseaudio { color: #cba6f7; background: rgba(203, 166, 247, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 44px; }
+#battery    { color: #a6e3a1; background: rgba(166, 227, 161, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 44px; }
 #mpd        { color: #f5c2e7; background: rgba(245, 194, 231, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 12px; }
 #tray       { background: rgba(49,  50,  68,  0.70);                 border-radius: 8px; margin: 4px 2px; padding: 0 6px; }
 #idle_inhibitor { color: #6c7086; border-radius: 8px; margin: 4px 1px; padding: 0 8px; }
 #clock      { color: #b4befe; background: rgba(180, 190, 254, 0.15); border-radius: 10px;
-              margin: 4px 4px; padding: 0 14px; font-weight: bold; min-width: 68px; }
+              margin: 4px 4px; padding: 0 14px; font-weight: bold; min-width: 50px; }
 
 /* ── CPU states ────────────────────────────────────────── */
 
@@ -221,7 +221,7 @@ window#waybar.hidden {
     border-radius: 8px;
     margin: 4px 1px;
     padding: 0 10px;
-    min-width: 64px;
+    min-width: 44px;
 }
 
 #custom-gpu.unavailable {
@@ -237,7 +237,7 @@ window#waybar.hidden {
     border-radius: 8px;
     margin: 4px 1px;
     padding: 0 10px;
-    min-width: 96px;
+    min-width: 80px;
 }
 
 #custom-powerprofile.performance {
@@ -284,7 +284,7 @@ window#waybar.hidden {
     border-radius: 8px;
     margin: 4px 1px;
     padding: 0 10px;
-    min-width: 76px;
+    min-width: 60px;
 }
 
 #custom-weather.unavailable {

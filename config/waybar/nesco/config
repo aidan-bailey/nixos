@@ -89,8 +89,7 @@
     },
 
     "cpu": {
-        "format": "󰍛 {usage}%",
-        "format-alt": "󰍛 {avg_frequency}GHz",
+        "format": "󰍛 {usage}% {avg_frequency}GHz",
         "interval": 2,
         "tooltip": true,
         "on-click": "foot -a btop btop"
@@ -136,12 +135,11 @@
 
     "network": {
         "interval": 2,
-        "format-wifi":         "󰖩 {essid}",
-        "format-ethernet":     "󰈀 {ipaddr}",
+        "format-wifi":         "󰖩 ↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
+        "format-ethernet":     "󰈀 ↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
         "format-linked":       "󰈀 {ifname}",
         "format-disconnected": "󰖪 Disconnected",
-        "format-alt":          "󰩠 ↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
-        "max-length": 20,
+        "format-alt":          "󰖩 {essid} 󰒢 {signalStrength}%",
         "tooltip-format-wifi":     "{essid} 󰒢 {signalStrength}%\n{ipaddr}/{cidr}\n↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
         "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}\n↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
         "on-click-right": "foot -a nmtui nmtui"

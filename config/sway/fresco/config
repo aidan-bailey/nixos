@@ -232,8 +232,6 @@ seat seat0 xcursor_theme Adwaita 36
 bar {
     swaybar_command waybar
     position bottom
-    mode hide 
-    hidden_state hide
-    modifier Mod4
+    mode dock
 }
 

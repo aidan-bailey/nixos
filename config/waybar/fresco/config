@@ -2,9 +2,9 @@
     "ipc": true,
     "position": "bottom",
     "height": 36,
-    "margin-bottom": 8,
-    "margin-left": 12,
-    "margin-right": 12,
+    "margin-bottom": 4,
+    "margin-left": 6,
+    "margin-right": 6,
     "modules-left": ["sway/workspaces", "sway/mode", "sway/scratchpad"],
     "modules-center": ["sway/window"],
     "modules-right": [
@@ -88,8 +88,7 @@
     },
 
     "cpu": {
-        "format": "󰍛 {usage}%",
-        "format-alt": "󰍛 {avg_frequency}GHz",
+        "format": "󰍛 {usage}% {avg_frequency}GHz",
         "interval": 2,
         "tooltip": true,
         "on-click": "foot -a btop btop"
@@ -120,12 +119,11 @@
 
     "network": {
         "interval": 2,
-        "format-wifi":         "󰖩 {essid}",
-        "format-ethernet":     "󰈀 {ipaddr}",
+        "format-wifi":         "󰖩 ↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
+        "format-ethernet":     "󰈀 ↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
         "format-linked":       "󰈀 {ifname}",
         "format-disconnected": "󰖪 Disconnected",
-        "format-alt":          "󰩠 ↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
-        "max-length": 20,
+        "format-alt":          "󰖩 {essid} 󰒢 {signalStrength}%",
         "tooltip-format-wifi":     "{essid} 󰒢 {signalStrength}%\n{ipaddr}/{cidr}\n↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
         "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}\n↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
         "on-click-right": "foot -a nmtui nmtui"
