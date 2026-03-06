@@ -49,6 +49,9 @@ exec wl-paste --watch cliphist store
 # Prevent idle lock while audio is playing
 exec sway-audio-idle-inhibit
 
+# Notification daemon (replaces mako)
+exec swaync
+
 # Idle + lock (xss-lock/i3lock -> swayidle/swaylock)
 exec_always swayidle -w \
   timeout 300 'swaylock -f' \
@@ -189,6 +192,9 @@ popup_during_fullscreen smart
 
 ### App shortcuts
 bindsym $mod+Shift+f exec thunar
+
+### Notification panel
+bindsym $mod+n exec swaync-client -t -sw
 
 ### Clipboard history
 bindsym $mod+Shift+v exec cliphist list | wofi --dmenu --prompt "clipboard:" | cliphist decode | wl-copy

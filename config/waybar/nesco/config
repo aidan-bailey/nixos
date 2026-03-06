@@ -1,120 +1,214 @@
 {
-  "ipc": true,
-  "position": "bottom",
-  "height": 24,
-  "modules-left": ["sway/workspaces", "sway/mode", "sway/scratchpad"],
-  "modules-center": ["sway/window"],
-  "modules-right": ["mpd", "idle_inhibitor", "temperature", "cpu", "memory","network", "pulseaudio", "backlight", "battery", "tray", "clock"],
-  "keyboard-state": {
-      "numlock": true,
-      "capslock": true,
-      "format": "{name} {icon}",
-      "format-icons": {
-          "locked": "",
-          "unlocked": ""
-      }
-  },
-  "sway/mode": {
-      "format": "<span style=\"italic\">{}</span>"
-  },
-  "sway/scratchpad": {
-      "format": "{icon} {count}",
-      "show-empty": false,
-      "format-icons": ["", ""],
-      "tooltip": true,
-      "tooltip-format": "{app}: {title}"
-  },
-  "mpd": {
-      "format": "  {title} - {artist} {stateIcon} [{elapsedTime:%M:%S}/{totalTime:%M:%S}] {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}[{songPosition}/{queueLength}] [{volume}%]",
-      "format-disconnected": " Disconnected",
-      "format-stopped": " {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}Stopped",
-      "unknown-tag": "N/A",
-      "interval": 2,
-      "consume-icons": {
-          "on": " "
-      },
-      "random-icons": {
-          "on": " "
-      },
-      "repeat-icons": {
-          "on": " "
-      },
-      "single-icons": {
-          "on": "1 "
-      },
-      "state-icons": {
-          "paused": "",
-          "playing": ""
-      },
-      "tooltip-format": "MPD (connected)",
-      "tooltip-format-disconnected": "MPD (disconnected)",
-      "on-click": "mpc toggle",
-      "on-click-right": "foot -a ncmpcpp ncmpcpp",
-      "on-scroll-up": "mpc volume +2",
-      "on-scroll-down": "mpc volume -2"
+    "ipc": true,
+    "position": "top",
+    "height": 36,
+    "margin-top": 8,
+    "margin-left": 12,
+    "margin-right": 12,
+    "modules-left": ["sway/workspaces", "sway/mode", "sway/scratchpad"],
+    "modules-center": ["sway/window"],
+    "modules-right": [
+        "custom/swaync", "mpd", "pulseaudio",
+        "network", "backlight", "battery",
+        "custom/powerprofile", "custom/gpu",
+        "cpu", "memory", "temperature",
+        "idle_inhibitor", "tray",
+        "custom/weather", "clock"
+    ],
 
-  },
-  "idle_inhibitor": {
-      "format": "{icon}",
-      "format-icons": {
-          "activated": "",
-          "deactivated": ""
-      }
-  },
-  "tray": {
-      "spacing": 10
-  },
-  "clock": {
-      "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-      "format": "{:L%Y-%m-%d<small>[%a]</small> <tt><small>%p</small></tt>%I:%M}"
-  },
-  "cpu": {
-      "format": " {usage}%"
-  },
-  "memory": {
-      "format": " {}%"
-  },
-  "temperature": {
-      "critical-threshold": 80,
-      "format-critical": "{icon} {temperatureC}°C",
-      "format": "{icon} {temperatureC}°C",
-      "format-icons": ["", "", ""]
-  },
-  "backlight": {
-      "format": "{icon} {percent}%",
-      "format-icons": ["", "", "", "", "", "", "", "", ""]
-  },
-  "battery": {
-      "states": {
-          "warning": 30,
-          "critical": 15
-      },
-      "format": "{icon} {capacity}%",
-      "format-charging": " {capacity}%",
-      "format-plugged": " {capacity}%",
-      "format-alt": "{icon} {time}",
-      "format-icons": ["", "", "", "", ""]
-  },
-  "network": {
-      "format-wifi": "{essid} ({signalStrength}%) ",
-      "format-ethernet": " {ifname}",
-      "tooltip-format": " {ifname} via {gwaddr}",
-      "format-linked": " {ifname} (No IP)",
-      "format-disconnected": "Disconnected ⚠ {ifname}",
-      "format-alt": " {ifname}: {ipaddr}/{cidr}"
-  },
-  "pulseaudio": {
-      "scroll-step": 5,
-      "format": "{icon} {volume}% {format_source}",
-      "format-bluetooth": " {icon} {volume}% {format_source}",
-      "format-bluetooth-muted": "  {icon} {format_source}",
-      "format-muted": "  {format_source}",
-      "format-source": " {volume}%",
-      "format-source-muted": "",
-      "format-icons": {
-          "default": ["", "", ""]
-      },
-      "on-click": "pavucontrol",
-      "on-click-right": "foot -a pw-top pw-top"
-  }
+    "sway/workspaces": {
+        "disable-scroll": false,
+        "all-outputs": false,
+        "format": "{name}"
+    },
+
+    "sway/mode": {
+        "format": " {}"
+    },
+
+    "sway/scratchpad": {
+        "format": "{icon} {count}",
+        "show-empty": false,
+        "format-icons": ["", ""],
+        "tooltip": true,
+        "tooltip-format": "{app}: {title}"
+    },
+
+    "sway/window": {
+        "max-length": 60,
+        "rewrite": {
+            "(.*) — Mozilla Firefox": "  $1",
+            "(.*) - Zed": "  $1",
+            "foot": " Terminal",
+            "btop": " btop",
+            "ncmpcpp": "󰎆 ncmpcpp"
+        }
+    },
+
+    "mpd": {
+        "format": "  {title} — {artist}  {stateIcon}",
+        "format-disconnected": "",
+        "format-stopped": "",
+        "unknown-tag": "?",
+        "interval": 2,
+        "state-icons": {
+            "paused": "",
+            "playing": ""
+        },
+        "tooltip-format": "{title}\n{artist} — {album}\n[{songPosition}/{queueLength}] {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}",
+        "tooltip-format-disconnected": "MPD disconnected",
+        "on-click": "mpc toggle",
+        "on-click-right": "foot -a ncmpcpp ncmpcpp",
+        "on-scroll-up": "mpc volume +2",
+        "on-scroll-down": "mpc volume -2",
+        "consume-icons": { "on": " " },
+        "random-icons": { "on": " " },
+        "repeat-icons": { "on": " " },
+        "single-icons": { "on": "1 " }
+    },
+
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "",
+            "deactivated": ""
+        },
+        "tooltip-format-activated": "Idle inhibition ON",
+        "tooltip-format-deactivated": "Idle inhibition OFF"
+    },
+
+    "tray": {
+        "spacing": 8,
+        "icon-size": 16
+    },
+
+    "clock": {
+        "format": " %H:%M",
+        "format-alt": " %a %d %b",
+        "tooltip-format": "<big>{:%B %Y}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+
+    "cpu": {
+        "format": " {usage}%",
+        "format-alt": " {avg_frequency}GHz",
+        "interval": 2,
+        "tooltip": true,
+        "on-click": "foot -a btop btop"
+    },
+
+    "memory": {
+        "format": " {used:.1f}G",
+        "format-alt": " {percentage}%",
+        "interval": 5,
+        "tooltip-format": "RAM: {used:.1f}G / {total:.1f}G\nSwap: {swapUsed:.1f}G / {swapTotal:.1f}G",
+        "on-click": "foot -a btop btop"
+    },
+
+    "temperature": {
+        "critical-threshold": 85,
+        "format": "{icon} {temperatureC}°",
+        "format-critical": "{icon} {temperatureC}°",
+        "format-icons": ["", "", "", "", ""],
+        "tooltip": true
+    },
+
+    "backlight": {
+        "format": "{icon} {percent}%",
+        "format-icons": ["", "", "", "", "", "", "", "", ""],
+        "on-scroll-up": "brightnessctl set +5%",
+        "on-scroll-down": "brightnessctl set 5%-",
+        "smooth-scrolling-threshold": 1
+    },
+
+    "battery": {
+        "states": {
+            "good": 80,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-full": " Full",
+        "format-alt": "{icon} {time}",
+        "format-icons": ["", "", "", "", ""],
+        "tooltip-format": "{timeTo}\nHealth: {health}%"
+    },
+
+    "network": {
+        "interval": 2,
+        "format-wifi":         "󰖩 {essid}  ↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
+        "format-ethernet":     "󰈀 ↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
+        "format-linked":       "󰈀 {ifname}",
+        "format-disconnected": "󰖪 Disconnected",
+        "format-alt":          "󰩠 {ipaddr}/{cidr}",
+        "tooltip-format-wifi":     "{essid} 󰒢 {signalStrength}%\n{ipaddr}/{cidr}",
+        "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}",
+        "on-click-right": "foot -a nmtui nmtui"
+    },
+
+    "pulseaudio": {
+        "scroll-step": 5,
+        "format": "{icon} {volume}%",
+        "format-bluetooth": " {icon} {volume}%",
+        "format-bluetooth-muted": " ",
+        "format-muted": " ",
+        "format-source": " {volume}%",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol",
+        "on-click-right": "foot -a pw-top pw-top",
+        "tooltip-format": "{desc}\n{volume}%"
+    },
+
+    "custom/gpu": {
+        "exec": "waybar-amdgpu",
+        "exec-if": "which amdgpu_top",
+        "return-json": true,
+        "interval": 3,
+        "format": "{icon} {text}",
+        "format-icons": ["󱐋", "󱐋", "󱐋", "󱐋", "󱐋"],
+        "tooltip": true,
+        "on-click": "foot -a btop btop"
+    },
+
+    "custom/powerprofile": {
+        "exec": "waybar-powerprofile",
+        "exec-if": "test -f /sys/firmware/acpi/platform_profile",
+        "return-json": true,
+        "interval": 10,
+        "signal": 10,
+        "format": "{}",
+        "tooltip": true,
+        "on-click": "waybar-powerprofile-cycle"
+    },
+
+    "custom/swaync": {
+        "exec": "waybar-swaync",
+        "exec-if": "which swaync-client",
+        "return-json": true,
+        "interval": "once",
+        "signal": 8,
+        "format": "{}",
+        "tooltip": true,
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw"
+    },
+
+    "custom/weather": {
+        "exec": "waybar-weather",
+        "exec-if": "which curl",
+        "return-json": true,
+        "interval": 1800,
+        "format": "{}",
+        "tooltip": true
+    }
 }
