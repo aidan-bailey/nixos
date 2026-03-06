@@ -45,14 +45,14 @@
     },
 
     "mpd": {
-        "format": "  {title} — {artist}  {stateIcon}",
+        "format": "󰎆  {title} — {artist}  {stateIcon}",
         "format-disconnected": "",
         "format-stopped": "",
         "unknown-tag": "?",
         "interval": 2,
         "state-icons": {
-            "paused": "",
-            "playing": ""
+            "paused": "󰏤",
+            "playing": "󰐊"
         },
         "tooltip-format": "{title}\n{artist} — {album}\n[{songPosition}/{queueLength}] {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}",
         "tooltip-format-disconnected": "MPD disconnected",
@@ -60,17 +60,17 @@
         "on-click-right": "foot -a ncmpcpp ncmpcpp",
         "on-scroll-up": "mpc volume +2",
         "on-scroll-down": "mpc volume -2",
-        "consume-icons": { "on": " " },
-        "random-icons": { "on": " " },
-        "repeat-icons": { "on": " " },
-        "single-icons": { "on": "1 " }
+        "consume-icons": { "on": "󰆤 " },
+        "random-icons": { "on": "󰒟 " },
+        "repeat-icons": { "on": "󰑖 " },
+        "single-icons": { "on": "󰑘 " }
     },
 
     "idle_inhibitor": {
         "format": "{icon}",
         "format-icons": {
-            "activated": "",
-            "deactivated": ""
+            "activated": "󰈈",
+            "deactivated": "󰈉"
         },
         "tooltip-format-activated": "Idle inhibition ON",
         "tooltip-format-deactivated": "Idle inhibition OFF"
@@ -82,22 +82,22 @@
     },
 
     "clock": {
-        "format": " {:%H:%M}",
-        "format-alt": " {:%a %d %b}",
+        "format": "󰥔 {:%H:%M}",
+        "format-alt": "󰃭 {:%a %d %b}",
         "tooltip-format": "<big>{:%B %Y}</big>\n<tt><small>{calendar}</small></tt>"
     },
 
     "cpu": {
-        "format": " {usage}%",
-        "format-alt": " {avg_frequency}GHz",
+        "format": "󰍛 {usage}%",
+        "format-alt": "󰍛 {avg_frequency}GHz",
         "interval": 2,
         "tooltip": true,
         "on-click": "foot -a btop btop"
     },
 
     "memory": {
-        "format": " {used:.1f}G",
-        "format-alt": " {percentage}%",
+        "format": "󰒋 {used:.1f}G",
+        "format-alt": "󰒋 {percentage}%",
         "interval": 5,
         "tooltip-format": "RAM: {used:.1f}G / {total:.1f}G\nSwap: {swapUsed:.1f}G / {swapTotal:.1f}G",
         "on-click": "foot -a btop btop"
@@ -105,48 +105,48 @@
 
     "disk": {
         "interval": 30,
-        "format": " {percentage_used}%",
-        "format-alt": " {free}",
+        "format": "󰋊 {percentage_used}%",
+        "format-alt": "󰋊 {free}",
         "path": "/",
         "tooltip-format": "{path}\n{used} / {total} ({percentage_used}%)"
     },
 
     "temperature": {
         "critical-threshold": 90,
-        "format": "{icon} {temperatureC}°",
-        "format-critical": "{icon} {temperatureC}°",
-        "format-icons": ["", "", "", "", ""],
+        "format": "󰔏 {temperatureC}°",
+        "format-critical": "󰔏 {temperatureC}°",
         "tooltip": true
     },
 
     "network": {
         "interval": 2,
-        "format-wifi":         "󰖩 {essid}  ↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
-        "format-ethernet":     "󰈀 ↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
+        "format-wifi":         "󰖩 {essid}",
+        "format-ethernet":     "󰈀 {ipaddr}",
         "format-linked":       "󰈀 {ifname}",
         "format-disconnected": "󰖪 Disconnected",
-        "format-alt":          "󰩠 {ipaddr}/{cidr}",
-        "tooltip-format-wifi":     "{essid} 󰒢 {signalStrength}%\n{ipaddr}/{cidr}",
-        "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}",
+        "format-alt":          "󰩠 ↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
+        "max-length": 20,
+        "tooltip-format-wifi":     "{essid} 󰒢 {signalStrength}%\n{ipaddr}/{cidr}\n↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
+        "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}\n↑{bandwidthUpBytes} ↓{bandwidthDownBytes}",
         "on-click-right": "foot -a nmtui nmtui"
     },
 
     "pulseaudio": {
         "scroll-step": 5,
         "format": "{icon} {volume}%",
-        "format-bluetooth": " {icon} {volume}%",
-        "format-bluetooth-muted": " ",
-        "format-muted": " ",
-        "format-source": " {volume}%",
-        "format-source-muted": "",
+        "format-bluetooth": "󰂯 {icon} {volume}%",
+        "format-bluetooth-muted": "󰂲 󰖁",
+        "format-muted": "󰖁",
+        "format-source": "󰍬 {volume}%",
+        "format-source-muted": "󰍭",
         "format-icons": {
-            "headphone": "",
-            "hands-free": "",
-            "headset": "",
-            "phone": "",
-            "portable": "",
-            "car": "",
-            "default": ["", "", ""]
+            "headphone": "󰋋",
+            "hands-free": "󰋎",
+            "headset": "󰋎",
+            "phone": "󰏲",
+            "portable": "󰏲",
+            "car": "󰄋",
+            "default": ["󰕾", "󰕿", "󰖀"]
         },
         "on-click": "pavucontrol",
         "on-click-right": "foot -a pw-top pw-top",
