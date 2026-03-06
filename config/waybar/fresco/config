@@ -82,8 +82,8 @@
     },
 
     "clock": {
-        "format": " %H:%M",
-        "format-alt": " %a %d %b",
+        "format": " {:%H:%M}",
+        "format-alt": " {:%a %d %b}",
         "tooltip-format": "<big>{:%B %Y}</big>\n<tt><small>{calendar}</small></tt>"
     },
 
@@ -156,7 +156,7 @@
     "custom/gpu": {
         "exec": "waybar-nvidiagpu",
         "exec-if": "which nvidia-smi",
-        "return-json": true,
+        "return-type": "json",
         "interval": 3,
         "format": "{icon} {text}",
         "format-icons": ["󰊴", "󰊴", "󰊴", "󰊴", "󰊴"],
@@ -165,12 +165,16 @@
     },
 
     "custom/swaync": {
-        "exec": "waybar-swaync",
+        "exec": "swaync-client -swb",
         "exec-if": "which swaync-client",
-        "return-json": true,
-        "interval": "once",
-        "signal": 8,
-        "format": "{}",
+        "return-type": "json",
+        "format": "{icon}",
+        "format-icons": {
+            "none": "󰂚",
+            "notification": "󰂞",
+            "dnd-none": "󰂛",
+            "dnd-notification": "󰂛"
+        },
         "tooltip": true,
         "on-click": "swaync-client -t -sw",
         "on-click-right": "swaync-client -d -sw"
@@ -179,7 +183,7 @@
     "custom/weather": {
         "exec": "waybar-weather",
         "exec-if": "which curl",
-        "return-json": true,
+        "return-type": "json",
         "interval": 1800,
         "format": "{}",
         "tooltip": true

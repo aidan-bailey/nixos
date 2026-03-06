@@ -268,7 +268,8 @@ window#waybar.hidden {
     background: rgba(249, 226, 175, 0.12);
 }
 
-#custom-swaync.dnd {
+#custom-swaync.dnd-none,
+#custom-swaync.dnd-notification {
     color: #6c7086;
     background: rgba(49, 50, 68, 0.40);
 }
