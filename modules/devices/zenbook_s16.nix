@@ -34,21 +34,22 @@
     "rcu_nocbs=all" # Offload RCU callbacks from all CPUs
   ];
 
-  # Enable hibernate and suspend-then-hibernate
+  # Hibernate config — use shutdown mode to avoid broken amdgpu S4 resume on Strix Point
   systemd.sleep.extraConfig = ''
     [Sleep]
     AllowSuspend=yes
     AllowHibernation=yes
-    AllowSuspendThenHibernate=yes
+    AllowSuspendThenHibernate=no
     AllowHybridSleep=no
     SuspendState=freeze
-    HibernateDelaySec=30min
+    HibernateMode=shutdown
   '';
 
-  # Suspend-then-hibernate on lid close
+  # Direct hibernate on lid close — suspend-then-hibernate crashes on Strix Point
+  # due to broken s2idle resume (amdgpu VPE ring test failure)
   services.logind.settings.Login = {
-    HandleLidSwitch = "suspend-then-hibernate";
-    HandleLidSwitchExternalPower = "suspend-then-hibernate";
+    HandleLidSwitch = "hibernate";
+    HandleLidSwitchExternalPower = "hibernate";
     LidSwitchIgnoreInhibited = "yes";
     IdleAction = "suspend";
     IdleActionSec = "30min";
