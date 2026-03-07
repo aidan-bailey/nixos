@@ -46,6 +46,22 @@
     keep-derivations = true;
   };
 
+  # RTX 3070 GAMING X TRIO overclock: 2000MHz core / 8000MHz mem / 250W
+  systemd.services.gpu-overclock = {
+    description = "Apply RTX 3070 GAMING X TRIO overclock";
+    after = [ "nvidia-persistenced.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = pkgs.writeShellScript "apply-3070-oc" ''
+        smi=${config.hardware.nvidia.package.bin}/bin/nvidia-smi
+        $smi -lgc 2000,2000
+        $smi -pl 250
+        $smi -lmc 8000,8000
+      '';
+    };
+  };
+
   # EXT4 mount tuning
   fileSystems."/".options = [
     "noatime"
