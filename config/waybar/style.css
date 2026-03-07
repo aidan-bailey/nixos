@@ -1,195 +1,315 @@
+/* Catppuccin Mocha palette:
+   base:     #1e1e2e  crust:    #11111b  mantle:   #181825
+   surface0: #313244  overlay0: #6c7086  text:     #cdd6f4
+   lavender: #b4befe  blue:     #89b4fa  sapphire: #74c7ec
+   teal:     #94e2d5  green:    #a6e3a1  yellow:   #f9e2af
+   peach:    #fab387  red:      #f38ba8  pink:     #f5c2e7
+   mauve:    #cba6f7  sky:      #89dceb
+*/
+
 * {
-    /* `otf-font-awesome` is required to be installed for icons */
-    font-family: "NotoSansM Nerd Font", "Noto Sans CJK KR Regular";
-    /*font-family: "D2CodingLigature Nerd Mono";*/
+    font-family: "JetBrainsMono Nerd Font Mono", "Symbols Nerd Font Mono", "Noto Sans", sans-serif;
     font-size: 13px;
     min-height: 0;
-  }
-  
-  window#waybar {
-    background: rgba(1, 58, 4, 0.9);
-    color: #ffffff;
-    transition-property: background-color;
-    transition-duration: .5s;
-  }
-  
-  window#waybar.hidden {
-    opacity: 0.2;
-  }
-  
-  #waybar.empty #window {
-    background-color: transparent;
-  }
-  
-  #workspaces {
-  }
-  
-  #window {
-    margin: 2px;
-    padding-left: 8px;
-    padding-right: 8px;
-    background-color: rgba(0,0,0,0.3);
-    font-size:14px;
-    font-weight: bold;
-  }
-  
-  button {
-    /* Use box-shadow instead of border so the text isn't offset */
-    box-shadow: inset 0 -3px transparent;
-    /* Avoid rounded borders under each button name */
     border: none;
     border-radius: 0;
-  }
-  
-  /* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
-  button:hover {
-    background: inherit;
-    border-top: 2px solid #c9545d;
-  }
-  
-  #workspaces button {
-    padding: 0 4px;
-    /*    background-color: rgba(0,0,0,0.3); */
-  }
-  
-  #workspaces button:hover {
-  }
-  
-  #workspaces button.focused {
-    /*    box-shadow: inset 0 -2px #c9545d; */
-    background-color: rgba(0,0,0,0.3);
-    color:#c9545d;
-    border-top: 2px solid #c9545d;
-  }
-  
-  #workspaces button.active {
-    /*    box-shadow: inset 0 -2px #c9545d; */
-    background-color: rgba(0,0,0,0.3);
-    color:#c9545d;
-    border-top: 2px solid #c9545d;
-  }
-  
-  #workspaces button.urgent {
-    background-color: #eb4d4b;
-  }
-  
-  #mode {
-    background-color: #64727D;
-    border-bottom: 3px solid #ffffff;
-  }
-  
-  #clock,
-  #battery,
-  #cpu,
-  #memory,
-  #disk,
-  #temperature,
-  #backlight,
-  #network,
-  #pulseaudio,
-  #wireplumber,
-  #custom-media,
-  #tray,
-  #mode,
-  #idle_inhibitor,
-  #scratchpad,
-  #mpd {
-    margin: 2px;
-    padding-left: 4px;
-    padding-right: 4px;
-    background-color: rgba(0,0,0,0.3);
-    color: #ffffff;
-  }
-  
-  /* If workspaces is the leftmost module, omit left margin */
-  .modules-left > widget:first-child > #workspaces {
-    margin-left: 0;
-  }
-  
-  /* If workspaces is the rightmost module, omit right margin */
-  .modules-right > widget:last-child > #workspaces {
-    margin-right: 0;
-  }
-  
-  #clock {
-    font-size:14px;
+    padding: 0;
+    margin: 0;
+}
+
+/* ── Floating bar ──────────────────────────────────────── */
+
+window#waybar {
+    background: rgba(17, 17, 27, 0.92);
+    border-radius: 12px;
+    border: 1px solid rgba(180, 190, 254, 0.10);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+    color: #cdd6f4;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+/* ── Workspaces (filled-pill active) ───────────────────── */
+
+#workspaces {
+    background: rgba(30, 30, 46, 0.85);
+    border-radius: 10px;
+    margin: 4px 6px 4px 4px;
+    padding: 0 2px;
+}
+
+#workspaces button {
+    padding: 2px 10px;
+    margin: 3px 1px;
+    color: #6c7086;
+    background: transparent;
+    border-radius: 8px;
+    border: none;
+    transition: all 0.15s ease;
+    min-width: 28px;
+}
+
+#workspaces button:hover {
+    color: #cdd6f4;
+    background: rgba(180, 190, 254, 0.08);
+}
+
+#workspaces button.focused,
+#workspaces button.active {
+    color: #1e1e2e;
+    background: #b4befe;
     font-weight: bold;
-  }
-  
-  #battery icon {
-    color: red;
-  }
-  
-  #battery.charging, #battery.plugged {
-    color: #ffffff;
-    background-color: #26A65B;
-  }
-  
-  @keyframes blink {
-    to {
-      background-color: #ffffff;
-      color: #000000;
-    }
-  }
-  
-  #battery.warning:not(.charging) {
-    background-color: #f53c3c;
-    color: #ffffff;
-    animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-  }
-  
-  #battery.critical:not(.charging) {
-    background-color: #f53c3c;
-    color: #ffffff;
-    animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-  }
-  
-  label:focus {
-    background-color: #000000;
-  }
-  
-  #network.disconnected {
-    background-color: #f53c3c;
-  }
-  
-  #temperature.critical {
-    background-color: #eb4d4b;
-  }
-  
-  #idle_inhibitor.activated {
-    background-color: #ecf0f1;
-    color: #2d3436;
-  }
-  
-  #tray > .passive {
+}
+
+#workspaces button.urgent {
+    color: #1e1e2e;
+    background: #f38ba8;
+}
+
+/* ── Mode / Scratchpad ─────────────────────────────────── */
+
+#mode {
+    padding: 0 10px;
+    color: #cba6f7;
+    font-style: italic;
+}
+
+#scratchpad {
+    padding: 0 8px;
+    color: #6c7086;
+}
+
+/* ── Window title ──────────────────────────────────────── */
+
+#window {
+    padding: 0 12px;
+    color: #a6adc8;
+}
+
+/* ── Per-module tinted pills ───────────────────────────── */
+
+#cpu        { color: #89b4fa; background: rgba(137, 180, 250, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 100px; }
+#memory     { color: #a6e3a1; background: rgba(166, 227, 161, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 52px; }
+#disk       { color: #94e2d5; background: rgba(148, 226, 213, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 44px; }
+#temperature{ color: #fab387; background: rgba(250, 179, 135, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 40px; }
+#backlight  { color: #f9e2af; background: rgba(249, 226, 175, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 44px; }
+#network    { color: #89dceb; background: rgba(137, 220, 235, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 160px; }
+#pulseaudio { color: #cba6f7; background: rgba(203, 166, 247, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 44px; }
+#battery    { color: #a6e3a1; background: rgba(166, 227, 161, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 10px; min-width: 44px; }
+#mpd        { color: #f5c2e7; background: rgba(245, 194, 231, 0.10); border-radius: 8px; margin: 4px 1px; padding: 0 12px; }
+#tray       { background: rgba(49,  50,  68,  0.70);                 border-radius: 8px; margin: 4px 2px; padding: 0 6px; }
+#idle_inhibitor { color: #6c7086; border-radius: 8px; margin: 4px 1px; padding: 0 8px; }
+#clock      { color: #b4befe; background: rgba(180, 190, 254, 0.15); border-radius: 10px;
+              margin: 4px 4px; padding: 0 14px; font-weight: bold; min-width: 50px; }
+
+/* ── CPU states ────────────────────────────────────────── */
+
+#cpu.warning {
+    color: #fab387;
+}
+
+#cpu.critical {
+    color: #f38ba8;
+    animation: blink 0.5s linear infinite alternate;
+}
+
+/* ── Memory states ─────────────────────────────────────── */
+
+#memory.warning {
+    color: #fab387;
+}
+
+#memory.critical {
+    color: #f38ba8;
+    animation: blink 0.5s linear infinite alternate;
+}
+
+/* ── Disk states ───────────────────────────────────────── */
+
+#disk.warning {
+    color: #f9e2af;
+}
+
+#disk.critical {
+    color: #f38ba8;
+}
+
+/* ── Temperature states ────────────────────────────────── */
+
+#temperature.critical {
+    color: #f38ba8;
+    animation: blink 0.5s linear infinite alternate;
+}
+
+/* ── Network states ────────────────────────────────────── */
+
+#network.disconnected {
+    color: #f38ba8;
+}
+
+/* ── Audio states ──────────────────────────────────────── */
+
+#pulseaudio.muted {
+    color: #6c7086;
+}
+
+#wireplumber {
+    color: #cba6f7;
+}
+
+#wireplumber.muted {
+    color: #6c7086;
+}
+
+/* ── Battery states ────────────────────────────────────── */
+
+#battery.good {
+    color: #a6e3a1;
+}
+
+#battery.warning:not(.charging) {
+    color: #f9e2af;
+}
+
+#battery.critical:not(.charging) {
+    color: #f38ba8;
+    animation: blink 0.5s linear infinite alternate;
+}
+
+#battery.charging,
+#battery.plugged {
+    color: #a6e3a1;
+}
+
+/* ── Idle inhibitor states ─────────────────────────────── */
+
+#idle_inhibitor.activated {
+    color: #f9e2af;
+}
+
+/* ── MPD states + collapse ─────────────────────────────── */
+
+#mpd.paused {
+    color: #a6adc8;
+}
+
+#mpd.stopped, #mpd.disconnected {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    color: transparent;
+}
+
+/* ── Tray states ───────────────────────────────────────── */
+
+#tray > .passive {
     -gtk-icon-effect: dim;
-  }
-  
-  #tray > .needs-attention {
+}
+
+#tray > .needs-attention {
     -gtk-icon-effect: highlight;
-    background-color: #eb4d4b;
-  }
-  
-  /*
-  
-  window#waybar.solo {
-  background-color: #FFFFFF;
-  }
-  
-  window#waybar.termite {
-  background-color: #3F3F3F;
-  }
-  
-  window#waybar.chromium {
-  background-color: #000000;
-  border: none;
-  }
-   */
+}
+
+/* ── GPU (custom module) ───────────────────────────────── */
+
+#custom-gpu {
+    color: #a6e3a1;
+    background: rgba(166, 227, 161, 0.10);
+    border-radius: 8px;
+    margin: 4px 1px;
+    padding: 0 10px;
+    min-width: 44px;
+}
+
+#custom-gpu.unavailable {
+    color: #6c7086;
+    background: transparent;
+}
+
+/* ── Power profile (custom module) ─────────────────────── */
+
+#custom-powerprofile {
+    color: #f9e2af;
+    background: rgba(249, 226, 175, 0.10);
+    border-radius: 8px;
+    margin: 4px 1px;
+    padding: 0 10px;
+    min-width: 80px;
+}
+
+#custom-powerprofile.performance {
+    color: #f38ba8;
+    background: rgba(243, 139, 168, 0.10);
+}
+
+#custom-powerprofile.balanced {
+    color: #a6e3a1;
+    background: rgba(166, 227, 161, 0.10);
+}
+
+#custom-powerprofile.power-saver {
+    color: #89dceb;
+    background: rgba(137, 220, 235, 0.10);
+}
+
+/* ── SwayNC notification bell (custom module) ──────────── */
+
+#custom-swaync {
+    color: #6c7086;
+    background: rgba(49, 50, 68, 0.60);
+    border-radius: 8px;
+    margin: 4px 1px;
+    padding: 0 10px;
+}
+
+#custom-swaync.notification {
+    color: #f9e2af;
+    background: rgba(249, 226, 175, 0.12);
+}
+
+#custom-swaync.dnd-none,
+#custom-swaync.dnd-notification {
+    color: #6c7086;
+    background: rgba(49, 50, 68, 0.40);
+}
+
+/* ── Weather (custom module) ───────────────────────────── */
+
+#custom-weather {
+    color: #89dceb;
+    background: rgba(137, 220, 235, 0.10);
+    border-radius: 8px;
+    margin: 4px 1px;
+    padding: 0 10px;
+    min-width: 60px;
+}
+
+#custom-weather.unavailable {
+    color: #6c7086;
+    background: transparent;
+}
+
+/* ── Animations ────────────────────────────────────────── */
+
+@keyframes blink {
+    from { opacity: 1.0; }
+    to   { opacity: 0.4; }
+}
+
+/* ── GTK resets ────────────────────────────────────────── */
+
+button {
+    box-shadow: none;
+    border: none;
+}
+
+button:hover {
+    background: inherit;
+}
+
+label:focus {
+    background-color: transparent;
+}
