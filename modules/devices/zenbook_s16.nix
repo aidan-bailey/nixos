@@ -29,6 +29,7 @@
   boot.kernelParams = [
     "amdgpu.dcdebugmask=0x600" # Disables Panel Self Refresh (Critical for Zenbook S16)
     "amdgpu.sg_display=0" # Fixes white/flashing screen artifacts (Recommended)
+    "amdgpu.abmlevel=0" # Disable Adaptive Brightness Management — fixes OLED flicker
     "amdgpu.ip_block_mask=0xffffbfff" # Disable VPE — broken s2idle resume on Strix Point
     "rcutree.enable_rcu_lazy=1" # Batch RCU callbacks for 5-10% idle power savings
     "rcu_nocbs=all" # Offload RCU callbacks from all CPUs
