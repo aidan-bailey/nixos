@@ -11,12 +11,12 @@
 
   hardware.nvidia = {
     modesetting.enable = true;
-    powerManagement.enable = false;
+    powerManagement.enable = true;
     powerManagement.finegrained = false;
     open = true;
     nvidiaSettings = true;
     nvidiaPersistenced = true; # keep driver state loaded — faster app/CUDA launches
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
   };
 
   hardware.graphics = {
@@ -29,6 +29,11 @@
   };
 
   hardware.nvidia-container-toolkit.enable = true;
+
+  # Coolbits 24 = fan control (8) + clock offset tuning (16)
+  services.xserver.screenSection = ''
+    Option "Coolbits" "24"
+  '';
 
   environment.variables = {
     GBM_BACKEND = "nvidia-drm";
