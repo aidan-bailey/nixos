@@ -26,6 +26,7 @@ let
   ];
 
   systemPackages = with pkgs; [
+    passmark-performancetest
     phoronix-test-suite
     geekbench
   ];
