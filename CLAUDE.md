@@ -31,7 +31,16 @@ nix flake check
 
 # Format nix files
 nixfmt .
+
+# Edit encrypted secrets
+sops secrets/secrets.yaml   # system secrets
+sops secrets/home.yaml      # user secrets
 ```
+
+Shell aliases defined in `home/modules/shell.nix`:
+- `updaten` — `nix flake update` piped through `nom` (pretty nix output)
+- `configure` — `sudo nixos-rebuild switch --flake .#$(hostname)`
+- `nix-sync-cache` — sync nix store to local binary cache at `/mnt/nixos-cache`
 
 ## Architecture
 
@@ -39,12 +48,12 @@ nixfmt .
 
 The flake defines a `mkHost` helper that combines a host-specific config with `commonModules` (doom-flake, nixarr, home-manager, sops-nix). Module composition is done via two profiles defined in `flake.nix`:
 
-- **serverModules** — base, user, networking, terminal, mediaserver, secrets
+- **serverModules** — base, user, networking, terminal, mediaserver, secrets, benchmarking
 - **desktopModules** — serverModules + cachyos kernel, sway, audio, bluetooth, gaming, nix-ld, virtualisation, power
 
 Each host selects a profile and a device module:
 
-- **nesco** — desktopModules + `devices/zenbook_s16.nix` (AMD iGPU, asusd)
+- **nesco** — desktopModules + `devices/zenbook_s16.nix` (Zen 5, AMD iGPU, asusd)
 - **fresco** — desktopModules + `devices/fresco.nix` (Zen 4 + NVIDIA, performance tuning)
 - **medesco** — serverModules only (no device module)
 
@@ -53,6 +62,24 @@ Each host selects a profile and a device module:
 **System modules** (`modules/`) configure NixOS options — hardware, services, kernel, system packages. They receive `inputs` and `system` via `specialArgs`.
 
 **Home-manager modules** (`home/modules/`) configure user environment — programs, dotfiles, shell, editor. They receive `inputs` and `system` via `extraSpecialArgs`. All home modules are imported from `home/users/aidanb/default.nix`.
+
+### Custom Options (`modules/profile.nix`)
+
+Two custom options control conditional behavior across modules:
+
+- `custom.hostType` — `"laptop"`, `"desktop"`, or `"server"` (controls TLP, sleep, power)
+- `custom.display.type` — `"oled"` or `"lcd"` (controls font rendering / subpixel settings)
+
+These are set in device modules and consumed by `sway.nix`, `power.nix`, etc.
+
+### Per-Host Integration Pattern
+
+Each host's `configuration.nix` does three things:
+1. Imports `hardware-configuration.nix` (generated per-machine)
+2. Imports its device module (e.g. `modules/devices/zenbook_s16.nix`)
+3. Injects per-host home-manager overrides via `home-manager.users.aidanb.imports = [ ../../home/hosts/{host}.nix ]`
+
+The per-host home files (`home/hosts/nesco.nix`, `home/hosts/fresco.nix`) override Sway and Waybar config sources to point to `config/sway/{host}/config` and `config/waybar/{host}/config`.
 
 ### CPU / GPU Module Hierarchy
 
@@ -66,23 +93,28 @@ CPU and GPU support is layered — device modules pick the pieces they need:
 
 Device modules compose these: `zenbook_s16.nix` imports `amd/graphics.nix` + `amd/cpu.nix`; `fresco.nix` imports `nvidia/gpu.nix` + `amd/zen4.nix`.
 
+### Waybar Architecture
+
+Waybar uses a base config (`config/waybar/config`) plus per-host overrides:
+- `config/waybar/nesco/config` — top bar, battery/backlight/powerprofile, AMDGPU monitoring
+- `config/waybar/fresco/config` — bottom bar, disk monitoring, NVIDIA GPU monitoring
+- `config/waybar/style.css` — shared styling
+
+Custom modules use shell scripts calling `amdgpu_top`, `nvidia-smi`, `swaync-client`, `powerprofilesctl`, and a weather API.
+
 ### Key Modules
 
-- `modules/base.nix` — Core system packages, zram swap (zstd, 50%), tmpfs /tmp, CUPS printing
+- `modules/base.nix` — Core system packages, zram swap (zstd, 50%), tmpfs /tmp, CUPS printing, local binary cache (`/mnt/nixos-cache`)
 - `modules/networking.nix` — NetworkManager, encrypted DNS-over-TLS (1.1.1.1, 9.9.9.9), mDNS via Avahi, nftables firewall, SSH
 - `modules/audio.nix` — PipeWire with Bluetooth codec support (SBC-XQ, LDAC, aptX, aptX-HD)
-- `modules/sway.nix` — Enables Sway at system level with XDG portals, GNOME keyring, fonts (Nerd Fonts), OLED font rendering; auto-starts Sway on tty1
+- `modules/sway.nix` — Enables Sway at system level with XDG portals, GNOME keyring, fonts (Nerd Fonts), font rendering conditioned on `custom.display.type`; auto-starts Sway on tty1
 - `modules/kernel/cachyos.nix` — CachyOS kernel via nix-cachyos-kernel overlay (LTO default, zen4-lto for fresco), binary cache config
 - `modules/secrets.nix` — SOPS-nix with age encryption for system-level secrets
 - `modules/devices/zenbook_s16.nix` — AMD iGPU, asusd fan control, PSR disable, RCU tuning, resume device
-- `modules/devices/fresco.nix` — Zen 4 + NVIDIA, performance governor, EPP, sched-ext scx_lavd, TCP BBR, NVMe/EXT4 tuning, earlyoom, irqbalance, WiFi ASPM workaround
+- `modules/devices/fresco.nix` — Zen 4 + NVIDIA, imports tuning submodules (`tuning/workstation.nix`, `tuning/network.nix`, `tuning/io.nix`), earlyoom, WiFi ASPM workaround
 - `home/modules/wayland.nix` — User-side Sway config, Waybar, Wayland tools, Gammastep night light, HiDPI cursor, polkit agent; sources config files from `config/sway/` and `config/waybar/`
 - `home/modules/devtools.nix` — Dev tools, Zed editor with vim mode and LSP configs (nixd, pyright, ruff, rust-analyzer), sccache, mold linker
 - `home/modules/secrets.nix` — SOPS-nix home-manager module for user secrets
-
-### Per-Host Sway Config
-
-Each desktop host has its own Sway config file: `config/sway/{host}/config`. These are linked by per-host home-manager files in `home/hosts/{host}.nix`, which are imported in each host's `configuration.nix`.
 
 ### Secrets
 
@@ -90,11 +122,15 @@ Encrypted secrets are managed by sops-nix with age encryption. Secrets live in `
 
 ### Flake Inputs of Note
 
-- **nix-cachyos-kernel** (xddxdd/nix-cachyos-kernel) — CachyOS kernel packages with LTO and arch-specific variants, served from binary cache
+- **nix-cachyos-kernel** (xddxdd/nix-cachyos-kernel) — CachyOS kernel packages with LTO and arch-specific variants; pinned to its own nixpkgs (must NOT follow our nixpkgs)
 - **doom-flake** (local, `flakes/doom-emacs/`) — Doom Emacs with PGTK + native-comp
 - **nixarr** — Media server stack (Jellyfin, Sonarr, Radarr, etc.)
 - **sops-nix** — Encrypted secrets management
 - **antigravity-nix**, **harbour** — Compilation optimization tools, exposed as packages in devtools
+
+### znver4 Build Issues (fresco)
+
+Setting `hostPlatform.gcc.arch = "znver4"` compiles all packages with `-march=znver4`, enabling AVX-512. This causes test failures in several packages due to valgrind incompatibility, floating-point precision changes, and SIMD miscompilation. Workarounds are applied as overlays. See `hosts/fresco/README.md` for a full tracking table of affected packages and upstream issues.
 
 ### Patterns
 
