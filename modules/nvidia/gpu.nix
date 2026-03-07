@@ -54,6 +54,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
+    gwe
     nvtopPackages.nvidia
     vulkan-tools
     vulkan-loader
