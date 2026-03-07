@@ -57,7 +57,8 @@
         smi=${config.hardware.nvidia.package.bin}/bin/nvidia-smi
         $smi -lgc 2000,2000
         $smi -pl 250
-        $smi -lmc 8000,8000
+        ${pkgs.python3.withPackages (ps: [ ps.nvidia-ml-py ])}/bin/python3 -c \
+          "from pynvml import *; nvmlInit(); h = nvmlDeviceGetHandleByIndex(0); nvmlDeviceSetMemClkVfOffset(h, 2000);"
       '';
     };
   };
