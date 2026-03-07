@@ -26,7 +26,7 @@ Desktop workstation — AMD Zen 4 + NVIDIA on MSI B650M Mortar WiFi.
 ## Hardware
 
 - **CPU**: AMD Ryzen 7 7700X (8C/16T, Zen 4)
-- **GPU**: NVIDIA RTX 3070
+- **GPU**: MSI RTX 3070 GAMING X TRIO
 - **Motherboard**: MSI B650M Mortar WiFi
 - **WiFi**: MediaTek MT7922/mt7921e
 - **RAM**: 32 GB DDR5-6000
