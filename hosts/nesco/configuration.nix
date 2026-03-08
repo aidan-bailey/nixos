@@ -13,5 +13,9 @@
     "resume=/dev/disk/by-uuid/8debf292-09a9-44aa-a9db-6a556aefb609"
   ];
 
+  networking.extraHosts = ''
+    192.168.68.65 fresco
+  '';
+
   home-manager.users.aidanb.imports = [ ../../home/hosts/nesco.nix ];
 }
