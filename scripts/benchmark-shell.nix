@@ -52,6 +52,19 @@ pkgs.mkShell {
 
     # Kernel build
     elfutils
+
+    # X11 (Unigine and other graphical benchmarks run via XWayland)
+    libxext
+    libx11
+    libxrandr
+    libxinerama
+    libxcursor
+    libxi
+    libxxf86vm
+
+    # GPU
+    libGL
+    vulkan-loader
   ];
 
   # PTS dependency checker doesn't understand Nix — skip it
@@ -85,6 +98,7 @@ pkgs.mkShell {
       esac
     done
     export LIBRARY_PATH="''${_lib}''${LIBRARY_PATH:+:$LIBRARY_PATH}"
+    export LD_LIBRARY_PATH="''${_lib}''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
     unset NIX_CFLAGS_COMPILE NIX_LDFLAGS NIX_LDFLAGS_BEFORE
     unset _inc _lib _prev

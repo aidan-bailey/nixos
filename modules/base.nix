@@ -25,6 +25,8 @@ let
     pciutils
     usbutils
     nix-output-monitor
+    psmisc
+    lm_sensors
   ];
 
 in
