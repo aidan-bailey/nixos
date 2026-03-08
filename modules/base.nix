@@ -82,6 +82,7 @@ in
 
   nix.settings.extra-substituters = [ "file:///mnt/nixos-cache" ];
   nix.settings.connect-timeout = 5;
+  nix.settings.fallback = true;
 
   # Automatic Nix store garbage collection
   nix.gc = {
