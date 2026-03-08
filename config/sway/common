@@ -1,5 +1,5 @@
-# Sway config (Wayland)
-# Inspired by your i3 config
+# Sway shared config (Wayland)
+# Per-host configs include this file and add host-specific settings
 
 set $mod Mod4
 
@@ -32,8 +32,6 @@ exec_always systemctl --user start xdg-desktop-portal.service
 # Initialize the keyring daemon and export the variables it creates
 exec --no-startup-id /run/current-system/sw/bin/gnome-keyring-daemon --start --components=secrets
 
-exec waybar
-
 # Wallpaper (feh -> swaybg)
 exec_always swaybg --image ~/.config/sway/wallpaper.jpg --mode fill
 
@@ -52,21 +50,15 @@ exec wl-paste --watch cliphist store
 # Prevent idle lock while audio is playing
 exec sway-audio-idle-inhibit
 
+# Notification daemon (replaces mako)
+exec swaync
+
 # Idle + lock (xss-lock/i3lock -> swayidle/swaylock)
 exec_always swayidle -w \
   timeout 300 'swaylock -f' \
   timeout 600 'swaymsg "output * power off"' \
   resume 'swaymsg "output * power on"' \
   before-sleep 'swaylock -f'
-
-bindsym XF86MonBrightnessUp exec brightnessctl set +10%
-bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
-
-### Output (Zenbook S16 OLED 2880x1800)
-output eDP-1 {
-  scale 1.5
-  adaptive_sync on
-}
 
 ### Input (keyboard layout like your XKB settings)
 input * {
@@ -76,7 +68,7 @@ input * {
 
 ### Mouse/Window behavior
 floating_modifier $mod
-# Sway doesn’t have i3’s `tiling_drag` option — dragging works with $mod by default
+# Sway doesn't have i3's `tiling_drag` option — dragging works with $mod by default
 
 ### Launchers
 set $term alacritty
@@ -196,6 +188,9 @@ popup_during_fullscreen smart
 ### App shortcuts
 bindsym $mod+Shift+f exec thunar
 
+### Notification panel
+bindsym $mod+n exec swaync-client -t -sw
+
 ### Clipboard history
 bindsym $mod+Shift+v exec cliphist list | wofi --dmenu --prompt "clipboard:" | cliphist decode | wl-copy
 
@@ -223,35 +218,5 @@ client.urgent           #44475A  #FF5555  #F8F8F2  #FF5555   #FF5555
 client.placeholder      #282A36  #282A36  #F8F8F2  #282A36   #282A36
 client.background       #F8F8F2
 
-input type:touchpad {
-    tap enabled
-    tap_button_map lrm
-    natural_scroll enabled
-    dwt enabled
-    middle_emulation enabled
-    click_method clickfinger
-    scroll_method two_finger
-    accel_profile adaptive
-    pointer_accel 0.3
-}
-
-### VNC
-exec wayvnc 0.0.0.0 --config-path ~/.config/wayvnc/config
-
-### Touchpad gestures (sway 1.8+)
-bindgesture swipe:right workspace prev
-bindgesture swipe:left workspace next
-bindgesture swipe:up exec $menu
-bindgesture swipe:down exec $term
-
 ### Cursor (HiDPI)
 seat seat0 xcursor_theme Adwaita 36
-
-bar {
-    swaybar_command waybar
-    position bottom
-    mode hide 
-    hidden_state hide
-    modifier Mod4
-}
-

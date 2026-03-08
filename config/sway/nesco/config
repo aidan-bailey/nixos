@@ -1,231 +1,17 @@
 # Sway config — nesco (Zenbook S16 OLED, AMD iGPU)
+include ~/.config/sway/common
 
-set $mod Mod4
-
-### Fonts
-# Waybar handles most text; Sway still uses this for titlebars if enabled
-font pango:monospace 11
-
-
-### Environment & portals (optional but nice for screensharing)
-# exec systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
-# exec /usr/lib/xdg-desktop-portal -r
-# exec /usr/lib/xdg-desktop-portal-wlr -r
-
-### Autostart
-# Autostart XDG .desktop files (Wayland-aware)
-# 'dex -ae sway' will only start entries matching this session
-exec_always dex -ae sway
-
-### Environment & portals
-# Make systemd user services aware of Sway's Wayland environment
-exec_always dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway XDG_SESSION_DESKTOP=sway SWAYSOCK
-
-# Import these vars into systemd so it can start portals correctly
-exec_always systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP SWAYSOCK
-
-# Start (not restart) the portals once Wayland is ready
-exec_always systemctl --user start xdg-desktop-portal-wlr.service
-exec_always systemctl --user start xdg-desktop-portal.service
-
-# Initialize the keyring daemon and export the variables it creates
-exec --no-startup-id /run/current-system/sw/bin/gnome-keyring-daemon --start --components=secrets
-
-# Wallpaper (feh -> swaybg)
-exec_always swaybg --image ~/.config/sway/wallpaper.jpg --mode fill
-
-# Applets (Waybar has a tray, these will dock there)
-exec_always nm-applet
-exec_always blueman-applet
-# If you like a volume tray, pasystray works well:
-# exec pasystray
-
-# Display profiles
-exec_always kanshi
-
-# Clipboard history
-exec wl-paste --watch cliphist store
-
-# Prevent idle lock while audio is playing
-exec sway-audio-idle-inhibit
-
-# Notification daemon (replaces mako)
-exec swaync
-
-# Idle + lock (xss-lock/i3lock -> swayidle/swaylock)
-exec_always swayidle -w \
-  timeout 300 'swaylock -f' \
-  timeout 600 'swaymsg "output * power off"' \
-  resume 'swaymsg "output * power on"' \
-  before-sleep 'swaylock -f'
-
+# Brightness keys (laptop)
 bindsym XF86MonBrightnessUp exec brightnessctl set +10%
 bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 
-### Output (Zenbook S16 OLED 2880x1800)
+# Output (Zenbook S16 OLED 2880x1800)
 output eDP-1 {
   scale 1.5
   adaptive_sync on
 }
 
-### Input (keyboard layout like your XKB settings)
-input * {
-  xkb_layout za
-  xkb_options caps:swapescape
-}
-
-### Mouse/Window behavior
-floating_modifier $mod
-# Sway doesn’t have i3’s `tiling_drag` option — dragging works with $mod by default
-
-### Launchers
-set $term alacritty
-set $menu wofi --show drun --prompt "run:" --allow-images
-
-bindsym $mod+Return exec $term
-bindsym $mod+q kill
-bindsym $mod+d exec $menu
-
-### Focus
-bindsym $mod+j focus left
-bindsym $mod+k focus down
-bindsym $mod+l focus up
-bindsym $mod+semicolon focus right
-
-bindsym $mod+Left focus left
-bindsym $mod+Down focus down
-bindsym $mod+Up focus up
-bindsym $mod+Right focus right
-
-### Move windows
-bindsym $mod+Shift+j move left
-bindsym $mod+Shift+k move down
-bindsym $mod+Shift+l move up
-bindsym $mod+Shift+semicolon move right
-
-bindsym $mod+Shift+Left move left
-bindsym $mod+Shift+Down move down
-bindsym $mod+Shift+Up move up
-bindsym $mod+Shift+Right move right
-
-### Split / layout / fullscreen
-bindsym $mod+h split h
-bindsym $mod+v split v
-bindsym $mod+f fullscreen toggle
-
-bindsym $mod+s layout stacking
-bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
-
-### Floating / focus mode toggle
-bindsym $mod+Shift+space floating toggle
-bindsym $mod+space focus mode_toggle
-
-### Container navigation
-bindsym $mod+a focus parent
-# bindsym $mod+d focus child  # (unused in your i3 file)
-
-### Workspaces (keep your 1..10)
-set $ws1 "1"
-set $ws2 "2"
-set $ws3 "3"
-set $ws4 "4"
-set $ws5 "5"
-set $ws6 "6"
-set $ws7 "7"
-set $ws8 "8"
-set $ws9 "9"
-set $ws10 "10"
-
-bindsym $mod+1 workspace number $ws1
-bindsym $mod+2 workspace number $ws2
-bindsym $mod+3 workspace number $ws3
-bindsym $mod+4 workspace number $ws4
-bindsym $mod+5 workspace number $ws5
-bindsym $mod+6 workspace number $ws6
-bindsym $mod+7 workspace number $ws7
-bindsym $mod+8 workspace number $ws8
-bindsym $mod+9 workspace number $ws9
-bindsym $mod+0 workspace number $ws10
-
-bindsym $mod+Shift+1 move container to workspace number $ws1
-bindsym $mod+Shift+2 move container to workspace number $ws2
-bindsym $mod+Shift+3 move container to workspace number $ws3
-bindsym $mod+Shift+4 move container to workspace number $ws4
-bindsym $mod+Shift+5 move container to workspace number $ws5
-bindsym $mod+Shift+6 move container to workspace number $ws6
-bindsym $mod+Shift+7 move container to workspace number $ws7
-bindsym $mod+Shift+8 move container to workspace number $ws8
-bindsym $mod+Shift+9 move container to workspace number $ws9
-bindsym $mod+Shift+0 move container to workspace number $ws10
-
-### Config reload / restart / exit
-bindsym $mod+Shift+c reload
-bindsym $mod+Shift+r restart
-bindsym $mod+Shift+e exec 'swaynag -t warning -m "Exit Sway?" -b "Yes, exit" "swaymsg exit"'
-
-### Resize mode (same semantics as i3)
-mode "resize" {
-  bindsym j          resize shrink width 10px
-  bindsym k          resize grow height 10px
-  bindsym l          resize shrink height 10px
-  bindsym semicolon  resize grow width 10px
-
-  bindsym Left  resize shrink width 10px
-  bindsym Down  resize grow height 10px
-  bindsym Up    resize shrink height 10px
-  bindsym Right resize grow width 10px
-
-  bindsym Return mode "default"
-  bindsym Escape mode "default"
-  bindsym $mod+r mode "default"
-}
-bindsym $mod+r mode "resize"
-
-### Gaps / borders
-gaps inner 5
-gaps outer 5
-smart_gaps on
-smart_borders on
-default_border pixel 1
-default_floating_border pixel 1
-
-### Popups during fullscreen
-popup_during_fullscreen smart
-
-### App shortcuts
-bindsym $mod+Shift+f exec thunar
-
-### Notification panel
-bindsym $mod+n exec swaync-client -t -sw
-
-### Clipboard history
-bindsym $mod+Shift+v exec cliphist list | wofi --dmenu --prompt "clipboard:" | cliphist decode | wl-copy
-
-### Media keys (PipeWire)
-set $refresh killall -SIGUSR1 waybar
-bindsym XF86AudioRaiseVolume exec wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+ && $refresh
-bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && $refresh
-bindsym XF86AudioMute        exec wpctl set-mute   @DEFAULT_AUDIO_SINK@ toggle && $refresh
-bindsym XF86AudioMicMute     exec wpctl set-mute   @DEFAULT_AUDIO_SOURCE@ toggle && $refresh
-
-### Screenshots (grim + slurp + clipboard)
-# Fullscreen - saves to file and copies to clipboard
-bindsym Print exec bash -c 'SCREENSHOTS_DIR="${SCREENSHOTS_DIR:-$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Pictures")}/Screenshots" && FILE="$SCREENSHOTS_DIR/screenshot-$(date +%F_%H-%M-%S).png" && grim "$FILE" && wl-copy < "$FILE" && notify-send "Screenshot saved & copied" "$FILE"'
-# Select area - saves to file and copies to clipboard
-bindsym Shift+Print exec bash -c 'SCREENSHOTS_DIR="${SCREENSHOTS_DIR:-$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Pictures")}/Screenshots" && FILE="$SCREENSHOTS_DIR/screenshot-$(date +%F_%H-%M-%S).png" && grim -g "$(slurp)" "$FILE" && wl-copy < "$FILE" && notify-send "Screenshot saved & copied" "$FILE"'
-# Quick area screenshot to clipboard only
-bindsym $mod+Shift+s exec grim -g "$(slurp)" - | wl-copy
-
-### Colors (ported from your i3 theme)
-# class                 border   bground  text     indicator child_border
-client.focused          #6272A4  #6272A4  #F8F8F2  #6272A4   #6272A4
-client.focused_inactive #44475A  #44475A  #F8F8F2  #44475A   #44475A
-client.unfocused        #282A36  #282A36  #BFBFBF  #282A36   #282A36
-client.urgent           #44475A  #FF5555  #F8F8F2  #FF5555   #FF5555
-client.placeholder      #282A36  #282A36  #F8F8F2  #282A36   #282A36
-client.background       #F8F8F2
-
+# Touchpad
 input type:touchpad {
     tap enabled
     tap_button_map lrm
@@ -238,23 +24,19 @@ input type:touchpad {
     pointer_accel 0.3
 }
 
-### VNC
+# VNC
 exec wayvnc 0.0.0.0 --config-path ~/.config/wayvnc/config
 
-### Touchpad gestures (sway 1.8+)
+# Touchpad gestures
 bindgesture swipe:right workspace prev
 bindgesture swipe:left workspace next
 bindgesture swipe:up exec $menu
 bindgesture swipe:down exec $term
 
-### Cursor (HiDPI)
-seat seat0 xcursor_theme Adwaita 36
-
 bar {
     swaybar_command waybar
     position bottom
-    mode hide 
+    mode hide
     hidden_state hide
     modifier Mod4
 }
-
