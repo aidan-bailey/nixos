@@ -60,6 +60,7 @@
       X11Forwarding = true;
       PermitRootLogin = "no";
       PasswordAuthentication = false;
+      AcceptEnv = [ "COLORTERM" "TERM_PROGRAM" ];
     };
     openFirewall = true;
   };

@@ -35,6 +35,13 @@
 
       # Doom Emacs in PATH
       export PATH="/home/aidanb/.emacs.d/bin:$PATH"
+
+      # Set COLORTERM for truecolor-capable terminals (lost over SSH)
+      if [ -z "$COLORTERM" ]; then
+        case "$TERM" in
+          alacritty*|*-256color) export COLORTERM="truecolor" ;;
+        esac
+      fi
     '';
   };
 }

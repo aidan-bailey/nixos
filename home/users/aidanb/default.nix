@@ -10,6 +10,7 @@
     ../../modules/terminal.nix
     ../../modules/editor.nix
     ../../modules/git.nix
+    ../../modules/ssh.nix
     ../../modules/development.nix
     ../../modules/devtools.nix
     ../../modules/zed.nix
