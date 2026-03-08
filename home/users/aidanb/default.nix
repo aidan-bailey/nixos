@@ -12,10 +12,7 @@
     ../../modules/git.nix
     ../../modules/development.nix
     ../../modules/devtools.nix
-    ../../modules/research.nix
-    ../../modules/apps.nix
-    ../../modules/gaming.nix
-    ../../modules/wayland.nix
+    ../../modules/zed.nix
     ../../modules/secrets.nix
     ../../modules/gpg.nix
   ];

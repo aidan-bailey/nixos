@@ -35,8 +35,16 @@ in
     thunar-media-tags-plugin
     xfconf
     tumbler
-    protonmail-bridge-gui
     gimp
+    teamviewer
+    clockify
+    remmina
+    slack
+    vscode
+    code-cursor
+    opencode
+    google-cloud-sdk
+    gemini-cli
   ];
 
   # Session variables
