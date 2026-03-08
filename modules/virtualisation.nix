@@ -6,106 +6,114 @@
 }:
 
 let
-  primaryUser = builtins.head (builtins.attrNames
-    (lib.filterAttrs (_: u: u.isNormalUser && builtins.elem "wheel" u.extraGroups) config.users.users));
+  wheelUsers = builtins.attrNames (
+    lib.filterAttrs (_: u: u.isNormalUser && builtins.elem "wheel" u.extraGroups) config.users.users
+  );
+  primaryUser =
+    assert wheelUsers != [ ];
+    builtins.head wheelUsers;
 
   xenPatch = builtins.toFile "fix-xen.patch" ''
-  diff --git a/xen/arch/x86/boot/Makefile b/xen/arch/x86/boot/Makefile
-index d45787665907..80c32163fbbd 100644
---- a/xen/arch/x86/boot/Makefile
-+++ b/xen/arch/x86/boot/Makefile
-@@ -40,8 +40,8 @@ LD32 := $(LD) $(subst x86_64,i386,$(LDFLAGS_DIRECT))
- # are affected by both text_diff and text_gap.  Ensure the sum of gap and diff
- # is greater than 2^16 so that any 16bit relocations if present in the object
- # file turns into a build-time error.
--text_gap := 0x010200
--text_diff := 0x408020
-+text_gap := 0x010240
-+text_diff := 0x608040
- 
- $(obj)/build32.base.lds: AFLAGS-y += -DGAP=$(text_gap) -DTEXT_DIFF=$(text_diff)
- $(obj)/build32.offset.lds: AFLAGS-y += -DGAP=$(text_gap) -DTEXT_DIFF=$(text_diff) -DAPPLY_OFFSET
---
+      diff --git a/xen/arch/x86/boot/Makefile b/xen/arch/x86/boot/Makefile
+    index d45787665907..80c32163fbbd 100644
+    --- a/xen/arch/x86/boot/Makefile
+    +++ b/xen/arch/x86/boot/Makefile
+    @@ -40,8 +40,8 @@ LD32 := $(LD) $(subst x86_64,i386,$(LDFLAGS_DIRECT))
+     # are affected by both text_diff and text_gap.  Ensure the sum of gap and diff
+     # is greater than 2^16 so that any 16bit relocations if present in the object
+     # file turns into a build-time error.
+    -text_gap := 0x010200
+    -text_diff := 0x408020
+    +text_gap := 0x010240
+    +text_diff := 0x608040
+
+     $(obj)/build32.base.lds: AFLAGS-y += -DGAP=$(text_gap) -DTEXT_DIFF=$(text_diff)
+     $(obj)/build32.offset.lds: AFLAGS-y += -DGAP=$(text_gap) -DTEXT_DIFF=$(text_diff) -DAPPLY_OFFSET
+    --
   '';
 in
 
 {
 
-  environment.systemPackages = with pkgs; [
-    virt-manager
-    docker
-    docker-compose
-    docker-buildx
-    (pkgs.writeShellScriptBin "qemu-system-x86_64-uefi" ''
+  config = lib.mkIf config.custom.features.virtualisation {
+
+    environment.systemPackages = with pkgs; [
+      virt-manager
+      docker
+      docker-compose
+      docker-buildx
+      (pkgs.writeShellScriptBin "qemu-system-x86_64-uefi" ''
         qemu-system-x86_64 \
           -bios ${pkgs.OVMF.fd}/FV/OVMF.fd \
           "$@"
       '')
-  ];
+    ];
 
-  nixpkgs.overlays = [
-	(final: prev: {
+    nixpkgs.overlays = [
+      (final: prev: {
         xen = prev.xen.overrideAttrs (old: {
-	  patches = (old.patches or []) ++ [ xenPatch ];
+          patches = (old.patches or [ ]) ++ [ xenPatch ];
         });
       })
-  ];
+    ];
 
-  # Enable Docker
-  virtualisation.docker = {
-    enable = true;
-  };
-
-
-  # Enable Samba server (VM bridge only)
-  services.samba = {
-    enable = true;
-    settings = {
-      global = {
-        "interfaces" = "virbr0";
-        "bind interfaces only" = true;
-      };
-      vmshare = {
-        path = "/srv/vm-shared";
-        browseable = true;
-        "read only" = false;
-        "guest ok" = false;
-        "valid users" = primaryUser;
-        "create mask" = "0644";
-        "directory mask" = "0755";
-      };
-    };
-  };
-
-  system.activationScripts.createVmShare = {
-    text = ''
-      mkdir -p /srv/vm-shared
-      chown ${primaryUser}:users /srv/vm-shared
-      chmod 755 /srv/vm-shared
-    '';
-  };
-
-  programs.virt-manager.enable = true;
-  virtualisation.libvirtd = {
-    enable = true;
-    qemu = {
-      package = pkgs.qemu_kvm;
-      runAsRoot = true;
-      swtpm.enable = true;
-      vhostUserPackages = with pkgs; [ virtiofsd ];
-    };
-  };
-
-  virtualisation.xen.enable = false;
-
-  services.avahi = {
-    enable = true;
-    publish = {
+    # Enable Docker
+    virtualisation.docker = {
       enable = true;
-      userServices = true;
     };
-  };
 
-  environment.pathsToLink = [ "/libexec" ];
+    # Enable Samba server (VM bridge only)
+    services.samba = {
+      enable = true;
+      settings = {
+        global = {
+          "interfaces" = "virbr0";
+          "bind interfaces only" = true;
+          "server min protocol" = "SMB3";
+        };
+        vmshare = {
+          path = "/srv/vm-shared";
+          browseable = true;
+          "read only" = false;
+          "guest ok" = false;
+          "valid users" = primaryUser;
+          "create mask" = "0644";
+          "directory mask" = "0755";
+        };
+      };
+    };
+
+    system.activationScripts.createVmShare = {
+      text = ''
+        mkdir -p /srv/vm-shared
+        chown ${primaryUser}:users /srv/vm-shared
+        chmod 755 /srv/vm-shared
+      '';
+    };
+
+    programs.virt-manager.enable = true;
+    virtualisation.libvirtd = {
+      enable = true;
+      qemu = {
+        package = pkgs.qemu_kvm;
+        runAsRoot = true;
+        swtpm.enable = true;
+        vhostUserPackages = with pkgs; [ virtiofsd ];
+      };
+    };
+
+    virtualisation.xen.enable = false;
+
+    services.avahi = {
+      enable = true;
+      publish = {
+        enable = true;
+        userServices = true;
+      };
+    };
+
+    environment.pathsToLink = [ "/libexec" ];
+
+  };
 
 }

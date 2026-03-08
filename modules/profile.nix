@@ -26,6 +26,18 @@
       default = null;
       description = "Display panel technology — controls font rendering (subpixel vs grayscale).";
     };
+
+    features.gaming = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable gaming support (Steam, Proton).";
+    };
+
+    features.virtualisation = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable virtualisation (Docker, libvirt, KVM).";
+    };
   };
 
 }
