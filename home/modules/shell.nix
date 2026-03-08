@@ -9,7 +9,7 @@
     shellAliases = {
       ll = "ls -l";
       configure = "nvim /etc/nixos/configuration.nix";
-      updaten = "sudo nixos-rebuild switch --flake ~/System#$HOST |& nom";
+      updaten = "sudo nixos-rebuild switch --flake ~/System#$HOST --option substitute false |& nom";
       hibernate = "sudo systemctl hibernate";
       shib = "systemd-inhibit sleep infinity";
       nix-sync-cache = "sudo nixos-rebuild switch --flake ~/System#$HOST --option extra-substituters \"file:///mnt/nixos-cache?priority=10\" --option require-sigs false && nix copy /run/current-system --to file:///mnt/nixos-cache";
