@@ -17,7 +17,7 @@ let
     # zed-editor-fhs # Don't use this if using programs.zed-editor
     code-cursor
     opencode
-    claude-code
+    inputs.claude-code-nix.packages.${system}.default
     google-cloud-sdk
     gemini-cli
   ];

@@ -21,6 +21,10 @@
       url = "github:ankerdata/harbour-3.2.0core";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    claude-code-nix = {
+      url = "github:sadjow/claude-code-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -37,6 +41,7 @@
       nixarr,
       antigravity-nix,
       harbour,
+      claude-code-nix,
       sops-nix,
       ...
     }@inputs:
