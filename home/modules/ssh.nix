@@ -8,6 +8,7 @@
 {
   programs.ssh = {
     enable = true;
+    enableDefaultConfig = false;
 
     # Forward display-hint env vars to remote hosts
     extraConfig = ''
@@ -15,6 +16,15 @@
     '';
 
     matchBlocks = {
+      "*" = {
+        extraOptions = {
+          AddKeysToAgent = "yes";
+        };
+        identityFile = [
+          "~/.ssh/id_ed25519"
+          "~/.ssh/id_rsa"
+        ];
+      };
       fresco = {
         hostname = "fresco.local";
         user = "aidanb";
