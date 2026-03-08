@@ -81,6 +81,19 @@
     };
   };
 
+  # Remote builder: allow nesco to offload builds to fresco
+  users.users.nixremote = {
+    isSystemUser = true;
+    group = "nixremote";
+    shell = pkgs.bashInteractive;
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMiW07jb+Pm26IisdAd3mWZ4oEdDKnSv9c7IIHWp0cvX nesco-builder"
+    ];
+  };
+  users.groups.nixremote = { };
+
+  nix.settings.trusted-users = [ "nixremote" ];
+
   # EXT4 mount tuning
   fileSystems."/".options = [
     "noatime"
