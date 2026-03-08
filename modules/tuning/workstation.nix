@@ -7,9 +7,6 @@
 
 {
 
-  # Performance-oriented CPU governor
-  powerManagement.cpuFreqGovernor = "performance";
-
   boot.kernelParams = [
     "transparent_hugepage=madvise"
     "iommu=pt" # passthrough mode — reduces IOMMU overhead for direct device access
