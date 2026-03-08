@@ -50,7 +50,6 @@
 
       commonModules = [
         ./modules/profile.nix
-        doom-flake.nixosModules.default
         nixarr.nixosModules.default
         sops-nix.nixosModules.sops
         home-manager.nixosModules.home-manager
@@ -79,6 +78,7 @@
       ];
 
       desktopModules = serverModules ++ [
+        doom-flake.nixosModules.default
         ./modules/kernel/cachyos.nix
         ./modules/sway.nix
         ./modules/audio.nix
