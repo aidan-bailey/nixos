@@ -15,6 +15,7 @@
     hostName = lib.mkDefault "nesco";
     extraHosts = ''
       192.168.122.23 winesco
+      192.168.68.65 fresco
     '';
     nftables.enable = true;
     firewall = {

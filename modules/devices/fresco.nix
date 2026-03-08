@@ -7,9 +7,6 @@
 
 {
 
-  # Zen 4 LTO kernel — compiled with -march=znver4 via Clang + ThinLTO
-  boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4;
-
   imports = [
     ../nvidia/gpu.nix
     ../amd/zen4.nix
@@ -17,9 +14,6 @@
     ../tuning/network.nix
     ../tuning/io.nix
   ];
-
-  custom.hostType = "desktop";
-  custom.display.type = "lcd";
 
   networking.hostName = "fresco";
 
@@ -53,32 +47,37 @@
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = let
-        python = pkgs.python3.withPackages (ps: [ ps.nvidia-ml-py ]);
-        smi = "${config.hardware.nvidia.package.bin}/bin/nvidia-smi";
-      in pkgs.writeShellScript "apply-3070-oc" ''
-        ${smi} -pl 250
-        ${python}/bin/python3 << 'PYEOF'
-import sys
-from pynvml import *
+      ExecStart =
+        let
+          python = pkgs.python3.withPackages (ps: [ ps.nvidia-ml-py ]);
+          smi = "${config.hardware.nvidia.package.bin}/bin/nvidia-smi";
+        in
+        pkgs.writeShellScript "apply-3070-oc" ''
+                  set -euo pipefail
+                  echo "Applying RTX 3070 overclock..." >&2
+                  ${smi} -pl 250
+                  ${python}/bin/python3 << 'PYEOF'
+          import sys
+          from pynvml import *
 
-try:
-    nvmlInit()
-    handle = nvmlDeviceGetHandleByIndex(0)
+          try:
+              nvmlInit()
+              handle = nvmlDeviceGetHandleByIndex(0)
 
-    # Memory offset: +1000MHz effective (units = MHz * 2 for GDDR6 on Ampere)
-    nvmlDeviceSetMemClkVfOffset(handle, 2000)
+              # Memory offset: +1000MHz effective (units = MHz * 2 for GDDR6 on Ampere)
+              nvmlDeviceSetMemClkVfOffset(handle, 2000)
 
-    # Core/GPC offset: +50MHz on the V-F curve (units = MHz * 2)
-    nvmlDeviceSetGpcClkVfOffset(handle, 100)
+              # Core/GPC offset: +50MHz on the V-F curve (units = MHz * 2)
+              nvmlDeviceSetGpcClkVfOffset(handle, 100)
 
-    print("RTX 3070 Overclock Applied: +50MHz Core / +1000MHz Mem")
-    nvmlShutdown()
-except NVMLError as err:
-    print(f"NVML Error: {err}")
-    sys.exit(1)
-PYEOF
-      '';
+              print("RTX 3070 Overclock Applied: +50MHz Core / +1000MHz Mem")
+              nvmlShutdown()
+          except NVMLError as err:
+              print(f"NVML Error: {err}")
+              sys.exit(1)
+          PYEOF
+                  echo "GPU overclock applied successfully" >&2
+        '';
     };
   };
 

@@ -7,16 +7,10 @@
 
 {
 
-  # Zen 4 LTO kernel — compiled with -march=znver4 via Clang + ThinLTO
-  boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4;
-
   imports = [
     ../amd/graphics.nix
     ../amd/cpu.nix
   ];
-
-  custom.hostType = "laptop";
-  custom.display.type = "oled";
 
   nix.settings.system-features = [
     "gccarch-znver5"

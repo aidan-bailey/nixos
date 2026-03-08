@@ -1,9 +1,14 @@
-{ pkgs, inputs, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 {
   nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ];
 
-  boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto;
+  boot.kernelPackages = lib.mkDefault pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-zen4;
 
   nix.settings = {
     substituters = [
