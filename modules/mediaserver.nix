@@ -8,9 +8,9 @@
 
 {
 
-  environment.systemPackages = [ 
-	pkgs.transmission_4-qt
-	pkgs.jellyfin-media-player
+  environment.systemPackages = [
+    pkgs.transmission_4-qt
+    pkgs.jellyfin-media-player
   ];
 
   nixarr = {
@@ -40,7 +40,6 @@
     sonarr.enable = true;
     jellyseerr.enable = true;
 
-
   };
 
   nixpkgs.config.permittedInsecurePackages = [
@@ -48,9 +47,9 @@
   ];
 
   services.flaresolverr = {
-  enable = true;
-  openFirewall = false;   # true only if you want to access externally
-  port = 8191;
+    enable = true;
+    openFirewall = false; # true only if you want to access externally
+    port = 8191;
   };
 
 }

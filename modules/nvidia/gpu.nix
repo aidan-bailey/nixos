@@ -16,18 +16,21 @@
     open = true;
     nvidiaSettings = true;
     nvidiaPersistenced = true; # keep driver state loaded — faster app/CUDA launches
-    package = let
-      base = config.boot.kernelPackages.nvidiaPackages.beta;
-      kernelPatch = pkgs.fetchpatch {
-        name = "kernel-6.19.patch";
-        url = "https://gitlab.manjaro.org/packages/extra/nvidia-utils/-/raw/master/kernel-6.19.patch";
-        hash = "sha256-YuJjSUXE6jYSuZySYGnWSNG5sfVei7vvxDcHx3K+IN4=";
+    package =
+      let
+        base = config.boot.kernelPackages.nvidiaPackages.beta;
+        kernelPatch = pkgs.fetchpatch {
+          name = "kernel-6.19.patch";
+          url = "https://gitlab.manjaro.org/packages/extra/nvidia-utils/-/raw/master/kernel-6.19.patch";
+          hash = "sha256-YuJjSUXE6jYSuZySYGnWSNG5sfVei7vvxDcHx3K+IN4=";
+        };
+      in
+      base
+      // {
+        open = base.open.overrideAttrs (old: {
+          patches = (old.patches or [ ]) ++ [ kernelPatch ];
+        });
       };
-    in base // {
-      open = base.open.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [ kernelPatch ];
-      });
-    };
   };
 
   hardware.graphics = {

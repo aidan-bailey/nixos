@@ -9,7 +9,7 @@
 
   boot.initrd.kernelModules = [ "amdgpu" ];
   hardware.amdgpu.initrd.enable = lib.mkDefault true;
-  
+
   services.xserver.videoDrivers = [ "amdgpu" ];
 
   hardware.graphics = {
@@ -24,7 +24,6 @@
   environment.variables = {
     LIBVA_DRIVER_NAME = "radeonsi";
   };
-
 
   environment.systemPackages = with pkgs; [
     libva-utils
