@@ -74,12 +74,14 @@ in
       "nodev"
       "nofail"
       "x-systemd.automount"
+      "x-systemd.device-timeout=5"
       "x-systemd.idle-timeout=60"
       "user"
     ];
   };
 
-  nix.settings.substituters = [ "file:///mnt/nixos-cache" ];
+  nix.settings.extra-substituters = [ "file:///mnt/nixos-cache" ];
+  nix.settings.connect-timeout = 5;
 
   # Automatic Nix store garbage collection
   nix.gc = {

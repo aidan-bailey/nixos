@@ -1,0 +1,80 @@
+BaselineInfo:
+  WebDBID: -1
+  TimeStamp: 20260308002832
+Version:
+  Major: 11
+  Minor: 0
+  Build: 1002
+  SpecialBuildName: ""
+  ptArchitecture: x86_64_linux
+Results:
+  Results Complete: true
+  NumTestProcesses: 16
+  CPU_INTEGER_MATH: 113800.24366666668
+  CPU_FLOATINGPOINT_MATH: 63698.534407764215
+  CPU_PRIME: 185.42913030458962
+  CPU_SORTING: 60175.27550453227
+  CPU_ENCRYPTION: 28052.185020666213
+  CPU_COMPRESSION: 448106.38991229597
+  CPU_SINGLETHREAD: 4377.4588811962039
+  CPU_PHYSICS: 3094.3127614561572
+  CPU_MATRIX_MULT_SSE: 29846.141343764069
+  CPU_mm: 2840.3294677734611
+  CPU_sse: 12521.75330826864
+  CPU_fma: 38053.904412744931
+  CPU_avx: 31681.087499275865
+  CPU_avx512: 37127.820154766836
+  m_CPU_enc_SHA: 39503563540.364738
+  m_CPU_enc_AES: 26516925112.180752
+  m_CPU_enc_ECDSA: 22224055228.144783
+  ME_ALLOC_S: 10293.067284418723
+  ME_READ_S: 42347.481249999997
+  ME_READ_L: 41599.11328125
+  ME_WRITE: 29278.78515625
+  ME_LARGE: 1900.0833333333333
+  ME_LATENCY: 41.61814424571579
+  ME_THREADED: 60801.023681640625
+  SUMM_CPU: 38005.717485313005
+  SUMM_ME: 2517.8830017915143
+SystemInformation:
+  OSName: NixOS 26.05 (Yarara)
+  Kernel: 6.19.2-cachyos-lto
+  Device: ""
+  Processor: AMD Ryzen 7 7700X 8-Core Processor
+  NumSockets: 1
+  Manufacturer: AuthenticAMD
+  NumCores: 8
+  NumLogicals: 16
+  CPUFrequency: 5791
+  Memory: 30955
+  MemModuleInfo:
+    iNumMemSticks: 4
+    DIMM 1:
+      manufacturer: ""
+      modulePartNo: ""
+      memType: Unknown
+      size: 0
+      clkspeed: 0
+      moduleVoltage: 0
+    DIMM 2:
+      manufacturer: Unknown
+      modulePartNo: "F5-6000J3238F16G              "
+      memType: DDR5
+      size: 16
+      clkspeed: 3000
+      moduleVoltage: 1.10000002
+    DIMM 3:
+      manufacturer: ""
+      modulePartNo: ""
+      memType: Unknown
+      size: 0
+      clkspeed: 0
+      moduleVoltage: 0
+    DIMM 4:
+      manufacturer: Unknown
+      modulePartNo: "F5-6000J3238F16G              "
+      memType: DDR5
+      size: 16
+      clkspeed: 3000
+      moduleVoltage: 1.10000002
+Checksum: 1E22FF8769EE6462B253E49BF9F18A1A11222EA4
