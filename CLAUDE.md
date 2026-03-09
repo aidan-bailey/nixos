@@ -39,8 +39,11 @@ sops secrets/home.yaml      # user secrets
 
 Shell aliases defined in `home/modules/shell.nix`:
 - `updaten` — `nix flake update` piped through `nom` (pretty nix output)
-- `configure` — `sudo nixos-rebuild switch --flake .#$(hostname)`
+- `configure` — `nvim /etc/nixos/configuration.nix`
 - `nix-sync-cache` — sync nix store to local binary cache at `/mnt/nixos-cache`
+- `cs` — `claude-squad` (multi-session manager)
+- `tc` — `tail-claude` (session log viewer)
+- `rt` — `ralph-tui` (autonomous loop orchestrator)
 
 ## Architecture
 
@@ -113,12 +116,24 @@ Custom modules use shell scripts calling `amdgpu_top`, `nvidia-smi`, `swaync-cli
 - `modules/devices/zenbook_s16.nix` — AMD iGPU, asusd fan control, PSR disable, RCU tuning, resume device
 - `modules/devices/fresco.nix` — Zen 4 + NVIDIA, imports tuning submodules (`tuning/workstation.nix`, `tuning/network.nix`, `tuning/io.nix`), earlyoom, WiFi ASPM workaround
 - `home/modules/wayland.nix` — User-side Sway config, Waybar, Wayland tools, Gammastep night light, HiDPI cursor, polkit agent; sources config files from `config/sway/` and `config/waybar/`
-- `home/modules/devtools.nix` — Dev tools, Zed editor with vim mode and LSP configs (nixd, pyright, ruff, rust-analyzer), sccache, mold linker
+- `home/modules/devtools.nix` — Dev tools, Rust via rust-overlay, sccache, mold linker, Claude Code ecosystem (claude-squad, tail-claude, mcp-nixos), tmux config, notification hook deployment
 - `home/modules/secrets.nix` — SOPS-nix home-manager module for user secrets
 
 ### Secrets
 
 Encrypted secrets are managed by sops-nix with age encryption. Secrets live in `secrets/` (secrets.yaml for system, home.yaml for user). Key configuration is in `.sops.yaml`. The system keyfile is at `/var/lib/sops-nix/key.txt`, the user keyfile at `~/.config/sops/age/keys.txt`.
+
+### Claude Code Integration
+
+Claude Code is installed via the `claude-code-nix` flake input. Supporting tools are packaged as `buildGoModule` derivations in `home/modules/devtools.nix`:
+
+- **claude-squad** (v1.0.16) — multi-session manager, built as `cs` binary with tmux/gh/git on PATH
+- **tail-claude** (v0.3.5) — session log viewer
+- **mcp-nixos** — NixOS MCP server, configured in `.mcp.json` at repo root
+
+OAuth token is stored encrypted via sops-nix (`sops.secrets.claude_code_oauth_token`) and exported in `programs.zsh.profileExtra`. Agent teams are enabled via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`.
+
+Notification hooks (`config/claude/hooks/notify.sh`) send desktop notifications via `notify-send` (swaync) on Stop/Notification events, with optional push via ntfy when `$NTFY_TOPIC` is set. The script is deployed to `~/.claude/hooks/` via `home.file`. Hook and sandbox config lives in `~/.claude/settings.json` (not Nix-managed).
 
 ### Flake Inputs of Note
 
@@ -127,6 +142,8 @@ Encrypted secrets are managed by sops-nix with age encryption. Secrets live in `
 - **nixarr** — Media server stack (Jellyfin, Sonarr, Radarr, etc.)
 - **sops-nix** — Encrypted secrets management
 - **antigravity-nix**, **harbour** — Compilation optimization tools, exposed as packages in devtools
+- **claude-code-nix** (sadjow/claude-code-nix) — Claude Code CLI package
+- **rust-overlay** (oxalica/rust-overlay) — Rust toolchain management; replaces rustup with declarative `rust-bin.stable.latest.default`
 
 ### znver4 Build Issues (fresco)
 
