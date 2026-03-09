@@ -78,7 +78,7 @@ if command -v notify-send &>/dev/null; then
     if [ "$action" = "focus" ] && command -v claude-focus &>/dev/null; then
       claude-focus "$session" 2>/dev/null || true
     fi
-  ) &
+  ) &>/dev/null &
 fi
 
 # ── Push notification via ntfy ───────────────────────────────────────────────
