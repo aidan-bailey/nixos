@@ -8,6 +8,70 @@
 }:
 
 let
+  claudeSettings = {
+    model = "opus";
+    hooks = {
+      Notification = [
+        {
+          matcher = "";
+          hooks = [
+            {
+              type = "command";
+              command = "~/.claude/hooks/notify.sh";
+            }
+          ];
+        }
+      ];
+      Stop = [
+        {
+          hooks = [
+            {
+              type = "command";
+              command = "~/.claude/hooks/notify.sh";
+            }
+          ];
+        }
+      ];
+    };
+    enabledPlugins = {
+      "rust-analyzer-lsp@claude-plugins-official" = true;
+      "skill-creator@claude-plugins-official" = true;
+      "pyright-lsp@claude-plugins-official" = true;
+      "frontend-design@claude-plugins-official" = true;
+      "semgrep@claude-plugins-official" = true;
+      "superpowers@claude-plugins-official" = true;
+      "feature-dev@claude-plugins-official" = true;
+      "sonatype-guide@claude-plugins-official" = true;
+      "example-skills@anthropic-agent-skills" = true;
+    };
+    sandbox = {
+      autoAllowBashIfSandboxed = true;
+      network = {
+        allowedDomains = [
+          "github.com"
+          "api.github.com"
+          "npmjs.org"
+          "registry.npmjs.org"
+          "pypi.org"
+          "crates.io"
+        ];
+      };
+      filesystem = {
+        denyRead = [
+          "~/.ssh"
+          "~/.gnupg"
+          "~/.config/sops"
+        ];
+      };
+    };
+    effortLevel = "high";
+    statusLine = {
+      type = "command";
+      command = "~/.claude/statusline.sh";
+      padding = 1;
+    };
+  };
+
   claude-squad = pkgs.buildGoModule rec {
     pname = "claude-squad";
     version = "1.0.16";
@@ -22,7 +86,13 @@ let
     doCheck = false;
     nativeBuildInputs = [ pkgs.makeWrapper ];
     postInstall = ''
-      wrapProgram $out/bin/claude-squad --prefix PATH : ${lib.makeBinPath [ pkgs.tmux pkgs.gh pkgs.git ]}
+      wrapProgram $out/bin/claude-squad --prefix PATH : ${
+        lib.makeBinPath [
+          pkgs.tmux
+          pkgs.gh
+          pkgs.git
+        ]
+      }
     '';
   };
 
@@ -57,8 +127,15 @@ in
     "$HOME/.bun/bin"
   ];
 
+  home.file.".claude/settings.json".text = builtins.toJSON claudeSettings;
+
   home.file.".claude/hooks/notify.sh" = {
     source = ../../config/claude/hooks/notify.sh;
+    executable = true;
+  };
+
+  home.file.".claude/statusline.sh" = {
+    source = ../../config/claude/statusline.sh;
     executable = true;
   };
 
