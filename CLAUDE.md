@@ -17,7 +17,7 @@ sudo nixos-rebuild switch --flake .#medesco
 # Test a configuration without switching (dry activation)
 sudo nixos-rebuild test --flake .#nesco
 
-# Build without activating
+# Build without activating (validates the config compiles — no sudo needed)
 nixos-rebuild build --flake .#nesco
 
 # Update flake inputs
@@ -25,9 +25,6 @@ nix flake update
 
 # Update a single input
 nix flake update nixpkgs
-
-# Check flake validity
-nix flake check
 
 # Format nix files
 nixfmt .
@@ -37,10 +34,14 @@ sops secrets/secrets.yaml   # system secrets
 sops secrets/home.yaml      # user secrets
 ```
 
+**Validation**: Build all three hosts to verify changes compile. There are no `nix flake check` checks defined — building is the real test. Use the `/test-build` Claude command to build all three hosts in parallel and report results. Use `/fix-warnings` to find and fix build warnings across all hosts.
+
 Shell aliases defined in `home/modules/shell.nix`:
 - `updaten` — `nix flake update` piped through `nom` (pretty nix output)
 - `configure` — `sudo nixos-rebuild switch --flake .#$(hostname)`
 - `nix-sync-cache` — sync nix store to local binary cache at `/mnt/nixos-cache`
+
+**MCP**: The `mcp-nixos` server is configured (`.mcp.json`) for looking up NixOS options, Home Manager options, and nixpkgs packages.
 
 ## Architecture
 
@@ -65,12 +66,14 @@ Each host selects a profile and a device module:
 
 ### Custom Options (`modules/profile.nix`)
 
-Two custom options control conditional behavior across modules:
+Custom options control conditional behavior across modules:
 
 - `custom.hostType` — `"laptop"`, `"desktop"`, or `"server"` (controls TLP, sleep, power)
 - `custom.display.type` — `"oled"` or `"lcd"` (controls font rendering / subpixel settings)
+- `custom.features.gaming` — bool (default `true`), enables Steam/Proton
+- `custom.features.virtualisation` — bool (default `true`), enables Docker/libvirt/KVM
 
-These are set in device modules and consumed by `sway.nix`, `power.nix`, etc.
+These are set in device modules and consumed by `sway.nix`, `power.nix`, `gaming.nix`, `virtualisation.nix`, etc.
 
 ### Per-Host Integration Pattern
 
@@ -79,7 +82,7 @@ Each host's `configuration.nix` does three things:
 2. Imports its device module (e.g. `modules/devices/zenbook_s16.nix`)
 3. Injects per-host home-manager overrides via `home-manager.users.aidanb.imports = [ ../../home/hosts/{host}.nix ]`
 
-The per-host home files (`home/hosts/nesco.nix`, `home/hosts/fresco.nix`) override Sway and Waybar config sources to point to `config/sway/{host}/config` and `config/waybar/{host}/config`.
+The per-host home files (`home/hosts/nesco.nix`, `home/hosts/fresco.nix`) import `home/profiles/desktop.nix` (which pulls in wayland, gaming, apps, research modules) and override Sway/Waybar config sources to point to `config/sway/{host}/config` and `config/waybar/{host}/config`. The base home modules (shell, terminal, editor, git, ssh, devtools, zed, secrets, gpg) are always imported via `home/users/aidanb/default.nix`; desktop-only modules come through the profile.
 
 ### CPU / GPU Module Hierarchy
 
@@ -126,6 +129,8 @@ Encrypted secrets are managed by sops-nix with age encryption. Secrets live in `
 - **doom-flake** (local, `flakes/doom-emacs/`) — Doom Emacs with PGTK + native-comp
 - **nixarr** — Media server stack (Jellyfin, Sonarr, Radarr, etc.)
 - **sops-nix** — Encrypted secrets management
+- **rust-overlay** (oxalica/rust-overlay) — Rust toolchain overlay, applied globally in `commonModules`
+- **claude-code-nix** — Claude Code CLI package
 - **antigravity-nix**, **harbour** — Compilation optimization tools, exposed as packages in devtools
 
 ### znver4 Build Issues (fresco)
