@@ -13,6 +13,7 @@
     ../../modules/ssh.nix
     ../../modules/development.nix
     ../../modules/devtools.nix
+    ../../modules/claude.nix
     ../../modules/zed.nix
     ../../modules/secrets.nix
     ../../modules/gpg.nix
