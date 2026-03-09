@@ -33,15 +33,6 @@ case "$event" in
     ntfy_tags="robot"
     show_actions=1
     ;;
-  SubagentStop)
-    urgency="low"
-    title="Claude Code — Subagent Done"
-    icon="emblem-system"
-    expire_ms=5000
-    ntfy_priority="low"
-    ntfy_tags="gear,robot"
-    show_actions=0
-    ;;
   *)
     urgency="low"
     title="Claude Code — $event"
