@@ -46,6 +46,7 @@ in
       polkit_gnome
       amdgpu_top
       python3
+      sound-theme-freedesktop
     ]
     ++ [
       # Waybar custom module scripts
@@ -71,6 +72,10 @@ in
 
       (pkgs.writeShellScriptBin "waybar-powerprofile-cycle" (
         builtins.readFile ../../config/waybar/scripts/waybar-powerprofile-cycle.sh
+      ))
+
+      (pkgs.writeShellScriptBin "claude-focus" (
+        builtins.readFile ../../config/claude/hooks/claude-focus.sh
       ))
     ];
 
@@ -125,6 +130,9 @@ in
   # Waybar configuration
   xdg.configFile."waybar/config".source = ../../config/waybar/config;
   xdg.configFile."waybar/style.css".source = ../../config/waybar/style.css;
+
+  # SwayNC notification daemon configuration
+  xdg.configFile."swaync/config.json".source = ../../config/swaync/config.json;
 
   # Polkit authentication agent for GUI privilege escalation
   systemd.user.services.polkit-gnome = {

@@ -1,0 +1,40 @@
+{
+  "positionX": "right",
+  "positionY": "top",
+  "timeout": 10,
+  "timeout-low": 5,
+  "timeout-critical": 0,
+  "notification-window-width": 400,
+  "notification-grouping": true,
+  "hide-on-action": true,
+  "script-fail-notify": false,
+
+  "scripts": {
+    "claude-stop-sound": {
+      "exec": "pw-play /run/current-system/sw/share/sounds/freedesktop/stereo/complete.oga",
+      "app-name": "Claude Code",
+      "urgency": "Critical",
+      "run-on": "receive"
+    }
+  },
+
+  "notification-visibility": {
+    "claude-low": {
+      "state": "transient",
+      "app-name": "Claude Code",
+      "urgency": "Low"
+    }
+  },
+
+  "widgets": ["title", "dnd", "notifications"],
+  "widget-config": {
+    "title": {
+      "text": "Notifications",
+      "clear-all-button": true,
+      "button-text": "Clear All"
+    },
+    "dnd": {
+      "text": "Do Not Disturb"
+    }
+  }
+}
