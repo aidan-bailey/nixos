@@ -22,8 +22,7 @@ let
     doCheck = false;
     nativeBuildInputs = [ pkgs.makeWrapper ];
     postInstall = ''
-      mv $out/bin/claude-squad $out/bin/cs
-      wrapProgram $out/bin/cs --prefix PATH : ${lib.makeBinPath [ pkgs.tmux pkgs.gh pkgs.git ]}
+      wrapProgram $out/bin/claude-squad --prefix PATH : ${lib.makeBinPath [ pkgs.tmux pkgs.gh pkgs.git ]}
     '';
   };
 
