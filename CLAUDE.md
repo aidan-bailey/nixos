@@ -137,7 +137,9 @@ Claude Code is installed via the `claude-code-nix` flake input. Supporting tools
 
 OAuth token is stored encrypted via sops-nix (`sops.secrets.claude_code_oauth_token`) and exported in `programs.zsh.profileExtra`. Agent teams are enabled via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`.
 
-Notification hooks (`config/claude/hooks/notify.sh`) send desktop notifications via `notify-send` (swaync) on Stop/Notification events, with optional push via ntfy when `$NTFY_TOPIC` is set. The script is deployed to `~/.claude/hooks/` via `home.file`. Hook and sandbox config lives in `~/.claude/settings.json` (not Nix-managed).
+Notification hooks (`config/claude/hooks/notify.sh`) send desktop notifications via `notify-send` (swaync) on Stop/Notification events, with optional push via ntfy when `$NTFY_TOPIC` is set. The script is deployed to `~/.claude/hooks/` via `home.file`.
+
+`~/.claude/settings.json` is Nix-generated from a `claudeSettings` attrset in `claude.nix` — model preference, hooks, enabled plugins, sandbox rules, effort level, and status line config are all declarative. The `statusline.sh` script (`config/claude/statusline.sh`) is also deployed via `home.file`. Both are read-only nix store symlinks.
 
 ### Flake Inputs of Note
 
