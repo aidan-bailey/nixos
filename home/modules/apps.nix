@@ -45,6 +45,7 @@ in
     opencode
     google-cloud-sdk
     gemini-cli
+    google-chrome
   ];
 
   # Session variables
