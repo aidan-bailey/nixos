@@ -98,10 +98,12 @@ Device modules compose these: `zenbook_s16.nix` imports `amd/graphics.nix` + `am
 
 ### Waybar Architecture
 
-Waybar uses a base config (`config/waybar/config`) plus per-host overrides:
-- `config/waybar/nesco/config` — top bar, battery/backlight/powerprofile, AMDGPU monitoring
-- `config/waybar/fresco/config` — bottom bar, disk monitoring, NVIDIA GPU monitoring
+Waybar config is Nix-generated from a shared base + per-host deltas:
+- `home/modules/wayland.nix` — defines `waybarBase` attrset (15 shared modules) and `custom.waybar.base`/`custom.waybar.hostOverrides` options; generates JSON via `builtins.toJSON (lib.recursiveUpdate base hostOverrides)`
+- `home/hosts/nesco.nix` — sets `custom.waybar.hostOverrides` with battery/backlight/powerprofile, AMDGPU monitoring
+- `home/hosts/fresco.nix` — sets `custom.waybar.hostOverrides` with disk monitoring, NVIDIA GPU monitoring
 - `config/waybar/style.css` — shared styling
+- `config/waybar/scripts/*.sh` — shell scripts for custom modules (sourced via `builtins.readFile` into `writeShellScriptBin`)
 
 Custom modules use shell scripts calling `amdgpu_top`, `nvidia-smi`, `swaync-client`, `powerprofilesctl`, and a weather API.
 
@@ -115,8 +117,10 @@ Custom modules use shell scripts calling `amdgpu_top`, `nvidia-smi`, `swaync-cli
 - `modules/secrets.nix` — SOPS-nix with age encryption for system-level secrets
 - `modules/devices/zenbook_s16.nix` — AMD iGPU, asusd fan control, PSR disable, RCU tuning, resume device
 - `modules/devices/fresco.nix` — Zen 4 + NVIDIA, imports tuning submodules (`tuning/workstation.nix`, `tuning/network.nix`, `tuning/io.nix`), earlyoom, WiFi ASPM workaround
-- `home/modules/wayland.nix` — User-side Sway config, Waybar, Wayland tools, Gammastep night light, HiDPI cursor, polkit agent; sources config files from `config/sway/` and `config/waybar/`
-- `home/modules/devtools.nix` — Dev tools, Rust via rust-overlay, sccache, mold linker, Claude Code ecosystem (claude-squad, tail-claude, mcp-nixos), tmux config, notification hook deployment
+- `home/modules/wayland.nix` — User-side Sway config, Waybar (Nix-generated base + per-host overrides), Wayland tools, Gammastep night light, HiDPI cursor, polkit agent
+- `home/modules/devtools.nix` — Dev tools, Rust via rust-overlay, sccache, mold linker, antigravity/harbour build optimization
+- `home/modules/claude.nix` — Claude Code ecosystem: claude-squad, tail-claude, claude-code-nix, mcp-nixos, notification hooks, OAuth token
+- `home/modules/zed.nix` — Zed editor with vim mode and LSP configs (nixd, pyright, ruff, rust-analyzer)
 - `home/modules/secrets.nix` — SOPS-nix home-manager module for user secrets
 
 ### Secrets
