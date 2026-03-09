@@ -33,15 +33,6 @@ case "$event" in
     ntfy_tags="robot"
     show_actions=1
     ;;
-  SubagentStop)
-    urgency="low"
-    title="Claude Code — Subagent Done"
-    icon="emblem-system"
-    expire_ms=5000
-    ntfy_priority="low"
-    ntfy_tags="gear,robot"
-    show_actions=0
-    ;;
   *)
     urgency="low"
     title="Claude Code — $event"
@@ -78,7 +69,7 @@ if command -v notify-send &>/dev/null; then
     if [ "$action" = "focus" ] && command -v claude-focus &>/dev/null; then
       claude-focus "$session" 2>/dev/null || true
     fi
-  ) &
+  ) &>/dev/null &
 fi
 
 # ── Push notification via ntfy ───────────────────────────────────────────────
