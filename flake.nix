@@ -29,6 +29,10 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -43,6 +47,7 @@
       harbour,
       claude-code-nix,
       sops-nix,
+      rust-overlay,
       ...
     }@inputs:
     let
@@ -50,6 +55,7 @@
 
       commonModules = [
         ./modules/profile.nix
+        { nixpkgs.overlays = [ rust-overlay.overlays.default ]; }
         nixarr.nixosModules.default
         sops-nix.nixosModules.sops
         home-manager.nixosModules.home-manager

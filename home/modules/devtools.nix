@@ -68,7 +68,11 @@ let
     # XML
     libxslt
     # Rust
-    rustup # For the toolchain (cargo, rustc)
+    (pkgs.rust-bin.stable.latest.default.override {
+      extensions = [ "clippy" "rustfmt" "rust-analyzer" "rust-src" ];
+    })
+    cargo-audit
+    cargo-machete
     sccache # Rust compilation caching
     lldb
     autoconf
