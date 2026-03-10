@@ -7,6 +7,7 @@
 set -euo pipefail
 
 VERB="${1:-}"
+# Tracks which tmux session is currently in the popup (consumed by dismiss)
 STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/claude-popup-session"
 APP_ID="claude-popup"
 
@@ -15,7 +16,7 @@ APP_ID="claude-popup"
 # Find the Sway container ID for the popup window (empty string if not found)
 popup_con_id() {
   swaymsg -t get_tree 2>/dev/null \
-    | jq -r '.. | objects | select(.app_id? == "'"$APP_ID"'") | .id' 2>/dev/null \
+    | jq -r --arg appid "$APP_ID" '.. | objects | select(.app_id? == $appid) | .id' 2>/dev/null \
     | head -1
 }
 
