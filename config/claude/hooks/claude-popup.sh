@@ -28,7 +28,7 @@ resolve_tmux_session() {
   # Try exact substring match first
   match=$(tmux list-sessions -F "#{session_name}" 2>/dev/null \
     | grep "^claudesquad_" \
-    | grep -i "$sid" \
+    | grep -Fi "$sid" \
     | head -1) || true
 
   if [ -n "$match" ]; then
@@ -62,7 +62,9 @@ cmd_show() {
   con_id=$(popup_con_id)
 
   if [ -n "$con_id" ]; then
-    # Window exists — surface it and switch to the target session
+    # Window exists — deterministically surface it (move to scratchpad first to
+    # avoid the toggle footgun where a second 'scratchpad show' hides it)
+    swaymsg "[app_id=$APP_ID] move scratchpad" &>/dev/null || true
     swaymsg "[app_id=$APP_ID] scratchpad show" &>/dev/null || true
     swaymsg "[app_id=$APP_ID] focus" &>/dev/null || true
     tmux switch-client -t "$tmux_session" 2>/dev/null || true
