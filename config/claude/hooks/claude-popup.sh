@@ -92,6 +92,20 @@ cmd_show() {
 # ── dismiss ──────────────────────────────────────────────────────────────────
 
 cmd_dismiss() {
+  local session_id="${1:-}"
+
+  # If a session_id was provided, only dismiss if it matches the active popup session.
+  # This prevents session A's Stop from hiding a popup showing session B.
+  if [ -n "$session_id" ] && [ -f "$STATE_FILE" ]; then
+    local active_session
+    active_session=$(cat "$STATE_FILE")
+    local stopping_session
+    stopping_session=$(resolve_tmux_session "$session_id")
+    if [ -n "$stopping_session" ] && [ "$stopping_session" != "$active_session" ]; then
+      return 0
+    fi
+  fi
+
   rm -f "$STATE_FILE"
 
   local con_id
@@ -106,6 +120,6 @@ cmd_dismiss() {
 
 case "$VERB" in
   show)    cmd_show "${2:-}" ;;
-  dismiss) cmd_dismiss ;;
+  dismiss) cmd_dismiss "${2:-}" ;;
   *)       echo "Usage: claude-popup show <session-id> | claude-popup dismiss" >&2; exit 1 ;;
 esac
