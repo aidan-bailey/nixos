@@ -6,7 +6,6 @@ let
     nixd
     pyright
     ruff
-    rust-analyzer
     nodePackages.bash-language-server
     marksman
     yaml-language-server
