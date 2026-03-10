@@ -20,41 +20,39 @@ popup_con_id() {
     | head -1
 }
 
-# Resolve a Claude session_id to the best-matching claudesquad_ tmux session.
-# Falls back to the first claudesquad_ session if no fragment match.
-resolve_tmux_session() {
-  local sid="$1"
-  local match
+# Launch the popup terminal attached to the given tmux session, wait for it to
+# appear in Sway, then surface it from the scratchpad.
+launch_popup() {
+  local target_session="$1"
 
-  # Try exact substring match first
-  match=$(tmux list-sessions -F "#{session_name}" 2>/dev/null \
-    | grep "^claudesquad_" \
-    | grep -Fi "$sid" \
-    | head -1) || true
+  alacritty --class "$APP_ID" --title "Claude Popup" \
+    -e tmux attach-session -t "$target_session" &>/dev/null &
+  disown
 
-  if [ -n "$match" ]; then
-    echo "$match"
-    return
-  fi
-
-  # Fallback: first claudesquad_ session
-  tmux list-sessions -F "#{session_name}" 2>/dev/null \
-    | grep "^claudesquad_" \
-    | head -1 || true
+  # Wait for window to appear (up to 2s), then surface it
+  local i con_id
+  for i in $(seq 1 20); do
+    sleep 0.1
+    con_id=$(popup_con_id)
+    if [ -n "$con_id" ]; then
+      swaymsg "[app_id=$APP_ID] scratchpad show" &>/dev/null || true
+      swaymsg "[app_id=$APP_ID] focus" &>/dev/null || true
+      return
+    fi
+  done
 }
 
 # ── show ─────────────────────────────────────────────────────────────────────
 
 cmd_show() {
-  local session_id="${1:-}"
-  [ -z "$session_id" ] && exit 0
-
-  local tmux_session
-  tmux_session=$(resolve_tmux_session "$session_id")
+  local tmux_session="${1:-}"
   [ -z "$tmux_session" ] && exit 0
 
   # Guard: tmux session must exist
   tmux has-session -t "$tmux_session" 2>/dev/null || exit 0
+
+  local active_session=""
+  [ -f "$STATE_FILE" ] && active_session=$(cat "$STATE_FILE")
 
   # Record active session
   printf '%s' "$tmux_session" > "$STATE_FILE"
@@ -62,46 +60,35 @@ cmd_show() {
   local con_id
   con_id=$(popup_con_id)
 
-  if [ -n "$con_id" ]; then
-    # Window exists — deterministically surface it (move to scratchpad first to
-    # avoid the toggle footgun where a second 'scratchpad show' hides it)
+  if [ -n "$con_id" ] && [ "$tmux_session" = "$active_session" ]; then
+    # Popup exists and already shows the right session — just surface it.
     swaymsg "[app_id=$APP_ID] move scratchpad" &>/dev/null || true
     swaymsg "[app_id=$APP_ID] scratchpad show" &>/dev/null || true
     swaymsg "[app_id=$APP_ID] focus" &>/dev/null || true
-    tmux switch-client -t "$tmux_session" 2>/dev/null || true
   else
-    # Launch new popup window — for_window rule will move it to scratchpad
-    alacritty --class "$APP_ID" --title "Claude Popup" \
-      -e tmux attach-session -t "$tmux_session" &>/dev/null &
-    disown
-
-    # Wait for window to appear (up to 2s), then surface it
-    local i
-    for i in $(seq 1 20); do
-      sleep 0.1
-      con_id=$(popup_con_id)
-      if [ -n "$con_id" ]; then
-        swaymsg "[app_id=$APP_ID] scratchpad show" &>/dev/null || true
-        swaymsg "[app_id=$APP_ID] focus" &>/dev/null || true
-        break
-      fi
-    done
+    # Either no popup exists, or it shows a different session.
+    # Kill any stale popup and spawn a fresh one attached to the target session.
+    # (tmux switch-client can't reliably target the popup's client from a
+    # backgrounded hook process, so kill+respawn is the safe approach.)
+    if [ -n "$con_id" ]; then
+      swaymsg "[app_id=$APP_ID] kill" &>/dev/null || true
+      sleep 0.15  # let Sway + Alacritty clean up
+    fi
+    launch_popup "$tmux_session"
   fi
 }
 
 # ── dismiss ──────────────────────────────────────────────────────────────────
 
 cmd_dismiss() {
-  local session_id="${1:-}"
+  local tmux_session="${1:-}"
 
-  # If a session_id was provided, only dismiss if it matches the active popup session.
+  # Only dismiss if the stopping session matches the active popup session.
   # This prevents session A's Stop from hiding a popup showing session B.
-  if [ -n "$session_id" ] && [ -f "$STATE_FILE" ]; then
+  if [ -n "$tmux_session" ] && [ -f "$STATE_FILE" ]; then
     local active_session
     active_session=$(cat "$STATE_FILE")
-    local stopping_session
-    stopping_session=$(resolve_tmux_session "$session_id")
-    if [ -n "$stopping_session" ] && [ "$stopping_session" != "$active_session" ]; then
+    if [ "$tmux_session" != "$active_session" ]; then
       return 0
     fi
   fi

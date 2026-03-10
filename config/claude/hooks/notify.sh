@@ -19,7 +19,7 @@ case "$event" in
     urgency="critical"
     title="Claude Code — Task Complete"
     icon="dialog-information"
-    expire_ms=0 # persistent until dismissed
+    expire_ms=15000
     ntfy_priority="high"
     ntfy_tags="white_check_mark,robot"
     show_actions=1
@@ -67,7 +67,14 @@ if command -v notify-send &>/dev/null; then
     action=$(notify-send "${args[@]}" "$title" "$display_msg" 2>/dev/null || true)
 
     if [ "$action" = "focus" ] && command -v claude-focus &>/dev/null; then
-      claude-focus "$session" 2>/dev/null || true
+      # Use the tmux session name (via $TMUX_PANE) so claude-focus can
+      # reliably find the correct Sway window via PID tree walking.
+      # Claude's session_id is a UUID that doesn't match anything.
+      focus_target="$session"
+      if [ -n "${TMUX_PANE:-}" ]; then
+        focus_target=$(tmux list-panes -t "$TMUX_PANE" -F "#{session_name}" 2>/dev/null | head -1) || focus_target="$session"
+      fi
+      claude-focus "$focus_target" 2>/dev/null || true
     fi
   ) &>/dev/null &
 fi
@@ -86,9 +93,17 @@ if [ -n "${NTFY_TOPIC:-}" ]; then
 fi
 
 # ── Scratchpad popup (Notification = show, Stop = dismiss) ───────────────────
-if command -v claude-popup &>/dev/null; then
+# Resolve the actual tmux session name via $TMUX_PANE (inherited from the tmux
+# pane where Claude Code runs). This is reliable — unlike Claude's session_id
+# (an internal UUID) which can't be mapped to claudesquad_ tmux sessions.
+popup_session=""
+if [ -n "${TMUX_PANE:-}" ]; then
+  popup_session=$(tmux list-panes -t "$TMUX_PANE" -F "#{session_name}" 2>/dev/null | head -1) || true
+fi
+
+if [ -n "$popup_session" ] && command -v claude-popup &>/dev/null; then
   case "$event" in
-    Notification) claude-popup show "$session" &>/dev/null & ;;
-    Stop)         claude-popup dismiss "$session" &>/dev/null & ;;
+    Notification) claude-popup show "$popup_session" &>/dev/null & ;;
+    Stop)         claude-popup dismiss "$popup_session" &>/dev/null & ;;
   esac
 fi
