@@ -89,6 +89,6 @@ fi
 if command -v claude-popup &>/dev/null; then
   case "$event" in
     Notification) claude-popup show "$session" &>/dev/null & ;;
-    Stop)         claude-popup dismiss         &>/dev/null & ;;
+    Stop)         claude-popup dismiss "$session" &>/dev/null & ;;
   esac
 fi
