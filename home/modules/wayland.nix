@@ -278,6 +278,10 @@ in
         (pkgs.writeShellScriptBin "claude-focus" (
           builtins.readFile ../../config/claude/hooks/claude-focus.sh
         ))
+
+        (pkgs.writeShellScriptBin "claude-popup" (
+          builtins.readFile ../../config/claude/hooks/claude-popup.sh
+        ))
       ];
 
     # HiDPI cursor (Adwaita at 1.5x = 36)

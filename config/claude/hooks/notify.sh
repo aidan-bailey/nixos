@@ -84,3 +84,11 @@ if [ -n "${NTFY_TOPIC:-}" ]; then
     -d "$display_msg" \
     "https://ntfy.sh/$NTFY_TOPIC" &>/dev/null &
 fi
+
+# ── Scratchpad popup (Notification = show, Stop = dismiss) ───────────────────
+if command -v claude-popup &>/dev/null; then
+  case "$event" in
+    Notification) claude-popup show "$session" &>/dev/null & ;;
+    Stop)         claude-popup dismiss "$session" &>/dev/null & ;;
+  esac
+fi
