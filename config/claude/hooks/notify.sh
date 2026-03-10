@@ -19,7 +19,7 @@ case "$event" in
     urgency="critical"
     title="Claude Code — Task Complete"
     icon="dialog-information"
-    expire_ms=0 # persistent until dismissed
+    expire_ms=15000
     ntfy_priority="high"
     ntfy_tags="white_check_mark,robot"
     show_actions=1
