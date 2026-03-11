@@ -103,10 +103,46 @@ cmd_dismiss() {
   swaymsg "[app_id=$APP_ID] move scratchpad" &>/dev/null || true
 }
 
+# ── toggle ────────────────────────────────────────────────────────────────────
+# Keybinding entry point: show/hide the popup, creating one if needed.
+
+cmd_toggle() {
+  local con_id
+  con_id=$(popup_con_id)
+
+  if [ -n "$con_id" ]; then
+    # Popup exists — let Sway toggle its visibility
+    swaymsg "[app_id=$APP_ID] scratchpad show" &>/dev/null || true
+  else
+    # No popup — launch a plain terminal (or attach to active state session)
+    local target_session=""
+    [ -f "$STATE_FILE" ] && target_session=$(cat "$STATE_FILE")
+
+    if [ -n "$target_session" ] && tmux has-session -t "$target_session" 2>/dev/null; then
+      launch_popup "$target_session"
+    else
+      # Standalone quake terminal (no tmux session)
+      alacritty --class "$APP_ID" --title "Claude Popup" &>/dev/null &
+      disown
+      local i
+      for i in $(seq 1 20); do
+        sleep 0.1
+        con_id=$(popup_con_id)
+        if [ -n "$con_id" ]; then
+          swaymsg "[app_id=$APP_ID] scratchpad show" &>/dev/null || true
+          swaymsg "[app_id=$APP_ID] focus" &>/dev/null || true
+          return
+        fi
+      done
+    fi
+  fi
+}
+
 # ── Dispatch ─────────────────────────────────────────────────────────────────
 
 case "$VERB" in
   show)    cmd_show "${2:-}" ;;
   dismiss) cmd_dismiss "${2:-}" ;;
-  *)       echo "Usage: claude-popup show <session-id> | claude-popup dismiss" >&2; exit 1 ;;
+  toggle)  cmd_toggle ;;
+  *)       echo "Usage: claude-popup show <session-id> | dismiss [session-id] | toggle" >&2; exit 1 ;;
 esac

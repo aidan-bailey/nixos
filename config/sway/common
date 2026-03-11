@@ -223,4 +223,4 @@ seat seat0 xcursor_theme Adwaita 36
 
 ### Claude popup terminal (scratchpad)
 for_window [app_id="claude-popup"] floating enable, resize set 80 ppt 70 ppt, move scratchpad
-bindsym $mod+grave [app_id="claude-popup"] scratchpad show
+bindsym $mod+grave exec claude-popup toggle
