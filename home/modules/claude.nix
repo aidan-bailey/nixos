@@ -42,6 +42,11 @@ let
       "superpowers@claude-plugins-official" = true;
       "feature-dev@claude-plugins-official" = true;
       "sonatype-guide@claude-plugins-official" = true;
+      "code-simplifier@claude-plugins-official" = true;
+      "commit-commands@claude-plugins-official" = true;
+      "claude-md-management@claude-plugins-official" = true;
+      "pr-review-toolkit@claude-plugins-official" = true;
+      "claude-code-setup@claude-plugins-official" = true;
       "example-skills@anthropic-agent-skills" = true;
     };
     sandbox = {
