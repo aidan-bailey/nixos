@@ -145,7 +145,7 @@ in
   };
 
   sops.secrets.claude_code_oauth_token = { };
-  programs.zsh.profileExtra = ''
+  programs.zsh.envExtra = ''
     export CLAUDE_CODE_OAUTH_TOKEN="$(cat ${config.sops.secrets.claude_code_oauth_token.path})"
   '';
 }
