@@ -101,6 +101,20 @@ let
     '';
   };
 
+  cs-wrapper = pkgs.writeShellScriptBin "cs" ''
+    GIT_ROOT=$(${pkgs.git}/bin/git rev-parse --show-toplevel 2>/dev/null)
+
+    if [ -n "$GIT_ROOT" ]; then
+      export CLAUDE_SQUAD_HOME="$GIT_ROOT/.claude-squad"
+      mkdir -p "$CLAUDE_SQUAD_HOME"
+      if ! grep -q "^.claude-squad" "$GIT_ROOT/.gitignore" 2>/dev/null; then
+        echo ".claude-squad/" >> "$GIT_ROOT/.gitignore"
+      fi
+    fi
+
+    exec ${claude-squad}/bin/claude-squad "$@"
+  '';
+
   tail-claude = pkgs.buildGoModule rec {
     pname = "tail-claude";
     version = "0.3.5";
@@ -119,7 +133,7 @@ in
     inputs.claude-code-nix.packages.${system}.default
     pkgs.jq
     pkgs.bun
-    claude-squad
+    cs-wrapper
     tail-claude
     (pkgs.mcp-nixos.overridePythonAttrs { doCheck = false; })
   ];

@@ -18,7 +18,6 @@
       hibernate = "sudo systemctl hibernate";
       shib = "systemd-inhibit sleep infinity";
       nix-sync-cache = "sudo nixos-rebuild switch --flake ~/System#$HOST --option extra-substituters \"file:///mnt/nixos-cache?priority=10\" --option require-sigs false && nix copy /run/current-system --to file:///mnt/nixos-cache";
-      cs = "claude-squad";
       tc = "tail-claude";
       rt = "ralph-tui";
     };
