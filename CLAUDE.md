@@ -38,7 +38,7 @@ sops secrets/home.yaml      # user secrets
 ```
 
 Shell aliases defined in `home/modules/shell.nix`:
-- `updaten` — `nix flake update` piped through `nom` (pretty nix output)
+- `updaten` — `sudo nixos-rebuild switch --flake ~/System#$HOST --option substitute false` piped through `nom` (rebuild+switch from local store)
 - `configure` — `nvim /etc/nixos/configuration.nix`
 - `nix-sync-cache` — sync nix store to local binary cache at `/mnt/nixos-cache`
 - `cs` — `claude-squad` (multi-session manager)
@@ -66,14 +66,18 @@ Each host selects a profile and a device module:
 
 **Home-manager modules** (`home/modules/`) configure user environment — programs, dotfiles, shell, editor. They receive `inputs` and `system` via `extraSpecialArgs`. All home modules are imported from `home/users/aidanb/default.nix`.
 
+**Home profiles** (`home/profiles/`) compose home modules into role-based sets. `home/profiles/desktop.nix` imports wayland, gaming, apps, research, and helix modules. Per-host files (`home/hosts/*.nix`) import a profile and then set host-specific overrides.
+
 ### Custom Options (`modules/profile.nix`)
 
-Two custom options control conditional behavior across modules:
+Four custom options control conditional behavior across modules:
 
 - `custom.hostType` — `"laptop"`, `"desktop"`, or `"server"` (controls TLP, sleep, power)
 - `custom.display.type` — `"oled"` or `"lcd"` (controls font rendering / subpixel settings)
+- `custom.features.gaming` — bool, default true (controls Steam, Proton)
+- `custom.features.virtualisation` — bool, default true (controls Docker, libvirt, KVM)
 
-These are set in device modules and consumed by `sway.nix`, `power.nix`, etc.
+These are set in device modules and consumed by `sway.nix`, `power.nix`, `gaming.nix`, `virtualisation.nix`, etc.
 
 ### Per-Host Integration Pattern
 
@@ -82,7 +86,7 @@ Each host's `configuration.nix` does three things:
 2. Imports its device module (e.g. `modules/devices/zenbook_s16.nix`)
 3. Injects per-host home-manager overrides via `home-manager.users.aidanb.imports = [ ../../home/hosts/{host}.nix ]`
 
-The per-host home files (`home/hosts/nesco.nix`, `home/hosts/fresco.nix`) override Sway and Waybar config sources to point to `config/sway/{host}/config` and `config/waybar/{host}/config`.
+The per-host home files (`home/hosts/nesco.nix`, `home/hosts/fresco.nix`) import `home/profiles/desktop.nix`, then set host-specific overrides for Sway config sources (`config/sway/{host}/config`) and Waybar host overrides.
 
 ### CPU / GPU Module Hierarchy
 
@@ -122,6 +126,12 @@ Custom modules use shell scripts calling `amdgpu_top`, `nvidia-smi`, `swaync-cli
 - `home/modules/claude.nix` — Claude Code ecosystem: claude-squad, tail-claude, claude-code-nix, mcp-nixos, notification hooks, OAuth token
 - `home/modules/zed.nix` — Zed editor with vim mode and LSP configs (nixd, pyright, ruff, rust-analyzer)
 - `home/modules/secrets.nix` — SOPS-nix home-manager module for user secrets
+- `home/modules/apps.nix` — User applications (Firefox, Discord, Spotify, Thunderbird, etc.) and MIME type defaults
+- `home/modules/git.nix` — Git configuration
+- `home/modules/helix.nix` — Helix editor configuration
+- `home/modules/research.nix` — Research tools
+- `home/modules/gaming.nix` — Home-level gaming packages (Steam, Proton, Lutris)
+- `home/profiles/desktop.nix` — Desktop profile composing wayland, gaming, apps, research, helix modules
 
 ### Secrets
 
@@ -129,7 +139,7 @@ Encrypted secrets are managed by sops-nix with age encryption. Secrets live in `
 
 ### Claude Code Integration
 
-Claude Code is installed via the `claude-code-nix` flake input. Supporting tools are packaged as `buildGoModule` derivations in `home/modules/devtools.nix`:
+Claude Code is installed via the `claude-code-nix` flake input. Supporting tools are packaged as `buildGoModule` derivations in `home/modules/claude.nix`:
 
 - **claude-squad** (v1.0.16) — multi-session manager, built as `cs` binary with tmux/gh/git on PATH
 - **tail-claude** (v0.3.5) — session log viewer
