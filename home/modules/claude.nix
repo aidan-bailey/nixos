@@ -77,20 +77,11 @@ let
     };
   };
 
-  claude-squad = pkgs.buildGoModule rec {
-    pname = "claude-squad";
-    version = "1.0.16";
-    src = pkgs.fetchFromGitHub {
-      owner = "smtg-ai";
-      repo = "claude-squad";
-      rev = "v${version}";
-      hash = "sha256-ecR+CqCO6uoWd6yVN3QpZAnA/xWZIOAHvwjbJgAQwNo=";
-    };
-    vendorHash = "sha256-Rc0pIwnA0k99IKTvYkHV54RxtY87zY1TmmmMl+hYk6Q=";
-    env.CGO_ENABLED = 0;
-    doCheck = false;
-    nativeBuildInputs = [ pkgs.makeWrapper ];
-    postInstall = ''
+  claude-squad = pkgs.symlinkJoin {
+    name = "claude-squad-wrapped";
+    paths = [ inputs.claude-squad.packages.${system}.default ];
+    buildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
       wrapProgram $out/bin/claude-squad --prefix PATH : ${
         lib.makeBinPath [
           pkgs.tmux

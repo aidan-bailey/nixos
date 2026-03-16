@@ -74,6 +74,26 @@
         "type": "github"
       }
     },
+    "claude-squad": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773650519,
+        "narHash": "sha256-VGbpMXgzhI8KUL4di4uGaHemRYzSFhEgzRXG8cXXHUw=",
+        "owner": "aidan-bailey",
+        "repo": "claude-squad",
+        "rev": "3882083be7debcc6cd7f12c7ed3d55dca2e69b45",
+        "type": "github"
+      },
+      "original": {
+        "owner": "aidan-bailey",
+        "repo": "claude-squad",
+        "type": "github"
+      }
+    },
     "doom-flake": {
       "inputs": {
         "nix-doom-emacs-unstraightened": "nix-doom-emacs-unstraightened",
@@ -437,6 +457,7 @@
       "inputs": {
         "antigravity-nix": "antigravity-nix",
         "claude-code-nix": "claude-code-nix",
+        "claude-squad": "claude-squad",
         "doom-flake": "doom-flake",
         "harbour": "harbour",
         "home-manager": "home-manager",

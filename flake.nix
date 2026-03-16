@@ -25,6 +25,10 @@
       url = "github:sadjow/claude-code-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    claude-squad = {
+      url = "github:aidan-bailey/claude-squad";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -46,6 +50,7 @@
       antigravity-nix,
       harbour,
       claude-code-nix,
+      claude-squad,
       sops-nix,
       rust-overlay,
       ...
