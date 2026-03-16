@@ -81,11 +81,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773650519,
-        "narHash": "sha256-VGbpMXgzhI8KUL4di4uGaHemRYzSFhEgzRXG8cXXHUw=",
+        "lastModified": 1773652483,
+        "narHash": "sha256-IxSiapeOEJ1L//fTpEQEo+gx/EoPJil8lUIZZJIO9Zs=",
         "owner": "aidan-bailey",
         "repo": "claude-squad",
-        "rev": "3882083be7debcc6cd7f12c7ed3d55dca2e69b45",
+        "rev": "1f5c8fe9d576a3a275777e0b01a0e74a08920c46",
         "type": "github"
       },
       "original": {
