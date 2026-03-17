@@ -45,13 +45,12 @@
   };
 
   # Conservative sleep defaults — device modules can override without mkForce
-  systemd.sleep.extraConfig = lib.mkDefault ''
-    [Sleep]
-    AllowSuspend=yes
-    AllowHibernation=no
-    AllowSuspendThenHibernate=no
-    AllowHybridSleep=no
-  '';
+  systemd.sleep.settings.Sleep = lib.mkDefault {
+    AllowSuspend = "yes";
+    AllowHibernation = "no";
+    AllowSuspendThenHibernate = "no";
+    AllowHybridSleep = "no";
+  };
 
   services.logind.settings.Login = lib.mkDefault {
     HandleLidSwitch = "suspend";
