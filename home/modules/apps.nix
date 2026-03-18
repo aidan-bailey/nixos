@@ -25,7 +25,7 @@ in
     qbittorrent-enhanced
     pomodoro-gtk
     protonvpn-gui
-    bitwarden-desktop
+    bitwarden-cli
     bitwarden-menu
     element-desktop
     zoom-us
