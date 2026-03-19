@@ -46,6 +46,7 @@ in
     google-cloud-sdk
     gemini-cli
     chromium
+    poppler-utils
   ];
 
   # Session variables
