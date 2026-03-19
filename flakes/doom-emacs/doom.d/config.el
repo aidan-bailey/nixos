@@ -105,3 +105,22 @@
   :config
   (setq typst-ts-mode-indent-config '((tab-width . 2)))
   )
+
+(use-package! claude-code-ide
+  :bind (("C-c C-'" . claude-code-ide-menu)
+         ("C-c c c" . claude-code-ide)
+         ("C-c c r" . claude-code-ide-resume)
+         ("C-c c k" . claude-code-ide-continue)
+         ("C-c c t" . claude-code-ide-toggle)
+         ("C-c c s" . claude-code-ide-switch-to-buffer)
+         ("C-c c l" . claude-code-ide-list-sessions)
+         ("C-c c q" . claude-code-ide-stop)
+         ("C-c c @" . claude-code-ide-insert-at-mentioned)
+         ("C-c c p" . claude-code-ide-send-prompt)
+         ("C-c c e" . claude-code-ide-send-escape)
+         ("C-c c ?" . claude-code-ide-check-status)
+         ("C-c c n" . claude-code-ide-insert-newline)
+         ("C-c c T" . claude-code-ide-toggle-recent)
+         ("C-c c o" . claude-code-ide-toggle-vterm-optimization))
+  :config
+  (claude-code-ide-emacs-tools-setup))
