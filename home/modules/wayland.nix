@@ -338,6 +338,10 @@ in
     );
     xdg.configFile."waybar/style.css".source = ../../config/waybar/style.css;
 
+    # Wofi launcher configuration
+    xdg.configFile."wofi/style.css".source = ../../config/wofi/style.css;
+    xdg.configFile."wofi/config".source = ../../config/wofi/config;
+
     # SwayNC notification daemon configuration
     xdg.configFile."swaync/config.json".source = ../../config/swaync/config.json;
 

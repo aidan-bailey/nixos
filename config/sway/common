@@ -72,7 +72,7 @@ floating_modifier $mod
 
 ### Launchers
 set $term alacritty
-set $menu wofi --show drun --prompt "run:" --allow-images
+set $menu wofi
 
 bindsym $mod+Return exec $term
 bindsym $mod+q kill
