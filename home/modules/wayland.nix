@@ -239,8 +239,8 @@ in
         gnome-keyring
         wdisplays
         brightnessctl
-        gnome-themes-extra
-        adwaita-icon-theme
+        gruvbox-dark-gtk
+        gruvbox-dark-icons-gtk
         adwaita-qt
         wayvnc
         sway-audio-idle-inhibit
@@ -284,10 +284,10 @@ in
         ))
       ];
 
-    # HiDPI cursor (Adwaita at 1.5x = 36)
+    # HiDPI cursor (Capitaine Gruvbox at 1.5x = 36)
     home.pointerCursor = {
-      name = "Adwaita";
-      package = pkgs.adwaita-icon-theme;
+      name = "Capitaine Cursors (Gruvbox)";
+      package = pkgs.capitaine-cursors-themed;
       size = 36;
       gtk.enable = true;
       x11.enable = true;
@@ -295,7 +295,7 @@ in
 
     # Wayland session variables
     home.sessionVariables = {
-      GTK_THEME = "Adwaita:dark";
+      GTK_THEME = "Gruvbox-Dark";
       QT_QPA_PLATFORMTHEME = "gtk3";
       SDL_VIDEODRIVER = "wayland";
       QT_QPA_PLATFORM = "wayland";
