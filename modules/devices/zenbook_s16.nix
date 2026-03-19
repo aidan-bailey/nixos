@@ -30,15 +30,14 @@
   ];
 
   # Hibernate config — use shutdown mode to avoid broken amdgpu S4 resume on Strix Point
-  systemd.sleep.extraConfig = ''
-    [Sleep]
-    AllowSuspend=yes
-    AllowHibernation=yes
-    AllowSuspendThenHibernate=no
-    AllowHybridSleep=no
-    SuspendState=freeze
-    HibernateMode=shutdown
-  '';
+  systemd.sleep.settings.Sleep = {
+    AllowSuspend = "yes";
+    AllowHibernation = "yes";
+    AllowSuspendThenHibernate = "no";
+    AllowHybridSleep = "no";
+    SuspendState = "freeze";
+    HibernateMode = "shutdown";
+  };
 
   # Direct hibernate on lid close — suspend-then-hibernate crashes on Strix Point
   # due to broken s2idle resume (amdgpu VPE ring test failure)
@@ -53,7 +52,6 @@
   # ASUS-specific daemon (fan profiles, platform profile switching)
   services.asusd = {
     enable = true;
-    enableUserService = true;
   };
 
 }
