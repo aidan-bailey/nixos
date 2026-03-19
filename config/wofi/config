@@ -1,0 +1,7 @@
+show=drun
+prompt=run:
+allow_images=true
+image_size=24
+width=500
+height=400
+insensitive=true
