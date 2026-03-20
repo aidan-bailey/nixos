@@ -72,7 +72,7 @@ floating_modifier $mod
 
 ### Launchers
 set $term alacritty
-set $menu wofi --show drun --prompt "run:" --allow-images
+set $menu wofi
 
 bindsym $mod+Return exec $term
 bindsym $mod+q kill
@@ -209,17 +209,17 @@ bindsym Shift+Print exec bash -c 'SCREENSHOTS_DIR="${SCREENSHOTS_DIR:-$(xdg-user
 # Quick area screenshot to clipboard only
 bindsym $mod+Shift+s exec grim -g "$(slurp)" - | wl-copy
 
-### Colors (ported from your i3 theme)
+### Colors (Gruvbox Dark)
 # class                 border   bground  text     indicator child_border
-client.focused          #FF5555  #FF5555  #F8F8F2  #FF5555   #FF5555
-client.focused_inactive #44475A  #44475A  #F8F8F2  #44475A   #44475A
-client.unfocused        #282A36  #282A36  #BFBFBF  #282A36   #282A36
-client.urgent           #44475A  #FF5555  #F8F8F2  #FF5555   #FF5555
-client.placeholder      #282A36  #282A36  #F8F8F2  #282A36   #282A36
-client.background       #F8F8F2
+client.focused          #458588  #458588  #ebdbb2  #458588   #458588
+client.focused_inactive #3c3836  #3c3836  #ebdbb2  #3c3836   #3c3836
+client.unfocused        #282828  #282828  #a89984  #282828   #282828
+client.urgent           #3c3836  #cc241d  #ebdbb2  #cc241d   #cc241d
+client.placeholder      #282828  #282828  #ebdbb2  #282828   #282828
+client.background       #ebdbb2
 
 ### Cursor (HiDPI)
-seat seat0 xcursor_theme Adwaita 36
+seat seat0 xcursor_theme "Capitaine Cursors (Gruvbox)" 36
 
 ### Claude popup terminal (scratchpad)
 for_window [app_id="claude-popup"] floating enable, resize set 80 ppt 70 ppt, move scratchpad

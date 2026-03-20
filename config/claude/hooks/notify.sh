@@ -13,6 +13,23 @@ session=$(echo "$input" | jq -r '.session_id // "claude"' 2>/dev/null) || sessio
 
 [ -z "$event" ] && exit 0
 
+# ── Load Nix-generated notification config ───────────────────────────────────
+NOTIFY_CONF="${HOME}/.claude/hooks/notify.conf"
+[ -f "$NOTIFY_CONF" ] && source "$NOTIFY_CONF"
+
+# Defaults when config is missing (backwards compat)
+: "${NOTIFY_DESKTOP:=1}"
+: "${NOTIFY_PUSH:=1}"
+: "${NOTIFY_POPUP:=1}"
+: "${NOTIFY_EVENT_STOP:=1}"
+: "${NOTIFY_EVENT_NOTIFICATION:=1}"
+
+# Per-event gate
+case "$event" in
+  Stop)         [ "$NOTIFY_EVENT_STOP" = "1" ] || exit 0 ;;
+  Notification) [ "$NOTIFY_EVENT_NOTIFICATION" = "1" ] || exit 0 ;;
+esac
+
 # ── Per-event configuration ──────────────────────────────────────────────────
 case "$event" in
   Stop)
@@ -51,7 +68,7 @@ display_msg="${message:0:200}"
 # expires). We run in a background subshell so the hook returns immediately.
 # When the user clicks "Focus Terminal", we call claude-focus to raise the
 # correct Sway window.
-if command -v notify-send &>/dev/null; then
+if [ "$NOTIFY_DESKTOP" = "1" ] && command -v notify-send &>/dev/null; then
   (
     args=(
       --urgency="$urgency"
@@ -80,7 +97,7 @@ if command -v notify-send &>/dev/null; then
 fi
 
 # ── Push notification via ntfy ───────────────────────────────────────────────
-if [ -n "${NTFY_TOPIC:-}" ]; then
+if [ "$NOTIFY_PUSH" = "1" ] && [ -n "${NTFY_TOPIC:-}" ]; then
   ntfy_actions="view, Open Topic, https://ntfy.sh/${NTFY_TOPIC}"
 
   curl -sf \
@@ -101,7 +118,7 @@ if [ -n "${TMUX_PANE:-}" ]; then
   popup_session=$(tmux list-panes -t "$TMUX_PANE" -F "#{session_name}" 2>/dev/null | head -1) || true
 fi
 
-if [ -n "$popup_session" ] && command -v claude-popup &>/dev/null; then
+if [ "$NOTIFY_POPUP" = "1" ] && [ -n "$popup_session" ] && command -v claude-popup &>/dev/null; then
   case "$event" in
     Notification) claude-popup show "$popup_session" &>/dev/null & ;;
     Stop)         claude-popup dismiss "$popup_session" &>/dev/null & ;;

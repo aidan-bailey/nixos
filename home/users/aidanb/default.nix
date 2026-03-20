@@ -40,5 +40,7 @@
   home.stateVersion = "25.05";
 
   # Let Home Manager install and manage itself.
+  custom.claude.notifications.enable = false;
+
   programs.home-manager.enable = true;
 }

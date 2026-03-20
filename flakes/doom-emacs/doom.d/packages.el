@@ -57,3 +57,7 @@
   :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
 
 (package! typst-ts-mode)
+
+(package! claude-code-ide
+  :recipe (:host github :repo "manzaltu/claude-code-ide.el")
+  :pin "5f12e60c6d2d1802c8c1b7944bbdf935d5db1364")
