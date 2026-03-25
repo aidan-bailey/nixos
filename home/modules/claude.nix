@@ -84,7 +84,7 @@ let
         ];
       };
     };
-    effortLevel = "high";
+    effortLevel = "max";
     statusLine = {
       type = "command";
       command = "~/.claude/statusline.sh";
