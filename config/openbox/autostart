@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Compositor for tear-free video playback on TV
+picom --backend glx &
+
+# Wallpaper
+feh --bg-fill ~/.config/openbox/wallpaper.jpg 2>/dev/null &
+
+# Lightweight panel
+tint2 &
+
+# Primary kiosk app
+jellyfinmediaplayer --fullscreen &

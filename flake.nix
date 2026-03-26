@@ -76,7 +76,8 @@
       ];
 
       # Module profiles — composable sets of system modules.
-      # serverModules: minimal headless base (medesco)
+      # serverModules: minimal headless base
+      # htpcModules: HTPC with Openbox, audio, gaming (medesco)
       # desktopModules: full desktop with gaming, audio, Sway (nesco, fresco)
       serverModules = [
         ./modules/base.nix
@@ -86,6 +87,13 @@
         ./modules/mediaserver.nix
         ./modules/secrets.nix
         ./modules/benchmarking.nix
+      ];
+
+      htpcModules = serverModules ++ [
+        ./modules/openbox.nix
+        ./modules/audio.nix
+        ./modules/gaming.nix
+        ./modules/nix-ld.nix
       ];
 
       desktopModules = serverModules ++ [
@@ -122,7 +130,7 @@
         };
         medesco = mkHost {
           hostConfig = ./hosts/medesco/configuration.nix;
-          profile = serverModules;
+          profile = htpcModules;
         };
       };
     };
