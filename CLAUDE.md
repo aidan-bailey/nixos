@@ -185,3 +185,18 @@ Setting `hostPlatform.gcc.arch = "znver4"` compiles all packages with `-march=zn
 - Package overrides are done inline with `overrideAttrs` (see Cockatrice in `home/modules/gaming.nix`, Xen in `modules/virtualisation.nix`)
 - Module composition profiles (serverModules, desktopModules) are defined in `flake.nix` and shared across hosts
 - The user is `aidanb` with groups: wheel, docker, libvirtd, networkmanager, video
+
+## Recipes
+
+Detailed modification guides live in `docs/recipes/`. Read the relevant recipe before making changes.
+
+| Topic | When to read | Path |
+|-------|-------------|------|
+| Modules | Adding or modifying system/home-manager modules | `docs/recipes/modules/` |
+| Hosts | Adding a host or changing host-specific config | `docs/recipes/hosts/` |
+| Devices | Adding hardware support, CPU/GPU layers, workarounds | `docs/recipes/devices/` |
+| Secrets | Working with sops-nix encrypted secrets | `docs/recipes/secrets/` |
+| Waybar | Modifying status bar modules or scripts | `docs/recipes/waybar/` |
+| Flake | Changing inputs, overlays, or the mkHost helper | `docs/recipes/flake/` |
+| Kernel | Kernel variants, patches, CachyOS config | `docs/recipes/kernel/` |
+| Claude | Claude Code settings, hooks, MCP servers | `docs/recipes/claude/` |
