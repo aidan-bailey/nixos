@@ -40,19 +40,19 @@ sops secrets/home.yaml      # user secrets
 Shell aliases defined in `home/modules/shell.nix`:
 - `updaten` — `sudo nixos-rebuild switch --flake ~/System#$HOST --option substitute false` piped through `nom` (rebuild+switch from local store)
 - `configure` — `nvim /etc/nixos/configuration.nix`
-- `nix-sync-cache` — sync nix store to local binary cache at `/mnt/nixos-cache`
-- `cs` — `claude-squad` (multi-session manager)
+- `nix-sync-cache` — rebuild using `/mnt/nixos-cache` as substituter, then copy the current system closure back to the cache
 - `tc` — `tail-claude` (session log viewer)
 - `rt` — `ralph-tui` (autonomous loop orchestrator)
+- `cs` — `claude-squad` wrapper (defined in `home/modules/claude.nix`, sets per-repo `CLAUDE_SQUAD_HOME`)
 
 ## Architecture
 
 ### Host / Module Split
 
-The flake defines a `mkHost` helper that combines a host-specific config with `commonModules` (doom-flake, nixarr, home-manager, sops-nix). Module composition is done via two profiles defined in `flake.nix`:
+The flake defines a `mkHost` helper that combines a host-specific config with `commonModules` (profile.nix, rust-overlay, nixarr, sops-nix, home-manager). Module composition is done via two profiles defined in `flake.nix`:
 
 - **serverModules** — base, user, networking, terminal, mediaserver, secrets, benchmarking
-- **desktopModules** — serverModules + cachyos kernel, sway, audio, bluetooth, gaming, nix-ld, virtualisation, power
+- **desktopModules** — serverModules + doom-flake, cachyos kernel, sway, audio, bluetooth, gaming, nix-ld, virtualisation, power
 
 Each host selects a profile and a device module:
 
@@ -83,8 +83,10 @@ These are set in device modules and consumed by `sway.nix`, `power.nix`, `gaming
 
 Each host's `configuration.nix` does three things:
 1. Imports `hardware-configuration.nix` (generated per-machine)
-2. Imports its device module (e.g. `modules/devices/zenbook_s16.nix`)
+2. Imports its device module (e.g. `modules/devices/zenbook_s16.nix`) — medesco has no device module
 3. Injects per-host home-manager overrides via `home-manager.users.aidanb.imports = [ ../../home/hosts/{host}.nix ]`
+
+Host-specific settings that don't belong in device modules (resume device, distributed builds, host keys) live in the host's `configuration.nix`.
 
 The per-host home files (`home/hosts/nesco.nix`, `home/hosts/fresco.nix`) import `home/profiles/desktop.nix`, then set host-specific overrides for Sway config sources (`config/sway/{host}/config`) and Waybar host overrides.
 
@@ -94,11 +96,11 @@ CPU and GPU support is layered — device modules pick the pieces they need:
 
 - `modules/amd/cpu.nix` — AMD microcode, `amd_pstate=active`, firmware (shared base)
 - `modules/amd/zen4.nix` — Imports cpu.nix, sets `hostPlatform`, RUSTFLAGS, GOAMD64
-- `modules/amd/zen5.nix` — Same pattern for znver5
+- `modules/amd/zen5.nix` — Same pattern for znver5 (but `gcc.arch = "znver5"` is currently **commented out**; sets RUSTFLAGS/GOAMD64 only)
 - `modules/amd/graphics.nix` — AMDGPU driver, Mesa, VA-API (used by zenbook_s16)
 - `modules/nvidia/gpu.nix` — NVIDIA open driver, VA-API/VDPAU, container toolkit, persistenced, shader cache, PAT (used by fresco)
 
-Device modules compose these: `zenbook_s16.nix` imports `amd/graphics.nix` + `amd/cpu.nix`; `fresco.nix` imports `nvidia/gpu.nix` + `amd/zen4.nix`.
+Device modules compose these: `zenbook_s16.nix` imports `amd/graphics.nix` + `amd/cpu.nix` directly (not zen5.nix — nesco does **not** build with `-march=znver5`); `fresco.nix` imports `nvidia/gpu.nix` + `amd/zen4.nix`.
 
 ### Waybar Architecture
 
@@ -119,8 +121,8 @@ Custom modules use shell scripts calling `amdgpu_top`, `nvidia-smi`, `swaync-cli
 - `modules/sway.nix` — Enables Sway at system level with XDG portals, GNOME keyring, fonts (Nerd Fonts), font rendering conditioned on `custom.display.type`; auto-starts Sway on tty1
 - `modules/kernel/cachyos.nix` — CachyOS kernel via nix-cachyos-kernel overlay (LTO default, zen4-lto for fresco), binary cache config
 - `modules/secrets.nix` — SOPS-nix with age encryption for system-level secrets
-- `modules/devices/zenbook_s16.nix` — AMD iGPU, asusd fan control, PSR disable, RCU tuning, resume device
-- `modules/devices/fresco.nix` — Zen 4 + NVIDIA, imports tuning submodules (`tuning/workstation.nix`, `tuning/network.nix`, `tuning/io.nix`), earlyoom, WiFi ASPM workaround
+- `modules/devices/zenbook_s16.nix` — AMD iGPU (imports `amd/graphics.nix` + `amd/cpu.nix`), asusd fan control, extensive Strix Point workarounds: PSR disable (`dcdebugmask`), OLED flicker fix (`abmlevel=0`), VPE block (`ip_block_mask` — broken s2idle resume), `sg_display=0`, RCU lazy batching; shutdown hibernate mode (broken S4 resume), lid-close → hibernate
+- `modules/devices/fresco.nix` — Zen 4 + NVIDIA, imports tuning submodules (`tuning/workstation.nix` [earlyoom], `tuning/network.nix`, `tuning/io.nix`), RTX 3070 overclock systemd service (NVML Python), remote builder (`nixremote` user for nesco), Sway `--unsupported-gpu`, WiFi ASPM workaround, EXT4 mount tuning
 - `home/modules/wayland.nix` — User-side Sway config, Waybar (Nix-generated base + per-host overrides), Wayland tools, Gammastep night light, HiDPI cursor, polkit agent
 - `home/modules/devtools.nix` — Dev tools, Rust via rust-overlay, sccache, mold linker, antigravity/harbour build optimization
 - `home/modules/claude.nix` — Claude Code ecosystem: claude-squad, tail-claude, claude-code-nix, mcp-nixos, notification hooks, OAuth token
@@ -131,7 +133,17 @@ Custom modules use shell scripts calling `amdgpu_top`, `nvidia-smi`, `swaync-cli
 - `home/modules/helix.nix` — Helix editor configuration
 - `home/modules/research.nix` — Research tools
 - `home/modules/gaming.nix` — Home-level gaming packages (Steam, Proton, Lutris)
+- `home/modules/shell.nix` — Zsh + oh-my-zsh, shell aliases, SSH agent setup, Doom Emacs PATH
+- `home/modules/terminal.nix` — Alacritty terminal emulator config
+- `home/modules/editor.nix` — Neovim with vi/vim aliases
+- `home/modules/development.nix` — direnv + nix-direnv, EDITOR=nvim
+- `home/modules/ssh.nix` — SSH client config, host matchblocks (fresco.local), identity files
+- `home/modules/gpg.nix` — GPG agent with pinentry-gnome3
 - `home/profiles/desktop.nix` — Desktop profile composing wayland, gaming, apps, research, helix modules
+
+### Distributed Builds
+
+nesco offloads builds to fresco via `nix.distributedBuilds` + `ssh-ng` protocol. A dedicated `nixremote` system user on fresco accepts build requests. The SSH key is at `/root/.ssh/nix-remote-builder` on nesco. fresco is configured as a trusted builder with `maxJobs = 4`, `speedFactor = 2`, and `big-parallel` support. Host key is pinned in `hosts/nesco/configuration.nix`.
 
 ### Secrets
 
@@ -139,15 +151,15 @@ Encrypted secrets are managed by sops-nix with age encryption. Secrets live in `
 
 ### Claude Code Integration
 
-Claude Code is installed via the `claude-code-nix` flake input. Supporting tools are packaged as `buildGoModule` derivations in `home/modules/claude.nix`:
+Claude Code is installed via the `claude-code-nix` flake input. Supporting tools in `home/modules/claude.nix`:
 
-- **claude-squad** (v1.0.16) — multi-session manager, built as `cs` binary with tmux/gh/git on PATH
-- **tail-claude** (v0.3.5) — session log viewer
+- **claude-squad** — flake input (`inputs.claude-squad`), wrapped with `symlinkJoin` + `makeWrapper` to inject tmux/gh/git on PATH. The `cs` wrapper script sets per-repo `CLAUDE_SQUAD_HOME`. Version pinned by flake lock.
+- **tail-claude** (v0.3.5) — session log viewer, built as `buildGoModule`
 - **mcp-nixos** — NixOS MCP server, configured in `.mcp.json` at repo root
 
-OAuth token is stored encrypted via sops-nix (`sops.secrets.claude_code_oauth_token`) and exported in `programs.zsh.profileExtra`. Agent teams are enabled via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`.
+OAuth token is stored encrypted via sops-nix (`sops.secrets.claude_code_oauth_token`) and exported in `programs.zsh.envExtra`. Agent teams are enabled via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`. Effort level is set via `CLAUDE_CODE_EFFORT_LEVEL = "max"` env var (overrides the `effortLevel = "high"` in settings).
 
-Notification hooks (`config/claude/hooks/notify.sh`) send desktop notifications via `notify-send` (swaync) on Stop/Notification events, with optional push via ntfy when `$NTFY_TOPIC` is set. The script is deployed to `~/.claude/hooks/` via `home.file`.
+Notification hooks are managed via declarative NixOS options (`custom.claude.notifications`) with three channels (desktop/push/popup) and two event types (Stop/Notification). The hook script (`config/claude/hooks/notify.sh`) and a generated `notify.conf` are deployed to `~/.claude/hooks/` via `home.file`. Notifications are currently **disabled** in `home/users/aidanb/default.nix`.
 
 `~/.claude/settings.json` is Nix-generated from a `claudeSettings` attrset in `claude.nix` — model preference, hooks, enabled plugins, sandbox rules, effort level, and status line config are all declarative. The `statusline.sh` script (`config/claude/statusline.sh`) is also deployed via `home.file`. Both are read-only nix store symlinks.
 
@@ -159,6 +171,7 @@ Notification hooks (`config/claude/hooks/notify.sh`) send desktop notifications 
 - **sops-nix** — Encrypted secrets management
 - **antigravity-nix**, **harbour** — Compilation optimization tools, exposed as packages in devtools
 - **claude-code-nix** (sadjow/claude-code-nix) — Claude Code CLI package
+- **claude-squad** (aidan-bailey/claude-squad) — Multi-session manager, wrapped in `claude.nix`
 - **rust-overlay** (oxalica/rust-overlay) — Rust toolchain management; replaces rustup with declarative `rust-bin.stable.latest.default`
 
 ### znver4 Build Issues (fresco)
