@@ -56,7 +56,6 @@ let
       "semgrep@claude-plugins-official" = true;
       "superpowers@claude-plugins-official" = true;
       "feature-dev@claude-plugins-official" = true;
-      "sonatype-guide@claude-plugins-official" = true;
       "code-simplifier@claude-plugins-official" = true;
       "commit-commands@claude-plugins-official" = true;
       "claude-md-management@claude-plugins-official" = true;
