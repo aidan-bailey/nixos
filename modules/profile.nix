@@ -38,6 +38,12 @@
       default = true;
       description = "Enable virtualisation (Docker, libvirt, KVM).";
     };
+
+    features.postgresql = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable PostgreSQL database server.";
+    };
   };
 
 }

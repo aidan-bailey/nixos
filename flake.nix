@@ -86,6 +86,7 @@
         ./modules/mediaserver.nix
         ./modules/secrets.nix
         ./modules/benchmarking.nix
+        ./modules/postgres.nix
       ];
 
       desktopModules = serverModules ++ [
