@@ -67,6 +67,12 @@ let
     pipenv
     # XML
     libxslt
+    # Go
+    go
+    gopls
+    delve
+    golangci-lint
+
     # Rust
     (pkgs.rust-bin.stable.latest.default.override {
       extensions = [
