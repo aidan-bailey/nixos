@@ -11,6 +11,7 @@
     networkmanager = {
       enable = true;
       wifi.powersave = false; # disable WiFi power saving — reduces latency
+      plugins = [ pkgs.networkmanager-openvpn ];
     };
     hostName = lib.mkDefault "nesco";
     extraHosts = ''
