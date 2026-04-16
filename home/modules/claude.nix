@@ -192,7 +192,10 @@ in
       "$HOME/.bun/bin"
     ];
 
-    home.file.".claude/settings.json".text = builtins.toJSON claudeSettings;
+    home.activation.claudeSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      rm -f "$HOME/.claude/settings.json"
+      install -D -m 644 ${pkgs.writeText "claude-settings.json" (builtins.toJSON claudeSettings)} "$HOME/.claude/settings.json"
+    '';
 
     home.file.".claude/hooks/notify.sh" = lib.mkIf hooksNeeded {
       source = ../../config/claude/hooks/notify.sh;
