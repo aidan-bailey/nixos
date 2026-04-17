@@ -73,9 +73,20 @@ let
     pipenv
     # XML
     libxslt
+    # Go
+    go
+    gopls
+    delve
+    golangci-lint
+
     # Rust
     (pkgs.rust-bin.stable.latest.default.override {
-      extensions = [ "clippy" "rustfmt" "rust-analyzer" "rust-src" ];
+      extensions = [
+        "clippy"
+        "rustfmt"
+        "rust-analyzer"
+        "rust-src"
+      ];
     })
     cargo-audit
     cargo-machete

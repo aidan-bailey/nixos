@@ -11,6 +11,7 @@
     networkmanager = {
       enable = true;
       wifi.powersave = false; # disable WiFi power saving — reduces latency
+      plugins = [ pkgs.networkmanager-openvpn ];
     };
     hostName = lib.mkDefault "nesco";
     extraHosts = ''
@@ -60,7 +61,10 @@
       X11Forwarding = true;
       PermitRootLogin = "no";
       PasswordAuthentication = false;
-      AcceptEnv = [ "COLORTERM" "TERM_PROGRAM" ];
+      AcceptEnv = [
+        "COLORTERM"
+        "TERM_PROGRAM"
+      ];
     };
     openFirewall = true;
   };

@@ -52,6 +52,7 @@ let
       "rust-analyzer-lsp@claude-plugins-official" = true;
       "skill-creator@claude-plugins-official" = true;
       "pyright-lsp@claude-plugins-official" = true;
+      "gopls-lsp@claude-plugins-official" = true;
       "frontend-design@claude-plugins-official" = true;
       "semgrep@claude-plugins-official" = true;
       "superpowers@claude-plugins-official" = true;
