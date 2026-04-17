@@ -63,6 +63,11 @@ let
       "claude-md-management@claude-plugins-official" = true;
       "pr-review-toolkit@claude-plugins-official" = true;
       "claude-code-setup@claude-plugins-official" = true;
+      "context7@claude-plugins-official" = true;
+      "code-review@claude-plugins-official" = true;
+      "github@claude-plugins-official" = true;
+      "serena@claude-plugins-official" = true;
+      "explanatory-output-style@claude-plugins-official" = true;
       "example-skills@anthropic-agent-skills" = true;
     };
     sandbox = {
