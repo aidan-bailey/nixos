@@ -98,33 +98,20 @@ let
     };
   };
 
-  claude-squad = pkgs.symlinkJoin {
-    name = "claude-squad-wrapped";
-    paths = [ inputs.claude-squad.packages.${system}.default ];
-    buildInputs = [ pkgs.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/claude-squad --prefix PATH : ${
-        lib.makeBinPath [
-          pkgs.tmux
-          pkgs.gh
-          pkgs.git
-        ]
-      }
-    '';
-  };
+  loom = inputs.loom.packages.${system}.default;
 
-  cs-wrapper = pkgs.writeShellScriptBin "cs" ''
+  loom-wrapper = pkgs.writeShellScriptBin "loom" ''
     GIT_ROOT=$(${pkgs.git}/bin/git rev-parse --show-toplevel 2>/dev/null)
 
     if [ -n "$GIT_ROOT" ]; then
-      export CLAUDE_SQUAD_HOME="$GIT_ROOT/.claude-squad"
-      mkdir -p "$CLAUDE_SQUAD_HOME"
-      if ! grep -q "^.claude-squad" "$GIT_ROOT/.gitignore" 2>/dev/null; then
-        echo ".claude-squad/" >> "$GIT_ROOT/.gitignore"
+      export LOOM_HOME="$GIT_ROOT/.loom"
+      mkdir -p "$LOOM_HOME"
+      if ! grep -q "^.loom" "$GIT_ROOT/.gitignore" 2>/dev/null; then
+        echo ".loom/" >> "$GIT_ROOT/.gitignore"
       fi
     fi
 
-    exec ${claude-squad}/bin/claude-squad "$@"
+    exec ${loom}/bin/loom "$@"
   '';
 
   tail-claude = pkgs.buildGoModule rec {
@@ -183,7 +170,7 @@ in
       inputs.claude-code-nix.packages.${system}.default
       pkgs.jq
       pkgs.bun
-      cs-wrapper
+      loom-wrapper
       tail-claude
       (pkgs.mcp-nixos.overridePythonAttrs { doCheck = false; })
     ];

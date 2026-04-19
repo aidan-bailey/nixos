@@ -46,7 +46,7 @@ Shell aliases defined in `home/modules/shell.nix`:
 - `hibernate` — `sudo systemctl hibernate`
 - `shib` — `systemd-inhibit sleep infinity`
 
-`cs` is a binary (not an alias) from `home/modules/claude.nix` — a `writeShellScriptBin` wrapper that sets `CLAUDE_SQUAD_HOME` to `$GIT_ROOT/.claude-squad` and auto-adds `.claude-squad/` to the repo's `.gitignore` before exec'ing the wrapped `claude-squad` binary (itself wrapped with `tmux`, `gh`, `git` on PATH).
+`loom` is shadowed by a `writeShellScriptBin` wrapper from `home/modules/claude.nix` that sets `LOOM_HOME` to `$GIT_ROOT/.loom` and auto-adds `.loom/` to the repo's `.gitignore` before exec'ing the underlying `loom` binary (itself wrapped by the upstream loom flake with `tmux`, `gh`, `git` on PATH).
 
 ## Architecture
 
@@ -141,7 +141,7 @@ Custom modules use shell scripts calling `amdgpu_top`, `nvidia-smi`, `swaync-cli
 - `home/modules/ssh.nix` — User SSH client config
 - `home/modules/gpg.nix` — GPG agent configuration
 - `home/modules/devtools.nix` — Dev tools, Rust via rust-overlay, sccache, mold linker, antigravity/harbour build optimization
-- `home/modules/claude.nix` — Claude Code ecosystem: claude-squad, tail-claude, claude-code-nix, mcp-nixos, notification hooks, OAuth token
+- `home/modules/claude.nix` — Claude Code ecosystem: loom, tail-claude, claude-code-nix, mcp-nixos, notification hooks, OAuth token
 - `home/modules/zed.nix` — Zed editor with vim mode and LSP configs (nixd, pyright, ruff, rust-analyzer)
 - `home/modules/secrets.nix` — SOPS-nix home-manager module for user secrets
 - `home/modules/apps.nix` — User applications (Firefox, Discord, Spotify, Thunderbird, etc.) and MIME type defaults
@@ -159,7 +159,7 @@ Encrypted secrets are managed by sops-nix with age encryption. Secrets live in `
 
 Claude Code is installed via the `claude-code-nix` flake input. Supporting tools in `home/modules/claude.nix`:
 
-- **claude-squad** — multi-session manager; tracked via `inputs.claude-squad` flake input (`aidan-bailey/claude-squad`), wrapped with tmux/gh/git on PATH, and re-wrapped as `cs` to scope `CLAUDE_SQUAD_HOME` to the current git root
+- **loom** — multi-session TUI for parallel AI coding agents (fork of claude-squad); tracked via `inputs.loom` flake input (`aidan-bailey/loom`), already wrapped by upstream with tmux/gh/git on PATH, and shadowed by a `loom` `writeShellScriptBin` wrapper that scopes `LOOM_HOME` to the current git root. Loom auto-migrates `~/.claude-squad/` → `~/.loom/` on first launch
 - **tail-claude** (v0.3.5) — session log viewer, `buildGoModule` from `kylesnowschwartz/tail-claude`
 - **mcp-nixos** — NixOS MCP server, configured in `.mcp.json` at repo root
 

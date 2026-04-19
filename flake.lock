@@ -74,26 +74,6 @@
         "type": "github"
       }
     },
-    "claude-squad": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1776411142,
-        "narHash": "sha256-/EUg369wRL1WBv5G9IJZErkB5wPPBkNdBiDonQ6VEas=",
-        "owner": "aidan-bailey",
-        "repo": "claude-squad",
-        "rev": "02c39c896b5affe5ce6dcec75ced06c34254c8ee",
-        "type": "github"
-      },
-      "original": {
-        "owner": "aidan-bailey",
-        "repo": "claude-squad",
-        "type": "github"
-      }
-    },
     "doom-flake": {
       "inputs": {
         "nix-doom-emacs-unstraightened": "nix-doom-emacs-unstraightened",
@@ -296,6 +276,26 @@
         "type": "github"
       }
     },
+    "loom": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1776627013,
+        "narHash": "sha256-gCu+WJu4fU0M8g3ufqmcS2aozOnojN2wWgf3AjdbV7A=",
+        "owner": "aidan-bailey",
+        "repo": "loom",
+        "rev": "9dfcd61677d43c3ea01ba6046efe55ef5dc0815f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "aidan-bailey",
+        "repo": "loom",
+        "type": "github"
+      }
+    },
     "nix-cachyos-kernel": {
       "inputs": {
         "cachyos-kernel": "cachyos-kernel",
@@ -457,10 +457,10 @@
       "inputs": {
         "antigravity-nix": "antigravity-nix",
         "claude-code-nix": "claude-code-nix",
-        "claude-squad": "claude-squad",
         "doom-flake": "doom-flake",
         "harbour": "harbour",
         "home-manager": "home-manager",
+        "loom": "loom",
         "nix-cachyos-kernel": "nix-cachyos-kernel",
         "nixarr": "nixarr",
         "nixpkgs": "nixpkgs_5",
