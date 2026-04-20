@@ -1,6 +1,10 @@
 { config, pkgs, ... }:
 
 {
+  home.packages = with pkgs; [
+    git-cliff
+  ];
+
   # Git version control configuration
   programs.git = {
     enable = true;
