@@ -40,33 +40,41 @@ sops secrets/home.yaml      # user secrets
 Shell aliases defined in `home/modules/shell.nix`:
 - `updaten` — `sudo nixos-rebuild switch --flake ~/System#$HOST --option substitute false` piped through `nom` (rebuild+switch from local store)
 - `configure` — `nvim /etc/nixos/configuration.nix`
-- `nix-sync-cache` — rebuild using `/mnt/nixos-cache` as substituter, then copy the current system closure back to the cache
+- `nix-sync-cache` — sync nix store to local binary cache at `/mnt/nixos-cache`
 - `tc` — `tail-claude` (session log viewer)
 - `rt` — `ralph-tui` (autonomous loop orchestrator)
-- `cs` — `claude-squad` wrapper (defined in `home/modules/claude.nix`, sets per-repo `CLAUDE_SQUAD_HOME`)
+- `hibernate` — `sudo systemctl hibernate`
+- `shib` — `systemd-inhibit sleep infinity`
+
+`loom` is shadowed by a `writeShellScriptBin` wrapper from `home/modules/claude.nix` that sets `LOOM_HOME` to `$GIT_ROOT/.loom` and auto-adds `.loom/` to the repo's `.gitignore` before exec'ing the underlying `loom` binary (itself wrapped by the upstream loom flake with `tmux`, `gh`, `git` on PATH).
 
 ## Architecture
 
 ### Host / Module Split
 
-The flake defines a `mkHost` helper that combines a host-specific config with `commonModules` (profile.nix, rust-overlay, nixarr, sops-nix, home-manager). Module composition is done via two profiles defined in `flake.nix`:
+The flake defines a `mkHost` helper that combines a host-specific config with `commonModules` (profile.nix, rust-overlay overlay, nixarr, sops-nix, home-manager). Module composition is done via three profiles defined in `flake.nix`:
 
 - **serverModules** — base, user, networking, terminal, mediaserver, secrets, benchmarking
+- **htpcModules** — serverModules + openbox, audio, gaming, nix-ld
 - **desktopModules** — serverModules + doom-flake, cachyos kernel, sway, audio, bluetooth, gaming, nix-ld, virtualisation, power
 
 Each host selects a profile and a device module:
 
 - **nesco** — desktopModules + `devices/zenbook_s16.nix` (Zen 5, AMD iGPU, asusd)
 - **fresco** — desktopModules + `devices/fresco.nix` (Zen 4 + NVIDIA, performance tuning)
-- **medesco** — serverModules only (no device module)
+- **medesco** — htpcModules only (no device module — HTPC with Openbox X11 session)
+
+**Distributed builds**: nesco is configured as a Nix client of fresco (`hosts/nesco/configuration.nix`) — SSH user `nixremote`, protocol `ssh-ng`, supports `big-parallel`/`kvm`/`nixos-test`/`benchmark`. Heavy builds triggered on nesco are offloaded to fresco.
 
 ### Two-Layer Module System
 
 **System modules** (`modules/`) configure NixOS options — hardware, services, kernel, system packages. They receive `inputs` and `system` via `specialArgs`.
 
-**Home-manager modules** (`home/modules/`) configure user environment — programs, dotfiles, shell, editor. They receive `inputs` and `system` via `extraSpecialArgs`. All home modules are imported from `home/users/aidanb/default.nix`.
+**Home-manager modules** (`home/modules/`) configure user environment — programs, dotfiles, shell, editor. They receive `inputs` and `system` via `extraSpecialArgs`. `home/users/aidanb/default.nix` imports the always-on base modules (shell, terminal, editor, git, ssh, development, devtools, claude, zed, secrets, gpg). Role-specific modules (wayland, apps, gaming, research, helix) are pulled in via `home/profiles/desktop.nix` through the per-host file.
 
 **Home profiles** (`home/profiles/`) compose home modules into role-based sets. `home/profiles/desktop.nix` imports wayland, gaming, apps, research, and helix modules. Per-host files (`home/hosts/*.nix`) import a profile and then set host-specific overrides.
+
+medesco is the exception: `home/hosts/medesco.nix` imports `apps.nix` and `gaming.nix` directly (no profile), and adds Openbox-specific config (tint2, feh, rofi, picom, Gruvbox theming).
 
 ### Custom Options (`modules/profile.nix`)
 
@@ -119,13 +127,23 @@ Custom modules use shell scripts calling `amdgpu_top`, `nvidia-smi`, `swaync-cli
 - `modules/networking.nix` — NetworkManager, encrypted DNS-over-TLS (1.1.1.1, 9.9.9.9), mDNS via Avahi, nftables firewall, SSH
 - `modules/audio.nix` — PipeWire with Bluetooth codec support (SBC-XQ, LDAC, aptX, aptX-HD)
 - `modules/sway.nix` — Enables Sway at system level with XDG portals, GNOME keyring, fonts (Nerd Fonts), font rendering conditioned on `custom.display.type`; auto-starts Sway on tty1
+- `modules/openbox.nix` — Openbox X11 session (used by medesco HTPC)
+- `modules/gaming.nix` — System-level gaming (Steam, Proton-GE, gated on `custom.features.gaming`)
+- `modules/nix-ld.nix` — Dynamic-linker compatibility for non-Nix binaries
+- `modules/tuning/{workstation,network,io}.nix` — Performance tuning submodules imported by `devices/fresco.nix`
 - `modules/kernel/cachyos.nix` — CachyOS kernel via nix-cachyos-kernel overlay (LTO default, zen4-lto for fresco), binary cache config
 - `modules/secrets.nix` — SOPS-nix with age encryption for system-level secrets
 - `modules/devices/zenbook_s16.nix` — AMD iGPU (imports `amd/graphics.nix` + `amd/cpu.nix`), asusd fan control, extensive Strix Point workarounds: PSR disable (`dcdebugmask`), OLED flicker fix (`abmlevel=0`), VPE block (`ip_block_mask` — broken s2idle resume), `sg_display=0`, RCU lazy batching; shutdown hibernate mode (broken S4 resume), lid-close → hibernate
 - `modules/devices/fresco.nix` — Zen 4 + NVIDIA, imports tuning submodules (`tuning/workstation.nix` [earlyoom], `tuning/network.nix`, `tuning/io.nix`), RTX 3070 overclock systemd service (NVML Python), remote builder (`nixremote` user for nesco), Sway `--unsupported-gpu`, WiFi ASPM workaround, EXT4 mount tuning
 - `home/modules/wayland.nix` — User-side Sway config, Waybar (Nix-generated base + per-host overrides), Wayland tools, Gammastep night light, HiDPI cursor, polkit agent
+- `home/modules/shell.nix` — Zsh + oh-my-zsh, shell aliases, SSH agent bootstrap, PATH for Doom Emacs
+- `home/modules/terminal.nix` — Alacritty terminal config
+- `home/modules/editor.nix` — Neovim config
+- `home/modules/development.nix` — Direnv + nix-direnv
+- `home/modules/ssh.nix` — User SSH client config
+- `home/modules/gpg.nix` — GPG agent configuration
 - `home/modules/devtools.nix` — Dev tools, Rust via rust-overlay, sccache, mold linker, antigravity/harbour build optimization
-- `home/modules/claude.nix` — Claude Code ecosystem: claude-squad, tail-claude, claude-code-nix, mcp-nixos, notification hooks, OAuth token
+- `home/modules/claude.nix` — Claude Code ecosystem: loom, tail-claude, claude-code-nix, mcp-nixos, notification hooks, OAuth token
 - `home/modules/zed.nix` — Zed editor with vim mode and LSP configs (nixd, pyright, ruff, rust-analyzer)
 - `home/modules/secrets.nix` — SOPS-nix home-manager module for user secrets
 - `home/modules/apps.nix` — User applications (Firefox, Discord, Spotify, Thunderbird, etc.) and MIME type defaults
@@ -153,15 +171,15 @@ Encrypted secrets are managed by sops-nix with age encryption. Secrets live in `
 
 Claude Code is installed via the `claude-code-nix` flake input. Supporting tools in `home/modules/claude.nix`:
 
-- **claude-squad** — flake input (`inputs.claude-squad`), wrapped with `symlinkJoin` + `makeWrapper` to inject tmux/gh/git on PATH. The `cs` wrapper script sets per-repo `CLAUDE_SQUAD_HOME`. Version pinned by flake lock.
-- **tail-claude** (v0.3.5) — session log viewer, built as `buildGoModule`
+- **loom** — multi-session TUI for parallel AI coding agents (fork of claude-squad); tracked via `inputs.loom` flake input (`aidan-bailey/loom`), already wrapped by upstream with tmux/gh/git on PATH, and shadowed by a `loom` `writeShellScriptBin` wrapper that scopes `LOOM_HOME` to the current git root. Loom auto-migrates `~/.claude-squad/` → `~/.loom/` on first launch
+- **tail-claude** (v0.3.5) — session log viewer, `buildGoModule` from `kylesnowschwartz/tail-claude`
 - **mcp-nixos** — NixOS MCP server, configured in `.mcp.json` at repo root
 
 OAuth token is stored encrypted via sops-nix (`sops.secrets.claude_code_oauth_token`) and exported in `programs.zsh.envExtra`. Agent teams are enabled via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`. Effort level is set via `CLAUDE_CODE_EFFORT_LEVEL = "max"` env var (overrides the `effortLevel = "high"` in settings).
 
-Notification hooks are managed via declarative NixOS options (`custom.claude.notifications`) with three channels (desktop/push/popup) and two event types (Stop/Notification). The hook script (`config/claude/hooks/notify.sh`) and a generated `notify.conf` are deployed to `~/.claude/hooks/` via `home.file`. Notifications are currently **disabled** in `home/users/aidanb/default.nix`.
+Notification hooks (`config/claude/hooks/notify.sh`) send desktop notifications via `notify-send` (swaync) on Stop/Notification events, with optional push via ntfy when `$NTFY_TOPIC` is set. The script is deployed to `~/.claude/hooks/` via `home.file`. Gated by the `custom.claude.notifications` option (defined in `claude.nix`): `enable`, `channels.{desktop,push,popup}`, `events.{Stop,Notification}` — all default true except medesco where the default.nix disables it.
 
-`~/.claude/settings.json` is Nix-generated from a `claudeSettings` attrset in `claude.nix` — model preference, hooks, enabled plugins, sandbox rules, effort level, and status line config are all declarative. The `statusline.sh` script (`config/claude/statusline.sh`) is also deployed via `home.file`. Both are read-only nix store symlinks.
+`~/.claude/settings.json` is Nix-generated from a `claudeSettings` attrset in `claude.nix` — model preference, hooks, enabled plugins, sandbox rules, effort level, and status line config are all declarative. It's installed via `home.activation` with `install -D -m 644` (writable at runtime, not a read-only symlink) so Claude Code can modify it. The `statusline.sh` script (`config/claude/statusline.sh`) is still a read-only symlink via `home.file`. The declarative plugin set includes superpowers, feature-dev, pr-review-toolkit, claude-md-management, skill-creator, code-simplifier, commit-commands, frontend-design, semgrep, sonatype-guide, claude-code-setup, context7, code-review, github, serena, explanatory-output-style, and language LSPs (rust-analyzer, pyright, gopls).
 
 ### Flake Inputs of Note
 

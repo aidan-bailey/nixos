@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Focus the Sway window hosting a Claude Code / claude-squad session.
+# Focus the Sway window hosting a Claude Code / loom session.
 # Usage: claude-focus SESSION_ID
 #
 # Tries three strategies in order:

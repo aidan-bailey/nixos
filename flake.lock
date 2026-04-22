@@ -61,36 +61,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1776225939,
-        "narHash": "sha256-u/9MUPeJKgp94UlTniH4wGkwcWylyyTWtcnKeIVlVto=",
+        "lastModified": 1776370363,
+        "narHash": "sha256-Ul2mJIH6irPdJLiVFDUcSbc7rv7ULWutGjIv7IHOvyI=",
         "owner": "sadjow",
         "repo": "claude-code-nix",
-        "rev": "9dc007803e0661cf32db77e0c50e219c08b1eeb0",
+        "rev": "9e198808ce7466eceb5bbd341936d6c410f9c664",
         "type": "github"
       },
       "original": {
         "owner": "sadjow",
         "repo": "claude-code-nix",
-        "type": "github"
-      }
-    },
-    "claude-squad": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1776268180,
-        "narHash": "sha256-MYIp8j9yHMdp1KidNx82GsrOz/5wTxSu1p1x33urCwI=",
-        "owner": "aidan-bailey",
-        "repo": "claude-squad",
-        "rev": "0e639e4281ed7d7adfdcb2d59a53cfb9bdaa8563",
-        "type": "github"
-      },
-      "original": {
-        "owner": "aidan-bailey",
-        "repo": "claude-squad",
         "type": "github"
       }
     },
@@ -296,6 +276,26 @@
         "type": "github"
       }
     },
+    "loom": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1776627013,
+        "narHash": "sha256-gCu+WJu4fU0M8g3ufqmcS2aozOnojN2wWgf3AjdbV7A=",
+        "owner": "aidan-bailey",
+        "repo": "loom",
+        "rev": "9dfcd61677d43c3ea01ba6046efe55ef5dc0815f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "aidan-bailey",
+        "repo": "loom",
+        "type": "github"
+      }
+    },
     "nix-cachyos-kernel": {
       "inputs": {
         "cachyos-kernel": "cachyos-kernel",
@@ -457,10 +457,10 @@
       "inputs": {
         "antigravity-nix": "antigravity-nix",
         "claude-code-nix": "claude-code-nix",
-        "claude-squad": "claude-squad",
         "doom-flake": "doom-flake",
         "harbour": "harbour",
         "home-manager": "home-manager",
+        "loom": "loom",
         "nix-cachyos-kernel": "nix-cachyos-kernel",
         "nixarr": "nixarr",
         "nixpkgs": "nixpkgs_5",
