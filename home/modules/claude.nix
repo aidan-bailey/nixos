@@ -57,7 +57,6 @@ let
       "semgrep@claude-plugins-official" = true;
       "superpowers@claude-plugins-official" = true;
       "feature-dev@claude-plugins-official" = true;
-      "sonatype-guide@claude-plugins-official" = true;
       "code-simplifier@claude-plugins-official" = true;
       "commit-commands@claude-plugins-official" = true;
       "claude-md-management@claude-plugins-official" = true;
@@ -66,8 +65,10 @@ let
       "context7@claude-plugins-official" = true;
       "code-review@claude-plugins-official" = true;
       "github@claude-plugins-official" = true;
+      "security-guidance@claude-plugins-official" = true;
       "serena@claude-plugins-official" = true;
       "explanatory-output-style@claude-plugins-official" = true;
+      "hookify@claude-plugins-official" = true;
       "example-skills@anthropic-agent-skills" = true;
     };
     sandbox = {

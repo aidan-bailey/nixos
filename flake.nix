@@ -87,6 +87,7 @@
         ./modules/mediaserver.nix
         ./modules/secrets.nix
         ./modules/benchmarking.nix
+        ./modules/postgres.nix
       ];
 
       htpcModules = serverModules ++ [

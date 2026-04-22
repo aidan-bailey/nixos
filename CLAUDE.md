@@ -91,8 +91,10 @@ These are set in device modules and consumed by `sway.nix`, `power.nix`, `gaming
 
 Each host's `configuration.nix` does three things:
 1. Imports `hardware-configuration.nix` (generated per-machine)
-2. Imports its device module (e.g. `modules/devices/zenbook_s16.nix`)
+2. Imports its device module (e.g. `modules/devices/zenbook_s16.nix`) — medesco has no device module
 3. Injects per-host home-manager overrides via `home-manager.users.aidanb.imports = [ ../../home/hosts/{host}.nix ]`
+
+Host-specific settings that don't belong in device modules (resume device, distributed builds, host keys) live in the host's `configuration.nix`.
 
 The per-host home files (`home/hosts/nesco.nix`, `home/hosts/fresco.nix`) import `home/profiles/desktop.nix`, then set host-specific overrides for Sway config sources (`config/sway/{host}/config`) and Waybar host overrides.
 
@@ -102,11 +104,11 @@ CPU and GPU support is layered — device modules pick the pieces they need:
 
 - `modules/amd/cpu.nix` — AMD microcode, `amd_pstate=active`, firmware (shared base)
 - `modules/amd/zen4.nix` — Imports cpu.nix, sets `hostPlatform`, RUSTFLAGS, GOAMD64
-- `modules/amd/zen5.nix` — Same pattern for znver5
+- `modules/amd/zen5.nix` — Same pattern for znver5 (but `gcc.arch = "znver5"` is currently **commented out**; sets RUSTFLAGS/GOAMD64 only)
 - `modules/amd/graphics.nix` — AMDGPU driver, Mesa, VA-API (used by zenbook_s16)
 - `modules/nvidia/gpu.nix` — NVIDIA open driver, VA-API/VDPAU, container toolkit, persistenced, shader cache, PAT (used by fresco)
 
-Device modules compose these: `zenbook_s16.nix` imports `amd/graphics.nix` + `amd/cpu.nix`; `fresco.nix` imports `nvidia/gpu.nix` + `amd/zen4.nix`.
+Device modules compose these: `zenbook_s16.nix` imports `amd/graphics.nix` + `amd/cpu.nix` directly (not zen5.nix — nesco does **not** build with `-march=znver5`); `fresco.nix` imports `nvidia/gpu.nix` + `amd/zen4.nix`.
 
 ### Waybar Architecture
 
@@ -131,8 +133,8 @@ Custom modules use shell scripts calling `amdgpu_top`, `nvidia-smi`, `swaync-cli
 - `modules/tuning/{workstation,network,io}.nix` — Performance tuning submodules imported by `devices/fresco.nix`
 - `modules/kernel/cachyos.nix` — CachyOS kernel via nix-cachyos-kernel overlay (LTO default, zen4-lto for fresco), binary cache config
 - `modules/secrets.nix` — SOPS-nix with age encryption for system-level secrets
-- `modules/devices/zenbook_s16.nix` — AMD iGPU, asusd fan control, PSR disable, RCU tuning, resume device
-- `modules/devices/fresco.nix` — Zen 4 + NVIDIA, imports tuning submodules (`tuning/workstation.nix`, `tuning/network.nix`, `tuning/io.nix`), earlyoom, WiFi ASPM workaround
+- `modules/devices/zenbook_s16.nix` — AMD iGPU (imports `amd/graphics.nix` + `amd/cpu.nix`), asusd fan control, extensive Strix Point workarounds: PSR disable (`dcdebugmask`), OLED flicker fix (`abmlevel=0`), VPE block (`ip_block_mask` — broken s2idle resume), `sg_display=0`, RCU lazy batching; shutdown hibernate mode (broken S4 resume), lid-close → hibernate
+- `modules/devices/fresco.nix` — Zen 4 + NVIDIA, imports tuning submodules (`tuning/workstation.nix` [earlyoom], `tuning/network.nix`, `tuning/io.nix`), RTX 3070 overclock systemd service (NVML Python), remote builder (`nixremote` user for nesco), Sway `--unsupported-gpu`, WiFi ASPM workaround, EXT4 mount tuning
 - `home/modules/wayland.nix` — User-side Sway config, Waybar (Nix-generated base + per-host overrides), Wayland tools, Gammastep night light, HiDPI cursor, polkit agent
 - `home/modules/shell.nix` — Zsh + oh-my-zsh, shell aliases, SSH agent bootstrap, PATH for Doom Emacs
 - `home/modules/terminal.nix` — Alacritty terminal config
@@ -149,7 +151,17 @@ Custom modules use shell scripts calling `amdgpu_top`, `nvidia-smi`, `swaync-cli
 - `home/modules/helix.nix` — Helix editor configuration
 - `home/modules/research.nix` — Research tools
 - `home/modules/gaming.nix` — Home-level gaming packages (Steam, Proton, Lutris)
+- `home/modules/shell.nix` — Zsh + oh-my-zsh, shell aliases, SSH agent setup, Doom Emacs PATH
+- `home/modules/terminal.nix` — Alacritty terminal emulator config
+- `home/modules/editor.nix` — Neovim with vi/vim aliases
+- `home/modules/development.nix` — direnv + nix-direnv, EDITOR=nvim
+- `home/modules/ssh.nix` — SSH client config, host matchblocks (fresco.local), identity files
+- `home/modules/gpg.nix` — GPG agent with pinentry-gnome3
 - `home/profiles/desktop.nix` — Desktop profile composing wayland, gaming, apps, research, helix modules
+
+### Distributed Builds
+
+nesco offloads builds to fresco via `nix.distributedBuilds` + `ssh-ng` protocol. A dedicated `nixremote` system user on fresco accepts build requests. The SSH key is at `/root/.ssh/nix-remote-builder` on nesco. fresco is configured as a trusted builder with `maxJobs = 4`, `speedFactor = 2`, and `big-parallel` support. Host key is pinned in `hosts/nesco/configuration.nix`.
 
 ### Secrets
 
@@ -163,7 +175,7 @@ Claude Code is installed via the `claude-code-nix` flake input. Supporting tools
 - **tail-claude** (v0.3.5) — session log viewer, `buildGoModule` from `kylesnowschwartz/tail-claude`
 - **mcp-nixos** — NixOS MCP server, configured in `.mcp.json` at repo root
 
-OAuth token is stored encrypted via sops-nix (`sops.secrets.claude_code_oauth_token`) and exported in `programs.zsh.profileExtra`. Agent teams are enabled via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`.
+OAuth token is stored encrypted via sops-nix (`sops.secrets.claude_code_oauth_token`) and exported in `programs.zsh.envExtra`. Agent teams are enabled via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`. Effort level is set via `CLAUDE_CODE_EFFORT_LEVEL = "max"` env var (overrides the `effortLevel = "high"` in settings).
 
 Notification hooks (`config/claude/hooks/notify.sh`) send desktop notifications via `notify-send` (swaync) on Stop/Notification events, with optional push via ntfy when `$NTFY_TOPIC` is set. The script is deployed to `~/.claude/hooks/` via `home.file`. Gated by the `custom.claude.notifications` option (defined in `claude.nix`): `enable`, `channels.{desktop,push,popup}`, `events.{Stop,Notification}` — all default true except medesco where the default.nix disables it.
 
@@ -177,6 +189,7 @@ Notification hooks (`config/claude/hooks/notify.sh`) send desktop notifications 
 - **sops-nix** — Encrypted secrets management
 - **antigravity-nix**, **harbour** — Compilation optimization tools, exposed as packages in devtools
 - **claude-code-nix** (sadjow/claude-code-nix) — Claude Code CLI package
+- **claude-squad** (aidan-bailey/claude-squad) — Multi-session manager, wrapped in `claude.nix`
 - **rust-overlay** (oxalica/rust-overlay) — Rust toolchain management; replaces rustup with declarative `rust-bin.stable.latest.default`
 
 ### znver4 Build Issues (fresco)
@@ -190,3 +203,18 @@ Setting `hostPlatform.gcc.arch = "znver4"` compiles all packages with `-march=zn
 - Package overrides are done inline with `overrideAttrs` (see Cockatrice in `home/modules/gaming.nix`, Xen in `modules/virtualisation.nix`)
 - Module composition profiles (serverModules, desktopModules) are defined in `flake.nix` and shared across hosts
 - The user is `aidanb` with groups: wheel, docker, libvirtd, networkmanager, video
+
+## Recipes
+
+Detailed modification guides live in `docs/recipes/`. Read the relevant recipe before making changes.
+
+| Topic | When to read | Path |
+|-------|-------------|------|
+| Modules | Adding or modifying system/home-manager modules | `docs/recipes/modules/` |
+| Hosts | Adding a host or changing host-specific config | `docs/recipes/hosts/` |
+| Devices | Adding hardware support, CPU/GPU layers, workarounds | `docs/recipes/devices/` |
+| Secrets | Working with sops-nix encrypted secrets | `docs/recipes/secrets/` |
+| Waybar | Modifying status bar modules or scripts | `docs/recipes/waybar/` |
+| Flake | Changing inputs, overlays, or the mkHost helper | `docs/recipes/flake/` |
+| Kernel | Kernel variants, patches, CachyOS config | `docs/recipes/kernel/` |
+| Claude | Claude Code settings, hooks, MCP servers | `docs/recipes/claude/` |

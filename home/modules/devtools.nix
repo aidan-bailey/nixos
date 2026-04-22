@@ -46,6 +46,12 @@ let
         enableOpenSSL = true;
       };
     })
+    # Go
+    go
+    gopls
+    delve
+    golangci-lint
+
     # JS
     nodejs_22
 
