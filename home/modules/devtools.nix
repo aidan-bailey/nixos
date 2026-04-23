@@ -57,6 +57,7 @@ let
 
     # DB
     postgresql
+    sqlite-interactive
     dbeaver-bin
     # Emulation
     qemu
