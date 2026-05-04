@@ -6,11 +6,11 @@ let
     nixd
     pyright
     ruff
-    nodePackages.bash-language-server
+    bash-language-server
     marksman
     yaml-language-server
     vscode-langservers-extracted # provides vscode-json-language-server
-    nodePackages.typescript-language-server
+    typescript-language-server
     typescript # required by typescript-language-server
   ];
 
@@ -18,7 +18,7 @@ let
   formatterPackages = with pkgs; [
     nixfmt
     shfmt
-    nodePackages.prettier
+    prettier
   ];
 
   # DAP adapters

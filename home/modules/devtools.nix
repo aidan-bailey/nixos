@@ -24,8 +24,8 @@ let
     # Shell
     shfmt
     shellcheck
-    nodePackages.bash-language-server
-    nodePackages.pnpm
+    bash-language-server
+    pnpm
 
     # Markdown
     uv
