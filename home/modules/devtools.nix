@@ -24,8 +24,8 @@ let
     # Shell
     shfmt
     shellcheck
-    nodePackages.bash-language-server
-    nodePackages.pnpm
+    bash-language-server
+    pnpm
 
     # Markdown
     uv
@@ -57,6 +57,7 @@ let
 
     # DB
     postgresql
+    sqlite-interactive
     dbeaver-bin
     # Emulation
     qemu

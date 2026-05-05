@@ -1,9 +1,15 @@
 # Sway config — fresco (Zen 4 workstation, NVIDIA GPU)
 include ~/.config/sway/common
 
-# Output (4K 32" LED)
-output * {
+# Outputs — matched by "Make Model Serial" (port names like DP-4 can shuffle between boots)
+output "Samsung Electric Company U32J59x HTPKC01180" {
+  position 2560 1194
   scale 1.5
+}
+
+output "ViewSonic Corporation VX3276-QHD V9W200241420" {
+  position 0 1283
+  scale 1.0
 }
 
 # VNC

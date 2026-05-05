@@ -24,7 +24,7 @@ in
     mupdf
     qbittorrent-enhanced
     pomodoro-gtk
-    protonvpn-gui
+    proton-vpn
     bitwarden-cli
     bitwarden-menu
     element-desktop

@@ -366,6 +366,7 @@ in
     # Custom directories like "screenshots" aren't part of the XDG spec
     xdg.userDirs = {
       enable = true;
+      setSessionVariables = true;
       documents = "${config.home.homeDirectory}/Documents";
       download = "${config.home.homeDirectory}/Downloads";
       music = "${config.home.homeDirectory}/Media/Music";
