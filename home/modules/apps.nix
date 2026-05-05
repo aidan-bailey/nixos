@@ -36,6 +36,7 @@ in
     xfconf
     tumbler
     gimp
+    libreoffice-fresh
     teamviewer
     clockify
     remmina
