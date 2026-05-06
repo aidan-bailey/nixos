@@ -283,11 +283,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777886480,
-        "narHash": "sha256-DAE5lIprB6DNXTlQRbUQ1/sjVTPDaVythWirh4phTDs=",
+        "lastModified": 1778059326,
+        "narHash": "sha256-ZmQfyXeh784HqkouwkAUOMpUUZ+CkUtVjs8rr4jPjSI=",
         "owner": "aidan-bailey",
         "repo": "loom",
-        "rev": "ed4aa7d882983756d7c6f6e5e1acd28993557068",
+        "rev": "02a917b4e0903736a68049908527c0f21f4822bb",
         "type": "github"
       },
       "original": {
