@@ -178,7 +178,7 @@ in
 
     home.sessionVariables = {
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "true";
-      CLAUDE_CODE_EFFORT_LEVEL = "max";
+      CLAUDE_CODE_EFFORT_LEVEL = "xhigh";
     };
 
     home.sessionPath = [

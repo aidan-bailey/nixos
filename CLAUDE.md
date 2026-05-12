@@ -175,7 +175,7 @@ Claude Code is installed via the `claude-code-nix` flake input. Supporting tools
 - **tail-claude** (v0.3.5) — session log viewer, `buildGoModule` from `kylesnowschwartz/tail-claude`
 - **mcp-nixos** — NixOS MCP server, configured in `.mcp.json` at repo root
 
-OAuth token is stored encrypted via sops-nix (`sops.secrets.claude_code_oauth_token`) and exported in `programs.zsh.envExtra`. Agent teams are enabled via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`. Effort level is set via `CLAUDE_CODE_EFFORT_LEVEL = "max"` env var (overrides the `effortLevel = "high"` in settings).
+OAuth token is stored encrypted via sops-nix (`sops.secrets.claude_code_oauth_token`) and exported in `programs.zsh.envExtra`. Agent teams are enabled via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`. Effort level is set via `CLAUDE_CODE_EFFORT_LEVEL = "xhigh"` env var (overrides the `effortLevel = "high"` in settings).
 
 Notification hooks (`config/claude/hooks/notify.sh`) send desktop notifications via `notify-send` (swaync) on Stop/Notification events, with optional push via ntfy when `$NTFY_TOPIC` is set. The script is deployed to `~/.claude/hooks/` via `home.file`. Gated by the `custom.claude.notifications` option (defined in `claude.nix`): `enable`, `channels.{desktop,push,popup}`, `events.{Stop,Notification}` — all default true except medesco where the default.nix disables it.
 
