@@ -22,6 +22,7 @@ let
     smartmontools
     geeqie
     parted
+    ncdu
     pciutils
     usbutils
     nix-output-monitor
