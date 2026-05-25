@@ -96,4 +96,12 @@ in
   services.gvfs.enable = true; # Mount, trash, etc
   services.tumbler.enable = true; # Thumbnails
 
+  # dbus-broker's notify-reload handshake hangs on root's user-early manager,
+  # making every nixos-rebuild eat a 90s timeout before failing. Leave the
+  # running broker untouched on rebuild; changes apply on next boot.
+  systemd.user.services.dbus-broker = {
+    reloadIfChanged = lib.mkForce false;
+    restartIfChanged = lib.mkForce false;
+  };
+
 }
