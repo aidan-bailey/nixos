@@ -68,7 +68,7 @@ in
 
   # External HDD as local binary cache
   fileSystems."/mnt/nixos-cache" = {
-    device = "/dev/disk/by-uuid/3e8a24a2-b357-4d2b-9ec4-d05d02c91a2e";
+    device = "/dev/disk/by-uuid/203e50a0-3286-4bd3-97d1-7a6149e7f450";
     fsType = "ext4";
     options = [
       "nosuid"

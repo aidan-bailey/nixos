@@ -85,7 +85,7 @@ let
         ];
       };
     };
-    effortLevel = "high";
+    effortLevel = "max";
     statusLine = {
       type = "command";
       command = "~/.claude/statusline.sh";
@@ -172,7 +172,7 @@ in
 
     home.sessionVariables = {
       CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "true";
-      CLAUDE_CODE_EFFORT_LEVEL = "xhigh";
+      CLAUDE_CODE_EFFORT_LEVEL = "max";
     };
 
     home.sessionPath = [
