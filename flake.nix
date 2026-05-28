@@ -95,6 +95,7 @@
         ./modules/audio.nix
         ./modules/gaming.nix
         ./modules/nix-ld.nix
+        ./modules/cloudflared.nix
       ];
 
       desktopModules = serverModules ++ [
