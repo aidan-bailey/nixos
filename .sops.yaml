@@ -1,7 +1,7 @@
 keys:
   - &nesco age1kpq2nfhl9uly2e7nfl0sc5gd4w5m760w50l4ex0pvgx4cwhxhaysrf0l5f
   - &fresco age1ejmsylnatlq3vxxd76mwtkc5vfchka9agxnwydl00xhf7420mf9sv44vve
-  - &medesco age1adtyglvthha30g64ylqcl4tlkluazq8kgp3fawq0euus3lz6ku7sj0qz66
+  - &medesco age1lxdzgpm6mjn3ferlurm647l55gxdhv7qq0nu5nkhmzeu02udh3usf5cn6z
 
 creation_rules:
   - path_regex: secrets/secrets\.yaml$
