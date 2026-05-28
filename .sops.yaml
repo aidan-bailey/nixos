@@ -2,6 +2,7 @@ keys:
   - &nesco age1kpq2nfhl9uly2e7nfl0sc5gd4w5m760w50l4ex0pvgx4cwhxhaysrf0l5f
   - &fresco age1ejmsylnatlq3vxxd76mwtkc5vfchka9agxnwydl00xhf7420mf9sv44vve
   - &medesco age1lxdzgpm6mjn3ferlurm647l55gxdhv7qq0nu5nkhmzeu02udh3usf5cn6z
+  - &medesco-host age1x48mkx2wp6s0p5puyqw4z6k0er3zu6p2t2qupecn728eue57k5dqe3fsxk
 
 creation_rules:
   - path_regex: secrets/secrets\.yaml$
@@ -22,3 +23,10 @@ creation_rules:
     key_groups:
       - age:
           - *nesco
+
+  - path_regex: secrets/medesco\.yaml$
+    key_groups:
+      - age:
+          - *nesco
+          - *fresco
+          - *medesco-host
