@@ -57,6 +57,35 @@ moveifexists "$HOME/Music" "$MEDIADIR/Music"
 moveifexists "$HOME/Videos" "$MEDIADIR/Videos"
 
 
+#############
+# SOPS KEY #
+#############
+
+# Derive the sops user age key from the user's SSH ed25519 key so that
+# home-manager can decrypt secrets/home.yaml on the first nixos-rebuild.
+SOPS_AGE_DIR="$HOME/.config/sops/age"
+SOPS_AGE_KEY="$SOPS_AGE_DIR/keys.txt"
+SSH_KEY="$HOME/.ssh/$HOSTNAME"
+
+if [ -f "$SOPS_AGE_KEY" ]; then
+    echo "sops user age key already present at $SOPS_AGE_KEY"
+elif [ ! -f "$SSH_KEY" ]; then
+    echo "Warning: $SSH_KEY not found; skipping sops age key setup."
+    echo "Generate one with: ssh-keygen -t ed25519 -f $SSH_KEY"
+    echo "Then re-run init.sh."
+else
+    echo "Deriving sops user age key from $SSH_KEY"
+    mkdir -p "$SOPS_AGE_DIR"
+    if command -v ssh-to-age >/dev/null 2>&1; then
+        ssh-to-age -private-key -i "$SSH_KEY" > "$SOPS_AGE_KEY"
+    else
+        nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i '$SSH_KEY'" > "$SOPS_AGE_KEY"
+    fi
+    chmod 600 "$SOPS_AGE_KEY"
+    echo "Wrote $SOPS_AGE_KEY"
+fi
+
+
 #mkdir -p "$HOME/.config/home-manager"
 
 echo "Configuration complete"
