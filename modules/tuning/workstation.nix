@@ -24,7 +24,10 @@
     "kernel.sched_autogroup_enabled" = 1;
     "kernel.nmi_watchdog" = 0; # disable NMI watchdog — saves a perf counter and reduces overhead
     "vm.max_map_count" = 1048576; # needed by some games/apps (e.g. Star Citizen, Electron)
-    "vm.compaction_proactiveness" = 0; # disable proactive compaction — reduces latency spikes
+    # Kernel-default proactive compaction (was 0 for build-latency, but disabling it
+    # caused physical memory fragmentation on long uptimes, which broke the NVIDIA
+    # proprietary driver's contiguous-page allocations: Xid 109 / VK_ERROR_DEVICE_LOST.
+    "vm.compaction_proactiveness" = 20;
     "vm.watermark_boost_factor" = 0; # disable watermark boosting — avoids unnecessary reclaim
   };
 
