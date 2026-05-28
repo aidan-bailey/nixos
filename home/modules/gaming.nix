@@ -1,10 +1,11 @@
 { config, pkgs, ... }:
 
 {
-  # Gaming applications (user packages)
-  # Steam system configuration is in modules/gaming.nix
+  # Gaming applications (user packages).
+  # Steam is installed system-wide via programs.steam in modules/gaming.nix —
+  # adding pkgs.steam here would shadow it with an unwrapped copy on PATH and
+  # silently drop extraCompatPackages (Proton-GE, vkd3d-proton).
   home.packages = with pkgs; [
-    steam
     (cockatrice.overrideAttrs (oldAttrs: {
       src = pkgs.fetchFromGitHub {
         owner = "Cockatrice";
