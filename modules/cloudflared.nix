@@ -41,7 +41,8 @@ in
         "prowlarr.aidanbailey.me" = "http://localhost:9696";
         "lidarr.aidanbailey.me" = "http://localhost:8686";
         "transmission.aidanbailey.me" = "http://localhost:9091";
-        "ssh.aidanbailey.me" = "ssh://192.168.88.246:22";
+        "fresco.aidanbailey.me" = "ssh://192.168.88.246:22";
+        "medesco.aidanbailey.me" = "ssh://localhost:22";
       };
     };
   };
