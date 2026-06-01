@@ -13,6 +13,17 @@
     pkgs.jellyfin-media-player
   ];
 
+  networking.firewall.allowedTCPPorts = lib.mkIf (config.networking.hostName == "medesco") [
+    8096 # Jellyfin
+    5055 # Jellyseerr
+    8989 # Sonarr
+    7878 # Radarr
+    6767 # Bazarr
+    9696 # Prowlarr
+    8686 # Lidarr
+    9091 # Transmission web UI
+  ];
+
   nixarr = {
     enable = true;
     mediaDir = "/data/media";
